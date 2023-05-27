@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["es5", "es6", "dom"],
+    "sourceMap": true,
+    "rootDir": "./",
+    "esModuleInterop": true,
+    "strict": true,
+    "types": ["@types/highlight.js"]
+  }
+}
