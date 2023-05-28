@@ -17,7 +17,6 @@ export default {
         chromeExtension({
             wrapContentScripts:false,
         }),
-        simpleReloader(),
         resolve(),
         commonjs(),
         typescript({
