@@ -6,7 +6,6 @@
     "sourceMap": true,
     "rootDir": "./",
     "esModuleInterop": true,
-    "strict": true,
-    "types": ["@types/highlight.js"]
+    "strict": true
   }
 }
