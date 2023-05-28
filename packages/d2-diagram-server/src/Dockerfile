@@ -11,7 +11,7 @@ RUN cat /usr/src/app/install.sh | sh -s --
 # Copy over the package.json
 COPY package*.json ./
 
-COPY .. .
+COPY ../../d2-diagram-client .
 
 RUN npm install
 

@@ -3,14 +3,13 @@ import CodeLintingElement from "./CodeLintingElement";
 import CodeBlockContainerElement from "./CodeBlockContainerElement";
 import CodeInputElement from "./CodeInputElement";
 import CodeEventHandler from "./CodeEventHandler";
-import {ITanaReplacementElement} from "../../TanaNodeReplacementHandler/types";
-import {highlightJS} from "../../TanaLibraryProvider/types";
+import {ITanaReplacementElement} from "tana-extensions-core/src/TanaNodeReplacementHandler/types";
+import {ITanaExtension} from "tana-extensions-core/src/TanaExtensionInitializer/types";
+import {NodeEvent, NodeEventTypeEnum} from "tana-extensions-core/src/TanaDOMNodeListener/types";
+import TanaDOMNodeDecorator from "tana-extensions-core/src/TanaDOMNodeDecorator";
 import {CODE_BLOCK_INPUT_CSS_SELECTOR} from "./types";
-import {ITanaExtension} from "../../TanaExtensionInitializer/types";
-import TanaNodeReplacementHandler from "../../TanaNodeReplacementHandler";
-import {NodeEvent, NodeEventTypeEnum} from "../../TanaDOMNodeListener/types"
-import {TanaNode} from "../../TanaStateProvider/types";
-import TanaDOMNodeDecorator from "../../TanaDOMNodeDecorator";
+import {TanaNode} from "tana-extensions-core/src/TanaStateProvider/types";
+import TanaNodeReplacementHandler from "tana-extensions-core/src/TanaNodeReplacementHandler";
 
 export default new class CodeBlockElement implements ITanaReplacementElement, ITanaExtension {
     private highlightJS = 'highlightJS'

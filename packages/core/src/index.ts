@@ -1,7 +1,7 @@
-import TanaExtensionInitializer from "../TanaExtensionInitializer";
-import TanaListenerInitializer from "../TanaListenerInitializer";
-import TanaLoader from "../TanaLoader";
-import {ITanaExtension} from "../TanaExtensionInitializer/types";
+import TanaExtensionInitializer from "./TanaExtensionInitializer";
+import TanaListenerInitializer from "./TanaListenerInitializer";
+import TanaLoader from "./TanaLoader";
+import {ITanaExtension} from "./TanaExtensionInitializer/types";
 
 export default class TanaMain {
     public static async init(tanaExtensions:ITanaExtension[]) {

@@ -1,13 +1,12 @@
 import CodeBlockComponentAccessor from "./CodeBlockComponentAccessor";
-import TanaStateProvider from "../../TanaStateProvider";
 import {
-    CODE_BLOCK_INPUT_CSS_CLASS,
     CODE_BLOCK_INPUT_CSS_SELECTOR,
-    CODE_BLOCK_LINTING_CSS_CLASS,
     CODE_BLOCK_LINTING_CSS_SELECTOR
 } from "./types";
 import highlightJS from "highlight.js"
-import TanaDomNodeProvider from "../../TanaDOMNodeProvider";
+import TanaDomNodeProvider from "tana-extensions-core/src/TanaDOMNodeProvider";
+import TanaStateProvider from "tana-extensions-core/src/TanaStateProvider";
+
 export default new class CodeEventHandler {
     public  registerBaseEventsForCodeBlock(codeBlockContainer:HTMLElement) {
         const inputElement = codeBlockContainer.querySelector(CODE_BLOCK_INPUT_CSS_SELECTOR) as HTMLTextAreaElement

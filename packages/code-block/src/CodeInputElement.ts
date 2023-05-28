@@ -1,6 +1,5 @@
 import {CODE_BLOCK_CSS_CLASS, CODE_BLOCK_INPUT_CSS_CLASS} from "./types";
 
-
 export default new class CodeInputElement {
 
     public  createInstance(): HTMLTextAreaElement {

@@ -1,0 +1,17 @@
+{
+
+  "manifest version": 3,
+  "name": "Tana Extension",
+  "version": "0.1.0",
+  "description": "An extension to modify Tana.",
+  "content_scripts": [
+    {
+      "js": [
+        "scripts/main.js"
+      ],
+      "matches": [
+        "https://app.tana.inc/*"
+      ]
+    }
+  ]
+}

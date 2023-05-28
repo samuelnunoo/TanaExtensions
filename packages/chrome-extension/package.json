@@ -1,0 +1,12 @@
+{
+  "name": "chrome-extension",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "tana-extensions-core": "*"
+  },
+  "devDependencies": {
+    "chrome-types": "^0.1.198"
+  }
+}

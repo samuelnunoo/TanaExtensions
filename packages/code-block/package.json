@@ -1,0 +1,13 @@
+{
+  "name": "extension-code-block",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "highlight.js": "^11.8.0",
+    "tana-extensions-core": "*"
+  },
+  "devDependencies": {
+    "@types/highlight.js": "^10.1.0"
+  }
+}
