@@ -31,8 +31,6 @@ export default new class TanaLoader {
             })
         })
     }
-
-
     private mainUIContainerHasBeenAdded(htmlElements:HTMLElement[]) {
         for (const htmlElement of htmlElements){
             const mainUIContainer =
@@ -42,5 +40,4 @@ export default new class TanaLoader {
         }
         return false
     }
-
 }
