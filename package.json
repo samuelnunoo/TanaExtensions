@@ -1,7 +1,7 @@
 {
-  "name": "TanaExtensionsCore",
+  "name": "TanaExtensions",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
   "repository": "https://github.com/samuelnunoo/TanaExtensionsCore.git",
   "author": "Samuel Nunoo <38366722+samuelnunoo@users.noreply.github.com>",
   "license": "MIT",
@@ -10,9 +10,14 @@
   },
   "devDependencies": {
     "jest": "^29.5.0",
+    "lerna": "^6.6.2",
+    "rollup": "^3.23.0",
     "ts-loader": "^9.4.3",
     "typescript": "^5.0.4",
     "webpack": "^5.84.1",
     "webpack-cli": "^5.1.1"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
