@@ -1,5 +1,5 @@
 import path from "path"
-import {chromeExtension, simpleReloader} from "rollup-plugin-chrome-extension";
+import {chromeExtension} from "rollup-plugin-chrome-extension";
 import typescript from "rollup-plugin-typescript2";
 import resolve from '@rollup/plugin-node-resolve'
 import {emptyDir} from "rollup-plugin-empty-dir";
@@ -17,7 +17,6 @@ export default {
         chromeExtension({
             wrapContentScripts:false,
         }),
-        simpleReloader(),
         resolve(),
         commonjs(),
         typescript({
