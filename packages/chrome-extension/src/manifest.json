@@ -1,17 +1,23 @@
 {
-
-  "manifest version": 3,
+  "manifest_version": 3,
   "name": "Tana Extension",
   "version": "0.1.0",
   "description": "An extension to modify Tana.",
   "content_scripts": [
     {
       "js": [
-        "scripts/main.js"
+        "content/index.ts"
       ],
       "matches": [
         "https://app.tana.inc/*"
-      ]
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/bundle.css"],
+      "matches": ["https://app.tana.inc/*"]
     }
   ]
 }

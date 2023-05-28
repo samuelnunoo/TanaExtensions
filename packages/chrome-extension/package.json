@@ -1,12 +1,22 @@
 {
   "name": "chrome-extension",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
+  "types": "module",
   "dependencies": {
+    "extension-code-block": "*",
+    "rollup-plugin-scss": "^4.0.0",
+    "save-dev": "^0.0.1-security",
     "tana-extensions-core": "*"
   },
   "devDependencies": {
-    "chrome-types": "^0.1.198"
+    "@types/chrome": "^0.0.237",
+    "autoprefixer": "^10.4.14",
+    "chrome-types": "^0.1.198",
+    "postcss": "^8.4.19",
+    "rollup-plugin-chrome-extension": "^3.6.12",
+    "rollup-plugin-css-bundle": "^1.0.4",
+    "rollup-plugin-empty-dir": "^1.0.5",
+    "sass": "^1.62.1"
   }
 }
