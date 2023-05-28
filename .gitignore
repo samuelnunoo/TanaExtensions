@@ -3,7 +3,6 @@ node_modules
 *.js
 *.log
 *.map
-!/webpack.config.js
 !/.gitattributes
 !**/rollup.config.js
 dist
