@@ -35,9 +35,7 @@ export default new class TanaDOMNodeListener implements IDomPanelListener {
         if (this.hasInitialized) return
         this.hasInitialized = true
         const originalMutationObserver = MutationObserver
-
-        const shouldProcessMutationRecord = this.shouldProcessMutationRecord
-        const processMutationRecord = this.processMutationRecord
+        const {shouldProcessMutationRecord,processMutationRecord} = this
         const classThisArg = this
         //@ts-ignore
         MutationObserver = function(...args) {
@@ -69,7 +67,7 @@ export default new class TanaDOMNodeListener implements IDomPanelListener {
         const addedNodes = Array.from(mutation.addedNodes) as HTMLElement[]
         const isRemoveEvent = !!TanaDomNodeProvider.getNodeWithClassFromArray(removedNodes,BULLET_CONTENT_CSS_CLASS)
         const isAddedEvent = !!TanaDomNodeProvider.getNodeWithClassFromArray(addedNodes,BULLET_CONTENT_CSS_CLASS)
-        if (isAddedEvent && isRemoveEvent) throw new Error("How is it added and removed Event ")
+        if (isAddedEvent && isRemoveEvent) throw new Error("Tana content node exists in both the remove and added nodes array.")
         if (isRemoveEvent) return NodeEventTypeEnum.Deletion
         if (isAddedEvent) return NodeEventTypeEnum.Insertion
         return NodeEventTypeEnum.Update
@@ -80,7 +78,7 @@ export default new class TanaDOMNodeListener implements IDomPanelListener {
         const targetType = this.getTargetType(mutation.target as HTMLElement)
         if (targetType == null) return
         const nodeElement = this.getBlockFromDescendant(mutation.target as HTMLElement,mutatingElement,targetType) as HTMLElement
-        if (nodeElement == null) return
+        if (!nodeElement) return
         const blockId = TanaDomNodeProvider.getIdFromElement(nodeElement)
         if (blockId == null) return
         const panel = TanaDomNodeProvider.getPanelFromNode(nodeElement) as HTMLElement

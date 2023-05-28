@@ -78,50 +78,6 @@ export default new class TanaDomPanelListener {
         })
     }
     private observeDocks(docks:HTMLElement[]) {
-      /*
-        -----------------------------------------------------------------------
-        case Insertion of Dock (From Observer on DockContainer):
-            - get docks.panelContainer and add —a listener on it
-            - get panels from docks.panelContainer and add listener on it
-
-        case Deletion of Dock:
-            - get docks.panelContainer and remove the listener on it
-            - get panels from docks.panelContainer and remove the listeners on it
-
-        case Insertion of Panel (From Observer on Docks.PanelContainer):
-            - add a mutationObserver to the panel and add it to the map
-
-        case Deletion of Panel (From Observer on Docks.PanelContainer):
-            - get the mutationObserver from the map and disconnect and delete it
-        ------------------------------------------------------------------------
-        init():
-            - observeDocks
-                - for each dock
-                    - observeDockPanelContainer
-                        - unobserveDockPanelContainer
-                        - set: panelContainerObserver with panelContainer
-                    - observePanels
-                        for each panel
-                        - unobserve panel
-                        - set panelObserver with panel
-
-        events:
-            - dockObserver @handleDockChildListMutationEvent
-              so this occurs when a dock is removed or added
-              my one question is how does the ordering of the mutationRecords work
-              they are ordered in the order they are received.
-              So if you get a deletion then a creation next it happened in that order
-              and that's how you shold process it.
-
-              My next question is can the same elem,ent be deleted and created within the
-              same mutationrecord?
-              no
-
-            - panelContainerObservers @handlePanelContainerChildListMutationEvent
-            - panelObservers @handlePanelIdChangeEvent
-
-
-         */
         docks.forEach(dock => {
             const panelContainer = dock.querySelector("div")
             if (!panelContainer) return

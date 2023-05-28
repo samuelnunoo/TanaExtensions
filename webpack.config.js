@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     context: path.resolve(__dirname),
     devtool: 'inline-source-map',
-    entry: './TanaMainEntryPoint/index.ts',
+    entry: './TanaMain/index.ts',
     mode: 'development',
     module: {
         rules: [{

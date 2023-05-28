@@ -5,8 +5,11 @@
   "repository": "https://github.com/samuelnunoo/TanaExtensionsCore.git",
   "author": "Samuel Nunoo <38366722+samuelnunoo@users.noreply.github.com>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
   "devDependencies": {
+    "jest": "^29.5.0",
     "ts-loader": "^9.4.3",
     "typescript": "^5.0.4",
     "webpack": "^5.84.1",

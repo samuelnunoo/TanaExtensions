@@ -1,12 +1,10 @@
 import {TanaNode} from "../TanaStateProvider/types";
 
-
 export enum NodeEventTypeEnum {
     Insertion,
     Deletion,
     Update
 }
-
 
 export const BULLET_MODULE_CLASS_PREFIX = "Bullet-module"
 export const BULLET_CONTENT_CSS_SELECTOR = ".bulletAndContent"

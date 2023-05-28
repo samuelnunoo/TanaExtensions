@@ -15,5 +15,4 @@ export default class TanaListenerInitializer {
         TanaDomPanelListener.invokeInitialPanelEvents()
         await TanaNodeTransactionListener.init()
     }
-
 }

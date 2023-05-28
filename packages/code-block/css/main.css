@@ -1,0 +1,135 @@
+
+
+.d2-element {
+    height: 350px;
+}
+.code-block {
+    display: inline-block !important;
+    resize: none;
+    outline: none;
+    width: 60vw;
+    max-height: 50vh;
+    min-height: 15vh;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding: 10px !important;
+    white-space: pre-wrap !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+    word-spacing: normal !important;
+}
+
+.code-button {
+    background: green;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    z-index: 4;
+    width: 20px;
+    height: 15px;
+}
+.code-block-container {
+    width: 60vw;
+    max-height: 50vh;
+    min-height: 15vh;
+    position: relative;
+    background: black;
+    border-radius: 10px;
+    display: block;
+    padding-top: 10px;
+
+
+}
+.output-area {
+    position: absolute;
+    display: inline-block;
+    background: transparent !important;
+    padding: 0;
+    bottom: 0;
+    top: 0;
+    z-index: 3;
+}
+
+.input-area {
+    z-index: 4;
+    position: relative;
+    display: inline-block;
+    background: transparent !important;
+    color: transparent;
+    caret-color: white;
+}
+
+
+.code-block {
+    display: inline-block !important;
+    resize: none;
+    outline: none;
+    width: 60vw;
+    max-height: 50vh;
+    min-height: 15vh;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding-right: 40px !important;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+    word-spacing: normal;
+    overflow-y: auto !important;
+    padding: 10px !important;
+    font-feature-settings: normal;
+    font-kerning: auto;
+    font-optical-sizing: auto;
+    font-size: 11.2px;
+    font-stretch: 100%;
+    font-style: normal;
+    font-variant-alternates: normal;
+    font-variant-caps: normal;
+    font-variant-east-asian: normal;
+    font-variant-ligatures: normal;
+    font-variant-numeric: normal;
+    font-variation-settings: normal;
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: 15.4px;
+    tab-size: 4;
+    text-align: start;
+    text-indent: 0px;
+    text-shadow: none;
+    text-transform: none;
+    white-space: pre-wrap;
+    word-break: break-all;
+    word-spacing: 0px;
+
+}
+
+.code-block-container {
+    width: 60vw;
+    max-height: 50vh;
+    min-height: 15vh;
+    position: relative;
+    background: black;
+    border-radius: 10px;
+    display: block;
+
+
+}
+.output-area {
+    position: absolute;
+    display: inline-block !important;
+    background: transparent !important;
+    padding: 0;
+    bottom: 0;
+    top: 10px;
+    z-index: 3;
+}
+
+.input-area {
+    z-index: 4;
+    position: relative;
+    display: inline-block;
+    background: transparent !important;
+    color: transparent;
+    caret-color: white;
+}

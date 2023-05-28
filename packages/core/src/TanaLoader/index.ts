@@ -13,7 +13,6 @@ export default new class TanaLoader {
             });
         })
     }
-
     public async waitForPageDOMToCompleteInitialization() {
         return new Promise((resolve) => {
             const app = document.getElementById(TANA_REACT_APP_ID)!
