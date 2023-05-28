@@ -42,7 +42,7 @@ export default new class TanaDomPanelListener {
             const panels = Array.from(panelContainer!.childNodes) as HTMLElement[]
             panels.forEach(panel => {
                 const dataPanelId = panel.getAttribute(TANA_DATA_PANEL_ATTRIBUTE)
-                const panelEvent = this.createPanelEvent(panel,panelContainer,dataPanelId!,false)
+                const panelEvent = this.createPanelEvent(panel,panelContainer!,dataPanelId!,false)
                 this.invokeListeners(panelEvent)
             })
         })

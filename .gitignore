@@ -5,3 +5,6 @@ node_modules
 *.map
 !/webpack.config.js
 !/.gitattributes
+!**/rollup.config.js
+dist
+.DS_Store

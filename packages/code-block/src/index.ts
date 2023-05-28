@@ -10,8 +10,9 @@ import TanaDOMNodeDecorator from "tana-extensions-core/src/TanaDOMNodeDecorator"
 import {CODE_BLOCK_INPUT_CSS_SELECTOR} from "./types";
 import {TanaNode} from "tana-extensions-core/src/TanaStateProvider/types";
 import TanaNodeReplacementHandler from "tana-extensions-core/src/TanaNodeReplacementHandler";
+import "../css/main.css"
 
-export default new class CodeBlockElement implements ITanaReplacementElement, ITanaExtension {
+export default new class CodeBlockExtension implements ITanaReplacementElement, ITanaExtension {
     private highlightJS = 'highlightJS'
     public  uniqueIdentifier(): string {
         return "customTanaCodeBlock"

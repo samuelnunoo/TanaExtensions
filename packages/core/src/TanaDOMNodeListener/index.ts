@@ -40,7 +40,7 @@ export default new class TanaDOMNodeListener implements IDomPanelListener {
         //@ts-ignore
         MutationObserver = function(...args) {
             const callback = args[0];
-            args[0] = function(mutationsList, observer) {
+            args[0] = function(mutationsList:MutationRecord[], observer:MutationObserver) {
                 for (const mutation of mutationsList) {
                     if (!shouldProcessMutationRecord.bind(classThisArg)(mutation)) continue
                     processMutationRecord.bind(classThisArg)(mutation)
