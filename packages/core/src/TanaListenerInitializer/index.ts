@@ -8,11 +8,11 @@ import tanaDOMNodeListener from "../TanaDOMNodeListener";
 export default class TanaListenerInitializer {
     public static async init() {
         await TanaLoader.waitForPageDOMToCompleteInitialization()
-        await TanaDomPanelListener.init()
+        TanaDomPanelListener.init()
         tanaDOMNodeListener.initialize()
         TanaDomPanelListener.registerListener(TanaDOMNodeListener)
         TanaDOMNodeListener.registerListener(TanaNodeReplacementHandler)
         TanaDomPanelListener.invokeInitialPanelEvents()
-        await TanaNodeTransactionListener.init()
+        TanaNodeTransactionListener.init()
     }
 }

@@ -8,7 +8,7 @@ export default new class TanaNodeReplacementHandler implements INodeDOMListener 
     public unregisterTanaReplacementElement(element: ITanaReplacementElement) {
         this.tanaReplacementElements.delete(element.uniqueIdentifier())
     }
-    onNodeEvent(nodeEvent: NodeEvent): void {
+    public onNodeEvent(nodeEvent: NodeEvent): void {
         this.tanaReplacementElements.forEach(entry => {
             if (entry.shouldReplace(nodeEvent)) {
                 entry.replaceElement(nodeEvent)
