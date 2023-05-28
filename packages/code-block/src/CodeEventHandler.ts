@@ -20,7 +20,7 @@ export default new class CodeEventHandler {
         const lintingElement = codeBlockContainer.querySelector(CODE_BLOCK_LINTING_CSS_SELECTOR) as HTMLElement
         inputElement.style.height = "auto"
         inputElement.style.height = inputElement.scrollHeight + "px"
-        lintingElement.style.height = `${inputElement.style.height}px`
+        lintingElement.style.height = inputElement.style.height
         highlightJS.highlightElement(lintingElement)
     }
 
@@ -33,9 +33,12 @@ export default new class CodeEventHandler {
     }
     private  registerCoordinateElementScrollEvent(inputElement:HTMLTextAreaElement) {
         inputElement.addEventListener("scroll", (event) => {
-            const{ scrollTop } = event.target as HTMLElement
             const lintingElement = CodeBlockComponentAccessor.getCodeBlockLintingElementFromEvent(event)
-            lintingElement!.scrollTop = scrollTop
+            window.requestAnimationFrame(() => {
+                const {scrollTop} = event.target as HTMLElement
+                lintingElement!.scrollTop = scrollTop
+                console.log(`[${scrollTop == lintingElement!.scrollTop}] ScrollingSame Input scrollTop ${scrollTop}. Linting scrollTop ${lintingElement!.scrollTop}`)
+            });
         })
     }
 
@@ -43,7 +46,7 @@ export default new class CodeEventHandler {
         inputElement.addEventListener("input", (event) => {
             const inputElement = event.target as HTMLTextAreaElement
             const lintingElement = CodeBlockComponentAccessor.getCodeBlockLintingElementFromEvent(event)
-            lintingElement!.innerHTML = inputElement.value
+            lintingElement!.textContent = inputElement.value
             const tanaElement = CodeBlockComponentAccessor.getCodeBlockTanaNodeFromEvent(event)
             const id = TanaDomNodeProvider.getIdFromElement(tanaElement as HTMLElement)
             const tanaNode = TanaStateProvider.getNodeWithId(id!)
@@ -63,7 +66,7 @@ export default new class CodeEventHandler {
         const lintingElement = CodeBlockComponentAccessor.getCodeBlockLintingElementFromEvent(event) as HTMLElement
         inputElement.style.height = "auto"
         inputElement.style.height = inputElement.scrollHeight + "px"
-        lintingElement.style.height = `${inputElement.style.height}px`
+        lintingElement.style.height = inputElement.style.height
     }
 
 }

@@ -1,6 +1,25 @@
+
+
 .d2-element {
     height: 350px;
 }
+.code-block {
+    display: inline-block !important;
+    resize: none;
+    outline: none;
+    width: 60vw;
+    max-height: 50vh;
+    min-height: 15vh;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding: 10px !important;
+    white-space: pre-wrap !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+    word-spacing: normal !important;
+}
+
 .code-button {
     background: green;
     position: absolute;
@@ -19,6 +38,8 @@
     border-radius: 10px;
     display: block;
     padding-top: 10px;
+
+
 }
 .output-area {
     position: absolute;
@@ -29,6 +50,7 @@
     top: 0;
     z-index: 1;
 }
+
 .input-area {
     z-index: 2;
     position: relative;
@@ -37,6 +59,8 @@
     color: transparent;
     caret-color: white;
 }
+
+
 .code-block {
     display: inline-block !important;
     resize: none;
@@ -77,5 +101,35 @@
     white-space: pre-wrap;
     word-break: break-all;
     word-spacing: 0px;
+
 }
 
+.code-block-container {
+    width: 60vw;
+    max-height: 50vh;
+    min-height: 15vh;
+    position: relative;
+    background: black;
+    border-radius: 10px;
+    display: block;
+
+
+}
+.output-area {
+    position: absolute;
+    display: inline-block !important;
+    background: transparent !important;
+    padding: 0;
+    bottom: 0;
+    top: 10px;
+    z-index: 1;
+}
+
+.input-area {
+    z-index: 2;
+    position: relative;
+    display: inline-block;
+    background: transparent !important;
+    color: transparent;
+    caret-color: white;
+}
