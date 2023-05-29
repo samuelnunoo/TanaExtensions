@@ -6,6 +6,7 @@
     "sourceMap": true,
     "rootDir": "./",
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "jsx": "react"
   }
 }

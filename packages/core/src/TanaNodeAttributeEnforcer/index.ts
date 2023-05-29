@@ -1,5 +1,6 @@
 import {BULLET_CONTENT_CSS_CLASS} from "../TanaDOMNodeListener/types";
 import {EDITABLE_BLOCK_CSS_SELECTOR} from "../TanaDOMNodeDecorator/types";
+import {TanaNode} from "../TanaStateProvider/types";
 
 
 export default new class TanaNodeAttributeEnforcer {
@@ -10,5 +11,12 @@ export default new class TanaNodeAttributeEnforcer {
         if (!node.classList.contains(BULLET_CONTENT_CSS_CLASS)) return false
         if (! node.querySelector(EDITABLE_BLOCK_CSS_SELECTOR)) return false
         return true
+    }
+
+    public hasTemplateWithName(tanaNode:TanaNode,templateName:string) {
+        for (const template of tanaNode.templates) {
+            if (template.name == templateName) return true
+        }
+        return false
     }
 }

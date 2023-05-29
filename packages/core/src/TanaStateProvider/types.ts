@@ -43,6 +43,7 @@ export interface NavigationService {
 export interface TanaNode {
     name:string
     isCodeBlock:boolean
+    templates:TanaNode[]
 }
 export interface TanaWindow extends Window {
     appState: AppState
