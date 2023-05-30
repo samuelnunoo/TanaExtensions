@@ -14,6 +14,7 @@ export default new class TanaNodeAttributeEnforcer {
     }
 
     public hasTemplateWithName(tanaNode:TanaNode,templateName:string) {
+        if (!tanaNode.templates) return false
         for (const template of tanaNode.templates) {
             if (template.name == templateName) return true
         }
