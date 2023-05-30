@@ -15,12 +15,14 @@ import {
     RIGHT_DOCK_ATTRIBUTE_VALUE,
     TOP_DOCK_ATTRIBUTE_VALUE
 } from "./types";
+import TanaDomNodeProvider from "../TanaDOMNodeProvider";
 
 export default new class TanaDomPanelListener {
     private listeners: IDomPanelListener[] = []
     private dockObserver: MutationObserver = new MutationObserver(this.handleDockContainerChildListMutationEvent.bind(this))
     private panelContainerObservers: Map<HTMLElement,MutationObserver> = new Map()
     private panelObserver: Map<HTMLElement,MutationObserver> = new Map()
+    private panelHeaderObservers: Map<HTMLElement,MutationObserver> = new Map()
     private mainDockObserver = new MutationObserver(this.handleMainDockChildListMutationEvent.bind(this))
     public init() {
         const dockContainer = document.querySelector(TANA_DOCKS_CONTAINER_CSS_SELECTOR)
@@ -67,6 +69,14 @@ export default new class TanaDomPanelListener {
                 attributeFilter: [TANA_DATA_PANEL_ATTRIBUTE]
             })
             this.panelObserver.set(panel,mutationObserver)
+
+            const panelHeaderMutationObserver = new MutationObserver(this.handlePanelHeaderChangeEvent.bind(this))
+            const panelTemplateContainer = TanaDomNodeProvider.getPanelHeaderTemplateContainerFromPanel(panel)
+            if (!panelTemplateContainer) return
+            panelHeaderMutationObserver.observe(panelTemplateContainer,{
+                childList:true
+                })
+            this.panelHeaderObservers.set(panel,panelHeaderMutationObserver)
         })
     }
     private unobservePanels(panels:HTMLElement[]) {
@@ -75,8 +85,31 @@ export default new class TanaDomPanelListener {
                 this.panelObserver.get(panel)!.disconnect()
                 this.panelObserver.delete(panel)
             }
+            if (this.panelHeaderObservers.has(panel)) {
+                this.panelHeaderObservers.get(panel)!.disconnect()
+                this.panelHeaderObservers.delete(panel)
+            }
         })
     }
+
+    /*
+    The goal of this method is to detect when tags are added or removed and propagate that event
+     */
+    private handlePanelHeaderChangeEvent(mutationList:MutationRecord[]) {
+        for (const mutation of mutationList) {
+            const isRemoval = mutation.removedNodes.length > mutation.addedNodes.length
+            const element = isRemoval ? mutation.removedNodes[0] : mutation.addedNodes[0]
+            const panel = TanaDomNodeProvider.getPanelFromNode(element as HTMLElement)
+            if (!panel) return
+            const panelContainer = panel.parentElement
+            if (!panelContainer) return
+            const dataPanelId = panel.getAttribute(TANA_DATA_PANEL_ATTRIBUTE)
+            if (!dataPanelId) return
+            const panelEvent = this.createPanelEvent(panel,panelContainer,dataPanelId,isRemoval)
+            this.invokeListeners(panelEvent)
+        }
+    }
+
     private observeDocks(docks:HTMLElement[]) {
         docks.forEach(dock => {
             const panelContainer = dock.querySelector("div")
