@@ -28,8 +28,8 @@ export default class TanaDomNodeProvider  {
         if (!panel) return
         return panel.querySelector(TANA_PANEL_HEADER_CSS_SELECTOR)
     }
-    public static getAllEditableNodesOnPanel(panel:HTMLElement) {
-        return Array.from(panel.querySelectorAll(EDITABLE_BLOCK_CSS_SELECTOR)) as HTMLElement[]
+    public static getAllContentNodesOnPanel(panel:HTMLElement) {
+        return Array.from(panel.querySelectorAll(DOM_NODE_CSS)) as HTMLElement[]
     }
     public static getBlockNodeFromDescendant(descendant:HTMLElement) {
         return descendant.closest(BULLET_CONTENT_CSS_SELECTOR)

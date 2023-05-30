@@ -2,10 +2,9 @@ import {BULLET_CONTENT_CSS_CLASS} from "../TanaDOMNodeListener/types";
 import {EDITABLE_BLOCK_CSS_SELECTOR} from "../TanaDOMNodeDecorator/types";
 import {TanaNode} from "../TanaStateProvider/types";
 
+export default new class TanaNodeAttributeInspector {
 
-export default new class TanaNodeAttributeEnforcer {
-
-    public isValidTanaContentNode(node:HTMLElement) {
+    public hasValidTanaNodeContent(node:HTMLElement) {
         if (!node) return false
         if (!('classList' in node)) return false
         if (!node.classList.contains(BULLET_CONTENT_CSS_CLASS)) return false

@@ -24,6 +24,7 @@ export default new class CodeBlockExtension implements ITanaReplacementElement, 
     }
     public  shouldReplace(nodeEvent:NodeEvent): boolean {
         if (nodeEvent.nodeEventType == NodeEventTypeEnum.Deletion) return false
+        if (nodeEvent.isHeaderNode) return false
         const isCodeBlock = nodeEvent.tanaNode.isCodeBlock
         const isCustomCodeBlock = nodeEvent.nodeElement.querySelector(CODE_BLOCK_INPUT_CSS_SELECTOR)
         return isCodeBlock && !isCustomCodeBlock

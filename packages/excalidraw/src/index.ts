@@ -4,7 +4,7 @@ import {TanaNode} from "tana-extensions-core/src/TanaStateProvider/types";
 import {NodeEvent, NodeEventTypeEnum} from "tana-extensions-core/src/TanaDOMNodeListener/types";
 import {Excalidraw} from "@excalidraw/excalidraw";
 import TanaNodeReplacementHandler from "tana-extensions-core/src/TanaNodeReplacementHandler";
-import TanaNodeAttributeEnforcer from "tana-extensions-core/src/TanaNodeAttributeEnforcer";
+import TanaNodeAttributeEnforcer from "../../core/src/TanaNodeAttributeInspector";
 import {EXCALIDRAW_CLASS_CSS_SELECTOR, EXCALIDRAW_CLASS_NAME, EXCALIDRAW_TEMPLATE_NAME} from "./types";
 import {createRoot} from 'react-dom/client';
 import React from "react";

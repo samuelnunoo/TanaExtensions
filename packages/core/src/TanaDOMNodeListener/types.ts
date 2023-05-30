@@ -34,4 +34,5 @@ export interface NodeEvent {
     nodeId: string,
     nodeEventType: NodeEventTypeEnum,
     panel: HTMLElement
+    isHeaderNode:boolean
 }

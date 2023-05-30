@@ -20,6 +20,7 @@ import {
 } from "../TanaDomPanelListener/types";
 import TanaStateProvider from "../TanaStateProvider";
 import {TanaNode} from "../TanaStateProvider/types";
+import {TANA_WRAPPER_CSS_SELECTOR} from "../TanaDOMNodeProvider/types";
 
 export default new class TanaDOMNodeListener implements IDomPanelListener {
     private classList:string[] = [
@@ -90,25 +91,41 @@ export default new class TanaDOMNodeListener implements IDomPanelListener {
             tanaNode,
             blockId,
             nodeEventType,
-            panel
+            panel,
+            false
         )
         this.invokeListeners(nodeEvent)
     }
     onPanelEvent({panel,panelEventType}: PanelEvent): void {
-        const contentNodes = TanaDomNodeProvider.getAllEditableNodesOnPanel(panel)
+        const contentNodes = TanaDomNodeProvider.getAllContentNodesOnPanel(panel)
+        const headerNode = TanaDomNodeProvider.getPanelHeaderFromPanel(panel)
+        const nodeEventType = this.getNodeEventType(panelEventType)
+        this.createEventForPanelHeaderNode(headerNode,panel,nodeEventType)
         contentNodes.forEach(nodeElement => {
             const nodeId = TanaDomNodeProvider.getIdFromElement(nodeElement)
             if (!nodeId) return
             const tanaNode = TanaStateProvider.getNodeWithId(nodeId)
             if (!tanaNode) return
-            const nodeEventType =
-                panelEventType == PanelEvenTypeEnum.Deletion
-                ? NodeEventTypeEnum.Deletion :
-                panelEventType == PanelEvenTypeEnum.Insertion ? NodeEventTypeEnum.Insertion
-                : NodeEventTypeEnum.Update
-            const nodeEvent = this.createNodeEvent(nodeElement,tanaNode,nodeId,nodeEventType,panel)
+            const nodeEvent = this.createNodeEvent(nodeElement,tanaNode,nodeId,nodeEventType,panel,false)
             this.invokeListeners(nodeEvent)
         })
+    }
+
+    private getNodeEventType(panelEventType:PanelEvenTypeEnum) {
+        return panelEventType == PanelEvenTypeEnum.Deletion
+            ? NodeEventTypeEnum.Deletion :
+            panelEventType == PanelEvenTypeEnum.Insertion ? NodeEventTypeEnum.Insertion
+            : NodeEventTypeEnum.Update
+    }
+    private createEventForPanelHeaderNode(panelHeaderNode:HTMLElement,panel:HTMLElement,nodeEventType:NodeEventTypeEnum) {
+        if (!panelHeaderNode) return
+        const wrapperNode = panelHeaderNode.querySelector(TANA_WRAPPER_CSS_SELECTOR)
+        if (!wrapperNode) return
+        const nodeId = wrapperNode.id
+        if (!nodeId) return
+        const tanaNode = TanaStateProvider.getNodeWithId(nodeId)
+        const nodeEvent = this.createNodeEvent(panelHeaderNode,tanaNode,nodeId,nodeEventType,panel,true)
+        this.invokeListeners(nodeEvent)
     }
     private getTargetType(target:HTMLElement) {
         if (!('classList' in target)) return null
@@ -164,13 +181,14 @@ export default new class TanaDOMNodeListener implements IDomPanelListener {
         }
         return false
     }
-    private createNodeEvent(nodeElement:HTMLElement, tanaNode:TanaNode,nodeId:string,nodeEventType:NodeEventTypeEnum,panel:HTMLElement) {
+    private createNodeEvent(nodeElement:HTMLElement, tanaNode:TanaNode,nodeId:string,nodeEventType:NodeEventTypeEnum,panel:HTMLElement,isHeaderNode:boolean) {
         return {
             nodeElement,
             tanaNode,
             nodeId,
             nodeEventType,
-            panel
+            panel,
+            isHeaderNode
         } as NodeEvent
     }
 }
