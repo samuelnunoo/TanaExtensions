@@ -1,13 +1,14 @@
 import {DOM_NODE_CSS, TANA_DOCK_CSS_SELECTOR} from "./types";
 import {MAIN_PANEL_CSS_SELECTOR} from "../TanaDomPanelListener/types";
 import {BULLET_CONTENT_CSS_SELECTOR} from "../TanaDOMNodeListener/types";
+import {EDITABLE_BLOCK_CSS_SELECTOR} from "../TanaDOMNodeDecorator/types";
 
 export default class TanaDomNodeProvider  {
     public static getAllContentNodesOnPage(): HTMLElement[] {
         return Array.from(document.querySelectorAll(DOM_NODE_CSS)) as HTMLElement[]
     }
-    public static getAllContentNodesOnPanel(panel:HTMLElement) {
-        return Array.from(panel.querySelectorAll(DOM_NODE_CSS)) as HTMLElement[]
+    public static getAllEditableNodesOnPanel(panel:HTMLElement) {
+        return Array.from(panel.querySelectorAll(EDITABLE_BLOCK_CSS_SELECTOR)) as HTMLElement[]
     }
     public static getBlockNodeFromDescendant(descendant:HTMLElement) {
         return descendant.closest(BULLET_CONTENT_CSS_SELECTOR)

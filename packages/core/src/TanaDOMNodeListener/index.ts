@@ -95,7 +95,7 @@ export default new class TanaDOMNodeListener implements IDomPanelListener {
         this.invokeListeners(nodeEvent)
     }
     onPanelEvent({panel,panelEventType}: PanelEvent): void {
-        const contentNodes = TanaDomNodeProvider.getAllContentNodesOnPanel(panel)
+        const contentNodes = TanaDomNodeProvider.getAllEditableNodesOnPanel(panel)
         contentNodes.forEach(nodeElement => {
             const nodeId = TanaDomNodeProvider.getIdFromElement(nodeElement)
             if (!nodeId) return
