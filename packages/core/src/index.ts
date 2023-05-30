@@ -2,6 +2,7 @@ import TanaExtensionInitializer from "./TanaExtensionInitializer";
 import TanaListenerInitializer from "./TanaListenerInitializer";
 import TanaLoader from "./TanaLoader";
 import {ITanaExtension} from "./TanaExtensionInitializer/types";
+import TanaDomPanelListener from "./TanaDomPanelListener";
 
 export default class TanaMain {
 
@@ -13,6 +14,8 @@ export default class TanaMain {
         await TanaListenerInitializer.init()
         console.log("Initializing Extensions...")
         await TanaExtensionInitializer.initialize(tanaExtensions)
+        console.log("Invoking Initial Panel Event...")
+        TanaDomPanelListener.invokeInitialPanelEvents()
     }
 
 }

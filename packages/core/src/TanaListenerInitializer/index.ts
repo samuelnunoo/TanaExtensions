@@ -12,7 +12,6 @@ export default class TanaListenerInitializer {
         tanaDOMNodeListener.initialize()
         TanaDomPanelListener.registerListener(TanaDOMNodeListener)
         TanaDOMNodeListener.registerListener(TanaNodeReplacementHandler)
-        TanaDomPanelListener.invokeInitialPanelEvents()
         TanaNodeTransactionListener.init()
     }
 }

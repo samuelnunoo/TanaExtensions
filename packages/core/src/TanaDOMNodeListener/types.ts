@@ -14,10 +14,12 @@ export const BULLET_CONTENT_CSS_CLASS = "bulletAndContent"
 export const PANEL_CONTENT_CSS_CLASS = "panelContent"
 
 export const NON_TEMPLATE_CSS_CLASS = "nonTemplateContent"
-
+export const CONTENT_SIDE_CSS_CLASS = "contentSide"
+export const CONTENT_SIDE_CSS_SELECTOR = ".contentSide"
 export const EXPANDED_NODE_CSS_CLASS = "expandedNodeContent"
 
 export enum NodeTargetTypeEnum {
+    ContentSide,
     Editable,
     BulletAndContent,
     ExpandedNodeContent,

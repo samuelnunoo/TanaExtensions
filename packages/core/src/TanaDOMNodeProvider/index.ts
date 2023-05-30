@@ -26,7 +26,7 @@ export default class TanaDomNodeProvider  {
      }
     public static getPanelHeaderFromPanel(panel:HTMLElement) {
         if (!panel) return
-        return panel.querySelector(TANA_PANEL_HEADER_CSS_SELECTOR)
+        return panel.querySelector(TANA_PANEL_HEADER_CSS_SELECTOR) as HTMLElement
     }
     public static getAllContentNodesOnPanel(panel:HTMLElement) {
         return Array.from(panel.querySelectorAll(DOM_NODE_CSS)) as HTMLElement[]
@@ -57,7 +57,7 @@ export default class TanaDomNodeProvider  {
     public static getNodeWithClassPrefixFromArray(elementArray:HTMLElement[],classPrefix:string) {
         for (const element of elementArray) {
             if (!('classList' in element)) continue
-            for (const classItem of element.classList) {
+            for (const classItem of Array.from(element.classList)) {
                 if (!!classItem.match(classPrefix)) return element
             }
         }
