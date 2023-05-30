@@ -25,6 +25,7 @@ import {TANA_WRAPPER_CSS_SELECTOR} from "../TanaDOMNodeProvider/types";
 
 export default new class TanaDOMNodeListener implements IDomPanelListener {
     private classList:string[] = [
+        CONTENT_SIDE_CSS_CLASS,
         EDITABLE_CSS_CLASS,
         BULLET_CONTENT_CSS_CLASS,
         EXPANDED_NODE_CSS_CLASS,
@@ -151,7 +152,7 @@ export default new class TanaDOMNodeListener implements IDomPanelListener {
             case NodeTargetTypeEnum.NonTemplateContent:
                 return element as HTMLElement
             case NodeTargetTypeEnum.ContentSide:
-                return element.parentElement as HTMLElement
+                return element.closest(BULLET_CONTENT_CSS_SELECTOR) as HTMLElement
             default:
                 return null
         }
