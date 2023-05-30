@@ -17,22 +17,17 @@ export default new class TanaDOMNodeDecorator {
         editableBlockContainer!.appendChild(newContentNode)
     }
 
-
-    public insertAsView(rootBlockNode:HTMLElement,viewNode:HTMLElement) {
-        const hasNonTemplateContent = rootBlockNode.querySelector(NON_TEMPLATE_CONTENT_CSS_SELECTOR)
-        const hasExpandedNodeContent =
-        if (hasNonTemplateContent) this.prependToNonTempalteContent(rootBlockNode,viewNode)
-
+    public insertAsView(rootBlockNode:HTMLElement,panel:HTMLElement,viewNode:HTMLElement) {
+        const nodeIsPanelHeader = TanaNodeAttributeEnforcer.hasPanelHeaderAttribute(rootBlockNode)
+        const rootNode = nodeIsPanelHeader ? panel : rootBlockNode
+        const nonTemplateContent = rootNode.querySelector(NON_TEMPLATE_CONTENT_CSS_SELECTOR) as HTMLElement
+        if (!nonTemplateContent) return
+        this.prependNodeToParent(nonTemplateContent,viewNode)
     }
 
-    private prependToNonTempalteContent(rootBlockNode:HTMLElement,newContentNode:HTMLElement) {
-
-    }
-
-    private insertToExpandedNodeContent(rootBlockNode:HTMLElement,newContentNode:HTMLElement) {
-        const expandedNodeContent = rootBlockNode.querySelector(NON_TEMPLATE_CONTENT_CSS_SELECTOR)
-        if (!expandedNodeContent) return
-        expandedNodeContent.insertBefore(newContentNode,expandedNodeContent.firstChild)
+    private prependNodeToParent(parentNode:HTMLElement,childNode:HTMLElement) {
+        if (parentNode.childNodes.length == 0) parentNode.appendChild(childNode)
+        else parentNode.insertBefore(childNode,parentNode.firstChild)
     }
     public wrapNodeWithViewContainer(contentNode:HTMLElement):HTMLElement {
         const container = document.createElement("div")

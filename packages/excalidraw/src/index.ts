@@ -10,7 +10,6 @@ import {createRoot} from 'react-dom/client';
 import React from "react";
 import TanaDOMNodeDecorator from "tana-extensions-core/src/TanaDOMNodeDecorator";
 
-
 export default new class ExcalidrawExtension implements ITanaExtension, ITanaReplacementElement {
 
     register(): void {
@@ -39,7 +38,7 @@ export default new class ExcalidrawExtension implements ITanaExtension, ITanaRep
 
     async replaceElement(nodeEvent: NodeEvent) {
         const excalidrawElement = await this.createInstance(nodeEvent.tanaNode)
-        TanaDOMNodeDecorator.insertToExpandedNodeContent(nodeEvent.nodeElement,excalidrawElement)
+        TanaDOMNodeDecorator.insertAsView(nodeEvent.nodeElement,nodeEvent.panel,excalidrawElement)
     }
 
     shouldReplace(nodeEvent: NodeEvent): boolean {

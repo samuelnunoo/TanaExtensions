@@ -110,7 +110,6 @@ export default new class TanaDOMNodeListener implements IDomPanelListener {
             this.invokeListeners(nodeEvent)
         })
     }
-
     private getNodeEventType(panelEventType:PanelEvenTypeEnum) {
         return panelEventType == PanelEvenTypeEnum.Deletion
             ? NodeEventTypeEnum.Deletion :

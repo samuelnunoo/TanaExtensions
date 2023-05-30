@@ -34,7 +34,6 @@ export default new class CodeBlockExtension implements ITanaReplacementElement, 
         const codeLintingElement = CodeLintingElement.createInstance()
         const codeBlockContainerElement = CodeBlockContainerElement.createInstance()
         const codeInputElement = CodeInputElement.createInstance()
-
         codeBlockContainerElement.appendChild(codeInputElement)
         codeBlockContainerElement.appendChild(codeLintingElement)
         codeBlockContainerElement.appendChild(codeButtonElement)
