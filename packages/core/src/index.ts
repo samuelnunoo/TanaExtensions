@@ -6,6 +6,7 @@ import TanaDomPanelListener from "./TanaDomPanelListener";
 
 export default class TanaMain {
 
+
     public static async init(tanaExtensions:ITanaExtension[]) {
         console.log("Waiting for App State")
         await TanaLoader.waitForFieldToInstantiate(window,"appState")

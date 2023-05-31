@@ -1,6 +1,6 @@
 import {ITanaExtension} from "tana-extensions-core/src/TanaExtensionInitializer/types";
 import {ITanaReplacementElement} from "tana-extensions-core/src/TanaNodeReplacementHandler/types";
-import {TanaNode} from "tana-extensions-core/src/TanaStateProvider/types";
+import {TanaNode} from "packages/core/src/TanaStateProvider/types/types";
 import {NodeEvent, NodeEventTypeEnum} from "tana-extensions-core/src/TanaDOMNodeListener/types";
 import {Excalidraw} from "@excalidraw/excalidraw";
 import TanaNodeReplacementHandler from "tana-extensions-core/src/TanaNodeReplacementHandler";

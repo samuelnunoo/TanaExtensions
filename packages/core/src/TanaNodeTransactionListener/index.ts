@@ -1,6 +1,6 @@
 import {INodeTransactionListener} from "./types";
 import TanaStateProvider from "../TanaStateProvider";
-import {changeRecord, TanaInfo} from "../TanaStateProvider/types";
+import {changeRecord, TanaInfo} from "../TanaStateProvider/types/types";
 import {ITanaExtension} from "../TanaExtensionInitializer/types";
 
 /*

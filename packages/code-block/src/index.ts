@@ -8,7 +8,7 @@ import {ITanaExtension} from "tana-extensions-core/src/TanaExtensionInitializer/
 import {NodeEvent, NodeEventTypeEnum} from "tana-extensions-core/src/TanaDOMNodeListener/types";
 import TanaDOMNodeDecorator from "tana-extensions-core/src/TanaDOMNodeDecorator";
 import {CODE_BLOCK_INPUT_CSS_SELECTOR} from "./types";
-import {TanaNode} from "tana-extensions-core/src/TanaStateProvider/types";
+import {TanaNode} from "packages/core/src/TanaStateProvider/types/types";
 import TanaNodeReplacementHandler from "tana-extensions-core/src/TanaNodeReplacementHandler";
 import "../css/main.css"
 

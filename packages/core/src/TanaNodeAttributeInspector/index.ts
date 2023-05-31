@@ -1,6 +1,6 @@
 import {BULLET_CONTENT_CSS_CLASS} from "../TanaDOMNodeListener/types";
 import {EDITABLE_BLOCK_CSS_SELECTOR} from "../TanaDOMNodeDecorator/types";
-import {TanaNode} from "../TanaStateProvider/types";
+import {TanaNode} from "../TanaStateProvider/types/types";
 import {TANA_PANEL_HEADER_ATTRIBUTE, TANA_PANEL_HEADER_CSS_SELECTOR} from "../TanaDOMNodeProvider/types";
 
 export default new class TanaNodeAttributeInspector {

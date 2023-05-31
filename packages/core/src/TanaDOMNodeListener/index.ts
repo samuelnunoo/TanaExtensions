@@ -20,7 +20,7 @@ import {
     TANA_DATA_PANEL_CSS_SELECTOR
 } from "../TanaDomPanelListener/types";
 import TanaStateProvider from "../TanaStateProvider";
-import {TanaNode} from "../TanaStateProvider/types";
+import {TanaNode} from "../TanaStateProvider/types/types";
 import {TANA_WRAPPER_CSS_SELECTOR} from "../TanaDOMNodeProvider/types";
 
 export default new class TanaDOMNodeListener implements IDomPanelListener {

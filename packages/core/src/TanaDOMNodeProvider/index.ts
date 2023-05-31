@@ -8,6 +8,7 @@ import {
 import {MAIN_PANEL_CSS_SELECTOR} from "../TanaDomPanelListener/types";
 import {BULLET_CONTENT_CSS_SELECTOR} from "../TanaDOMNodeListener/types";
 import {EDITABLE_BLOCK_CSS_SELECTOR} from "../TanaDOMNodeDecorator/types";
+import TanaStateProvider from "../TanaStateProvider";
 
 export default class TanaDomNodeProvider  {
     public static getAllContentNodesOnPage(): HTMLElement[] {
@@ -24,6 +25,8 @@ export default class TanaDomNodeProvider  {
         )
 
      }
+
+
     public static getPanelHeaderFromPanel(panel:HTMLElement) {
         if (!panel) return
         return panel.querySelector(TANA_PANEL_HEADER_CSS_SELECTOR) as HTMLElement

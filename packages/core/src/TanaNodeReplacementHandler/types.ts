@@ -1,5 +1,5 @@
 import {NodeEvent} from "../TanaDOMNodeListener/types";
-import {TanaNode} from "../TanaStateProvider/types";
+import {TanaNode} from "../TanaStateProvider/types/types";
 
 export interface  ITanaReplacementElement {
     uniqueIdentifier(): string

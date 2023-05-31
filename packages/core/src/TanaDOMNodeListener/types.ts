@@ -1,4 +1,4 @@
-import {TanaNode} from "../TanaStateProvider/types";
+import {TanaNode} from "../TanaStateProvider/types/types";
 
 export enum NodeEventTypeEnum {
     Insertion,
