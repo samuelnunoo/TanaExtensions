@@ -4,8 +4,8 @@ import {
     CODE_BLOCK_LINTING_CSS_SELECTOR
 } from "./types";
 import highlightJS from "highlight.js"
-import TanaDomNodeProvider from "tana-extensions-core/src/TanaDOMNodeProvider";
-import TanaStateProvider from "tana-extensions-core/src/TanaStateProvider";
+import TanaDomNodeProvider from "../../core/src/DataProviders/TanaDomNodeProvider";
+import TanaStateProvider from "../../core/src/DataProviders/TanaStateProvider";
 
 export default new class CodeEventHandler {
     public  registerBaseEventsForCodeBlock(codeBlockContainer:HTMLElement) {

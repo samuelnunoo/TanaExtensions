@@ -3,7 +3,7 @@ import {
     CODE_BLOCK_INPUT_CSS_SELECTOR,
     CODE_BLOCK_LINTING_CSS_SELECTOR
 } from "./types";
-import TanaDomNodeProvider from "tana-extensions-core/src/TanaDOMNodeProvider";
+import TanaDomNodeProvider from "../../core/src/DataProviders/TanaDomNodeProvider";
 
 export default new class CodeBlockComponentAccessor {
     public  getCodeBlockContainerFromEvent(event:Event) {

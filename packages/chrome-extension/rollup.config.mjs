@@ -4,7 +4,6 @@ import typescript from "rollup-plugin-typescript2";
 import resolve from '@rollup/plugin-node-resolve'
 import {emptyDir} from "rollup-plugin-empty-dir";
 import commonjs from "@rollup/plugin-commonjs";
-import sourcemaps from 'rollup-plugin-sourcemaps';
 import scss from "rollup-plugin-scss";
 import replace from "@rollup/plugin-replace"
 export default {

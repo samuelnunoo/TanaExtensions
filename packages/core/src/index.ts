@@ -1,22 +1,23 @@
-import TanaExtensionInitializer from "./TanaExtensionInitializer";
-import TanaListenerInitializer from "./TanaListenerInitializer";
-import TanaLoader from "./TanaLoader";
-import {ITanaExtension} from "./TanaExtensionInitializer/types";
-import TanaDomPanelListener from "./TanaDomPanelListener";
+import TanaModuleLoader from "./LifeCycleModules/TanaModuleLoader";
+import TanaLifeCycleObserver from "./StatefulModules/Observers/TanaLifeCycleObserver";
+import IStatefulTanaModule from "./types/IStatefulTanaModule";
+import ITanaExtension from "./types/ITanaExtension";
 
 export default class TanaMain {
+    private static readonly modulesToLoadOnStart: IStatefulTanaModule[] = []
+    private static readonly  modulesToLoadOnAppStateInit: IStatefulTanaModule[] = []
+    private static readonly  modulesToLoadOnDomRenderComplete: IStatefulTanaModule[] = [
 
+    ]
 
     public static async init(tanaExtensions:ITanaExtension[]) {
-        console.log("Waiting for App State")
-        await TanaLoader.waitForFieldToInstantiate(window,"appState")
-        console.log("appState Loaded")
-        console.log("Initializing Listeners...")
-        await TanaListenerInitializer.init()
-        console.log("Initializing Extensions...")
-        await TanaExtensionInitializer.initialize(tanaExtensions)
-        console.log("Invoking Initial Panel Event...")
-        TanaDomPanelListener.invokeInitialPanelEvents()
+        const moduleLoader = new TanaModuleLoader(
+            tanaExtensions,
+            TanaMain.modulesToLoadOnStart,
+            TanaMain.modulesToLoadOnAppStateInit,
+            TanaMain.modulesToLoadOnDomRenderComplete
+        )
+        await new TanaLifeCycleObserver(moduleLoader).init()
     }
 
 }
