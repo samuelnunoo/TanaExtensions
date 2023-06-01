@@ -27,12 +27,24 @@ test('init: listeners are added to notifier ', async t => {
 });
 
 test("notify: all handlers get invoked", async t => {
-    const sandbox = sinon.createSandbox() // console.log(sandbox)
+    const sandbox = sinon.createSandbox()
     const notifier = await notifierWith2Mocks()
     const mock1 = sandbox.spy(notifier.listeners[0])
     const mock2 = sandbox.spy(notifier.listeners[1])
     await notifier.notifyExtensions(mockRequest())
     t.deepEqual(mock1.handle.calledOnce,true)
     t.deepEqual(mock2.handle.calledOnce,true)
+    sandbox.restore()
+})
+
+test.skip("notify: only one handler gets invoked",async t => {
+    const sandbox = sinon.createSandbox()
+    const notifier = await notifierWith2Mocks()
+    const mock1 = sandbox.spy(notifier.listeners[0])
+    const mock2 = sandbox.spy(notifier.listeners[1])
+    const req = {stop:true} as IRequest
+    await notifier.notifyExtensions(req)
+    t.deepEqual(mock1.handle.calledOnce,true)
+    t.deepEqual(mock2.handle.notCalled,true)
     sandbox.restore()
 })
