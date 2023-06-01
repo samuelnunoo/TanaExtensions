@@ -3,5 +3,11 @@
   "type": "module",
   "version": "1.0.0",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "config": "*"
+  },
+  "scripts": {
+    "test": "ava"
+  }
 }

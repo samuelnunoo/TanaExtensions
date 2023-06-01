@@ -1,5 +1,5 @@
-import TanaModuleLoader from "./LifeCycleModules/TanaModuleLoader";
-import TanaLifeCycleObserver from "./StatefulModules/Observers/TanaLifeCycleObserver";
+import TanaModuleLoader from "./TanaModuleLoader";
+import TanaLifeCycleObserver from "./TanaLifeCycleObserver";
 import IStatefulTanaModule from "./types/IStatefulTanaModule";
 import ITanaExtension from "./types/ITanaExtension";
 

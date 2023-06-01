@@ -1,9 +1,9 @@
-import TanaStateProvider from "../../DataProviders/TanaStateProvider";
-import TanaDomNodeProvider from "../../DataProviders/TanaDomNodeProvider";
+import TanaStateProvider from "../../TanaStateProvider";
+import TanaDomNodeProvider from "../../TanaDomNodeProvider";
 import TanaNodeFinder from "../TanaNodeFinder";
 import {TANA_CONFIG_TEMPLATE_NAME} from "./types";
-import {TanaNode} from "../../DataProviders/TanaStateProvider/types/types";
-import TanaCommandExecutor from "../../CommandModules/TanaCommandExecutor";
+import {TanaNode} from "../../TanaStateProvider/types/types";
+import TanaCommandExecutor from "../../TanaCommandExecutor";
 
 
 export default new class TanaConfigManager {

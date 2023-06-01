@@ -9,5 +9,9 @@ node_modules
 dist
 !**/jest.config.js
 !**/babel.config.js
+!**/avaConfigBase.js
+!**/ava.config.js
 .DS_Store
 coverage
+scratch
+build

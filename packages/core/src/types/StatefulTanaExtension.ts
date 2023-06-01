@@ -11,9 +11,5 @@ export default abstract class StatefulTanaExtension extends BaseTanaExtension {
             .map((_) => this.shouldBlockUntilComplete() || nextHandler(true))
             .map((_) => this.requestContainsInitRequirement(request))
             .map((_) => this.registerInitComponent(request))
-            .orDefault(super.handlerequest,nextHandler)
-            )
-
-            .finally(() => super.handle(request,nextHandler))
     }
 }

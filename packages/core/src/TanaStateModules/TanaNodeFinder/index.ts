@@ -1,4 +1,4 @@
-import TanaStateProvider from "../../DataProviders/TanaStateProvider";
+import TanaStateProvider from "../../TanaStateProvider";
 
 
 export default new class TanaNodeFinder {

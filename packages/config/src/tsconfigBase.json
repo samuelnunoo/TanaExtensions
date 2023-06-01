@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+    "target": "es6",
+        "module": "es6",
+        "lib": [ "es6","dom"],
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "types": ["@types/sinon"],
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "strict": true,
+        "jsx": "react",
+        "outDir": "build"
+}
+}
