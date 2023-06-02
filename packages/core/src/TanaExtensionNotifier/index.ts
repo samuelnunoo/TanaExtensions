@@ -13,8 +13,6 @@ class BaseObserver<T> {
     }
 
     public addListener(listener:T) {
-        console.log("Called the add listener method",listener)
-        console.log("what is this",this)
         this.listeners.push(listener)
     }
 
@@ -39,15 +37,16 @@ export default class TanaExtensionNotifier extends BaseObserver<ITanaExtension>
 
     async notifyExtensions(request: IRequest) {
         await this.listeners.reduce((prevStatus:Promise<Maybe<boolean>>,currentExtension) => {
+            console.log("prev",prevStatus,currentExtension)
             return MaybeAsync.fromPromise(() => prevStatus)
-                .filter(this.shouldProcessRequest)
+
+                .filter((shouldContinue) => {
+                    console.log("should continue", shouldContinue, shouldContinue == true)
+                    return shouldContinue == true
+                })
                 .extend(_ => this.notifyExtension(currentExtension,request))
                 .run()
         },Promise.resolve(Just(true)))
-    }
-
-    private shouldProcessRequest(response:boolean) {
-        return !!response
     }
 
     private async notifyExtension(currentExtension:ITanaExtension,request:IRequest) {

@@ -6,9 +6,19 @@ import test from "ava"
 
 const notifierWith2Mocks = async () => {
     const notifier = new TanaExtensionNotifier()
-    const mock = new MockExtension()
-    const mock2 = new MockExtension()
+    const mock = new MockExtension(1)
+    const mock2 = new MockExtension(2)
     await notifier.init([mock,mock2])
+    return notifier
+}
+
+const notifierWithNMocks = async (count:number) => {
+    const notifier = new TanaExtensionNotifier()
+    const mocks = []
+    for (let i = 0 ; i < count; i ++) {
+        mocks.push(new MockExtension(i))
+    }
+    await notifier.init(mocks)
     return notifier
 }
 
@@ -26,25 +36,27 @@ test('init: listeners are added to notifier ', async t => {
     t.deepEqual(notifier.listeners.length,2)
 });
 
-test("notify: all handlers get invoked", async t => {
+test.only("notify: all handlers get invoked", async t => {
     const sandbox = sinon.createSandbox()
-    const notifier = await notifierWith2Mocks()
-    const mock1 = sandbox.spy(notifier.listeners[0])
-    const mock2 = sandbox.spy(notifier.listeners[1])
-    await notifier.notifyExtensions(mockRequest())
-    t.deepEqual(mock1.handle.calledOnce,true)
-    t.deepEqual(mock2.handle.calledOnce,true)
+    const notifier = await notifierWithNMocks(4)
+    const spies = notifier.listeners.map(listener => sandbox.spy(listener))
+    const req = {stop:200}
+    await notifier.notifyExtensions(req)
+    for (const spy of spies) {
+        t.deepEqual(spy.handle.calledOnce,true)
+    }
     sandbox.restore()
 })
 
-test.skip("notify: only one handler gets invoked",async t => {
+test.only("notify: only one handler gets invoked",async t => {
     const sandbox = sinon.createSandbox()
-    const notifier = await notifierWith2Mocks()
-    const mock1 = sandbox.spy(notifier.listeners[0])
-    const mock2 = sandbox.spy(notifier.listeners[1])
-    const req = {stop:true} as IRequest
+    const notifier = await notifierWithNMocks(3)
+    const spies = notifier.listeners.map(listener => sandbox.spy(listener))
+    const req = {stop:1} as IRequest
     await notifier.notifyExtensions(req)
-    t.deepEqual(mock1.handle.calledOnce,true)
-    t.deepEqual(mock2.handle.notCalled,true)
+    console.log(spies)
+    t.deepEqual(spies[0].handle.calledOnce,true)
+    t.deepEqual(spies[1].handle.calledOnce,true)
+    t.deepEqual(spies[2].handle.calledOnce,false)
     sandbox.restore()
 })
