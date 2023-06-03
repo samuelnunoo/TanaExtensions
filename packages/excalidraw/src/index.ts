@@ -1,12 +1,12 @@
 import {ITanaExtension} from "tana-extensions-core/src/TanaExtensionInitializer/types";
 import {ITanaReplacementElement} from "tana-extensions-core/src/TanaDomNodeReplacementHandler/types";
 import {Excalidraw} from "@excalidraw/excalidraw";
-import TanaNodeReplacementHandler from "../../core/src/TanaDomNodeReplacementHandler";
-import TanaNodeAttributeEnforcer from "../../core/src/TanaNodeAttributeInspector";
+import TanaNodeReplacementHandler from "../../core/src/ReactiveModules/TanaDomNodeReplacementHandler";
+import TanaNodeAttributeEnforcer from "../../core/src/StaticModules/TanaNodeAttributeInspector";
 import {EXCALIDRAW_CLASS_CSS_SELECTOR, EXCALIDRAW_CLASS_NAME, EXCALIDRAW_TEMPLATE_NAME} from "./types";
 import {createRoot} from 'react-dom/client';
 import React from "react";
-import TanaDOMNodeDecorator from "../../core/src/TanaDOMNodeDecorator";
+import TanaDOMNodeDecorator from "../../core/src/StaticModules/TanaDomNodeDecorator";
 
 export default new class ExcalidrawExtension implements ITanaExtension, ITanaReplacementElement {
 

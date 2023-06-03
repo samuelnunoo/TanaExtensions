@@ -6,10 +6,10 @@ import CodeEventHandler from "./CodeEventHandler";
 import {ITanaReplacementElement} from "tana-extensions-core/src/TanaDomNodeReplacementHandler/types";
 import {ITanaExtension} from "tana-extensions-core/src/TanaExtensionInitializer/types";
 import {NodeEvent, NodeEventTypeEnum} from "tana-extensions-core/src/TanaDOMNodeListener/types";
-import TanaDOMNodeDecorator from "../../core/src/TanaDOMNodeDecorator";
+import TanaDOMNodeDecorator from "../../core/src/StaticModules/TanaDomNodeDecorator";
 import {CODE_BLOCK_INPUT_CSS_SELECTOR} from "./types";
 import {TanaNode} from "packages/core/src/TanaStateProvider/types/types";
-import TanaNodeReplacementHandler from "../../core/src/TanaDomNodeReplacementHandler";
+import TanaNodeReplacementHandler from "../../core/src/ReactiveModules/TanaDomNodeReplacementHandler";
 import "../css/main.css"
 
 export default new class CodeBlockExtension implements ITanaReplacementElement, ITanaExtension {

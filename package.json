@@ -2,7 +2,7 @@
   "name": "root",
   "version": "1.0.0",
   "private": true,
-  "types": "module",
+  "type": "module",
   "repository": "https://github.com/samuelnunoo/TanaExtensionsCore.git",
   "author": "Samuel Nunoo <38366722+samuelnunoo@users.noreply.github.com>",
   "license": "MIT",
@@ -29,7 +29,6 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
     "tsx": "^3.12.7",
-    "ttypescript": "^1.5.15",
     "typescript": "^5.0.4"
   },
   "workspaces": [

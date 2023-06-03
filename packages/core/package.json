@@ -3,7 +3,9 @@
   "type": "module",
   "version": "1.0.0",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "redux": "^4.2.1"
+  },
   "devDependencies": {
     "config": "*"
   },

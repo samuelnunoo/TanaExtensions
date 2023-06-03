@@ -1,5 +1,7 @@
+import IStatefulTanaModule from "./IStatefulTanaModule";
 
 
-export default interface IRequest {
-
+export default interface IRequest<T> {
+    sender:IStatefulTanaModule
+    message:T
 }

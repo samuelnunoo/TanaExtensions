@@ -12,11 +12,7 @@ export default abstract class BaseTanaExtension {
     handle(request:IRequest,nextHandler:(continueToNextHandler:boolean) => boolean) {
         Maybe.fromFalsy(this.shouldHandleRequest(request))
             .map((_) => this.shouldBlockUntilComplete() || nextHandler(true))
-
             .orDefault(nextHandler(true))
     }
-
-
-
 
 }
