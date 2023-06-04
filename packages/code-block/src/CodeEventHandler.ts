@@ -49,7 +49,7 @@ export default new class CodeEventHandler {
             lintingElement!.textContent = inputElement.value
             const tanaElement = CodeBlockComponentAccessor.getCodeBlockTanaNodeFromEvent(event)
             const id = TanaDomNodeProvider.getIdFromElement(tanaElement as HTMLElement)
-            const tanaNode = TanaStateProvider.getNodeWithId(id!)
+            const tanaNode = TanaStateProvider.getNodeWithId(id!).extract()
             tanaNode!.name = inputElement.value
             this.invokeRefreshLintingElementHighlightsEvent(event)
             this.invokeUpdateCodeBlockSizeEvent(event)

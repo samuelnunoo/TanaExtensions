@@ -1,4 +1,3 @@
-import IRequest from "./IRequest";
 import TanaPubSubModule from "../ReactiveModules/EventBus/types/TanaPubSubModule";
 
 

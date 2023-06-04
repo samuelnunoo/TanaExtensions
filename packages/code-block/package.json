@@ -7,6 +7,9 @@
     "tana-extensions-core": "*",
     "config": "*"
   },
+  "scripts": {
+    "tsc":"tsc"
+  },
   "devDependencies": {
     "@types/highlight.js": "^10.1.0"
   }

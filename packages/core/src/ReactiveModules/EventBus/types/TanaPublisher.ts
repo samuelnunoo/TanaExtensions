@@ -20,7 +20,7 @@ export default abstract class TanaPublisher<T extends TanaPubSubModule> implemen
     abstract onInitComplete()
 
 
-    dispatchRuntimeEvent(event:RuntimeEventInstance<T>) {
+    dispatchRuntimeEvent<T>(event:RuntimeEventInstance<T>) {
         this.eventBus.dispatchRuntimeEvent(event)
     }
 }

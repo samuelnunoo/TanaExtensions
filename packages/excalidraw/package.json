@@ -8,7 +8,8 @@
     "@types/react-dom": "^18.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tana-extensions-core": "*"
+    "tana-extensions-core": "*",
+    "config":"*"
   },
   "devDependencies": {
     "@types/react": "^18.2.7",

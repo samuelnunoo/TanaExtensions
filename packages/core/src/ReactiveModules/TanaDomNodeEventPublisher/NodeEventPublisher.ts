@@ -8,8 +8,9 @@ import MutationRecordAttributeInspector from "./MutationRecordAttributeInspector
 import NodeHelper from "./NodeHelper";
 import {Maybe} from "purify-ts";
 import NodeEvent, {NodeEventMessage} from "./types/NodeEvent";
+import TanaDomNodeEventPublisher from './index';
 
-export default class NodeEventPublisher extends TanaPublisher {
+export default class NodeEventPublisher extends TanaPublisher<TanaDomNodeEventPublisher> {
     getInitRequirements(): InitEvent[] {
         return [
             onDomRenderCompleteEvent
@@ -26,7 +27,7 @@ export default class NodeEventPublisher extends TanaPublisher {
             args[0] = function(mutationsList:MutationRecord[], observer:MutationObserver) {
                 for (const mutation of mutationsList) {
                     Maybe.fromFalsy(shouldProcessMutationRecord.bind(classThisArg)(mutation))
-                        .chain(_ => processMutationRecord.bind(classThisArg)(mutation))
+                        .extend(_ => processMutationRecord.bind(classThisArg)(mutation))
                 }
                 return callback.apply(this, arguments);
             }
