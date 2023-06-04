@@ -9,12 +9,16 @@
   ],
   "oauth2": {
     "client_id": "597806616477-4c66al6aufepseuv9fjbpo2f7271385h.apps.googleusercontent.com",
-    "scopes": [""]
+    "scopes": ["https://www.googleapis.com/auth/drive.file"]
+  },
+  "background": {
+    "service_worker":"lib/Background.ts"
   },
   "content_scripts": [
     {
       "js": [
-        "lib/ResourceInjector.ts"
+        "lib/ResourceInjector.ts",
+        "lib/ChromeEventRelay.ts"
       ],
       "matches": [
         "https://app.tana.inc/*"
@@ -23,7 +27,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["assets/*","lib/index.ts","content/extensions.ts"],
+      "resources": ["assets/*","lib/*","content/extensions.ts"], 
       "matches": ["https://app.tana.inc/*"]
     }
   ]

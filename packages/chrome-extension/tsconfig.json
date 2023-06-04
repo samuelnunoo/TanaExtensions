@@ -1,3 +1,7 @@
 {
-    "extends":"config/src/tsconfigBase.json"
+    "extends":"config/src/tsconfigBase.json",
+    "compilerOptions": {
+        "types": ["@types/chrome"],
+        "module": "ESNext"
+    }
 }
