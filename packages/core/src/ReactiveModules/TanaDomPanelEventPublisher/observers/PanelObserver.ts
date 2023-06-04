@@ -6,13 +6,13 @@ import {
 } from "../types/constants";
 import TanaDomNodeProvider from "../../../StaticModules/TanaDomNodeProvider";
 import {PanelContainerType, PanelEvent, PanelEvenTypeEnum} from "../types/types";
-import TanaDomPanelListener from "../index";
+import TanaDomPanelEventPublisher from "../index";
 
 
 export default class PanelObserver {
 
-    mediator: TanaDomPanelListener
-    constructor(mediator:TanaDomPanelListener) {
+    mediator: TanaDomPanelEventPublisher
+    constructor(mediator:TanaDomPanelEventPublisher) {
         this.mediator = mediator
     }
     private panelContainerObservers: Map<HTMLElement,MutationObserver> = new Map()

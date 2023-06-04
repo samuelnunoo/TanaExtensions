@@ -7,10 +7,10 @@ import {InitEvent} from "../EventBus/types/Event";
 import {PanelEventMessage} from "./types/PanelEvent";
 import DomPanelPublisherInitEvent from "./types/DomPanelPublisherInitEvent";
 
-export default class TanaDomPanelListener extends TanaPubSubModule {
+export default class TanaDomPanelEventPublisher extends TanaPubSubModule {
     private panelObserver:PanelObserver
     private dockObserver:DockObserver
-    private panelEventPublisher = new PanelEventPublisher(this,this.eventBus.dispatchRuntimeEvent)
+    private panelEventPublisher = new PanelEventPublisher(this,this.eventBus)
     constructor(eventBus:EventBus) {
         super(eventBus);
         this.panelObserver = new PanelObserver(this)

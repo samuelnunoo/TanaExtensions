@@ -7,7 +7,15 @@ import RuntimeEventStatic from "./types/RuntimeEventStatic";
 export default class EventBus {
     private subscribers: Map<string,GenericEventCallback[]> = new Map()
 
+    constructor() {
+        this.dispatchInitEvent = this.dispatchInitEvent.bind(this)
+        this.dispatchRuntimeEvent = this.dispatchRuntimeEvent.bind(this)
+        this.subscribeToRuntimeEvent = this.subscribeToRuntimeEvent.bind(this)
+        this.subscribeToInitEvent = this.subscribeToInitEvent.bind(this)
+    }
+
     public dispatchInitEvent(event:InitEvent) {
+
         this.dispatchEvent(event)
     }
 
@@ -20,7 +28,7 @@ export default class EventBus {
     }
 
     public subscribeToRuntimeEvent<T>(event:RuntimeEventStatic<T>,callback:(event:RuntimeEventInstance<T>) => void) {
-        this.subscribe(event,callback)
+        this.subscribe(event,callback as (event:BaseEvent) => void)
     }
 
     public unsubscribe(event:BaseEvent,callback:GenericEventCallback) {
@@ -30,11 +38,15 @@ export default class EventBus {
     }
 
     private dispatchEvent(event:BaseEvent) {
+        console.log(`Dispatching Event ${event.getIdentifier()}`)
+        console.log(`Subscribers ${this.subscribers.toString()}`)
         Maybe.fromNullable(this.subscribers.get(event.getIdentifier()))
             .map(callbacks => callbacks.forEach(callback => callback(event)))
     }
 
     private subscribe(event:BaseEvent,callback:GenericEventCallback) {
+        console.log(`Subscribing to Event ${event.getIdentifier()}`)
+        console.log(`Subscribers ${(this.subscribers.toString())}`)
         Maybe.of(this.subscribers.has(event.getIdentifier()) || this.subscribers.set(event.getIdentifier(),[]))
             .chain( _ => Maybe.of(this.subscribers.get(event.getIdentifier()) as GenericEventCallback[]))
             .map( callbacks => callbacks.push(callback))

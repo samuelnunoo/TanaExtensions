@@ -5,10 +5,10 @@ import {
     TANA_PANEL_HEADER_TEMPLATE_CONTAINER_CLASS_PREFIX,
     TANA_WRAPPER_CSS_SELECTOR
 } from "./types";
-import {MAIN_PANEL_CSS_SELECTOR} from "../../ReactiveModules/TanaDomPanelEventPublisher/types/types";
 import {BULLET_CONTENT_CSS_SELECTOR} from "../../ReactiveModules/TanaDomNodeEventPublisher/types/types";
 import {EDITABLE_BLOCK_CSS_SELECTOR} from "../TanaDomNodeDecorator/types";
-import TanaStateProvider from "../../ReactiveModules/TanaStateProvider";
+import TanaStateProvider from "../TanaStateProvider";
+import {MAIN_PANEL_CSS_SELECTOR} from "../../ReactiveModules/TanaDomPanelEventPublisher/types/constants";
 
 export default class TanaDomNodeProvider  {
     public static getAllContentNodesOnPage(dom:Document): HTMLElement[] {
@@ -44,7 +44,7 @@ export default class TanaDomNodeProvider  {
     }
     public static getAllContentNodesOnPageAsMap() {
         const map:Map<string,HTMLElement> = new Map()
-        const domNodes = TanaDomNodeProvider.getAllContentNodesOnPage()
+        const domNodes = TanaDomNodeProvider.getAllContentNodesOnPage(document)
         domNodes.forEach(domNode => {
             const id = TanaDomNodeProvider.getIdFromElement(domNode)
             map.set(id!,domNode)

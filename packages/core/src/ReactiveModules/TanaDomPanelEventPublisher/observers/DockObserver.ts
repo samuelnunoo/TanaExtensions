@@ -4,14 +4,14 @@ import {
     TANA_DATA_PANEL_CSS_SELECTOR,
     TANA_DOCKS_CONTAINER_CSS_SELECTOR
 } from "../types/constants";
-import TanaDomPanelListener from "../index";
+import TanaDomPanelEventPublisher from "../index";
 import {Maybe} from "purify-ts";
 
 
 export default class DockObserver {
 
-    mediator: TanaDomPanelListener
-    constructor(mediator:TanaDomPanelListener) {
+    mediator: TanaDomPanelEventPublisher
+    constructor(mediator:TanaDomPanelEventPublisher) {
         this.mediator = mediator
     }
     private mainDockObserver = new MutationObserver(this.handleMainDockChildListMutationEvent.bind(this))

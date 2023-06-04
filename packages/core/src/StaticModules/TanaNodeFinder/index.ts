@@ -1,4 +1,4 @@
-import TanaStateProvider from "../../ReactiveModules/TanaStateProvider";
+import TanaStateProvider from "../TanaStateProvider";
 import {Maybe} from "purify-ts";
 
 

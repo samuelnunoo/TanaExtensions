@@ -1,6 +1,6 @@
 import TanaPublisher from "../EventBus/types/TanaPublisher";
 import {InitEvent} from "../EventBus/types/Event";
-import OnMainInitEvent from "../../OnMainInitEvent";
+import OnMainInitEvent from "../../types/OnMainInitEvent";
 import TanaLoader from "../../StaticModules/TanaLoader";
 import TanaModuleLoader from "./index";
 

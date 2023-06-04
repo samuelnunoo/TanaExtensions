@@ -5,6 +5,7 @@ import TanaLifeCycleEventPublisher from "./TanaLifeCycleEventPublisher";
 import OnStartEvent from "./types/OnStartEvent";
 import OnAppStateInitEvent from "./types/OnAppStateInitEvent";
 import OnDomRenderCompleteEvent from "./types/OnDomRenderCompleteEvent";
+import EventBus from "../EventBus";
 
 /*
 Module Responsibility:
@@ -13,7 +14,13 @@ Module Responsibility:
  */
 
 export default class TanaModuleLoader extends TanaPubSubModule {
-    TanaLifeCycleEventPublisher = new TanaLifeCycleEventPublisher(this,this.eventBus.dispatchRuntimeEvent)
+
+    constructor(eventBus:EventBus) {
+        console.log("RUnning Tana Module Loader")
+        super(eventBus);
+
+    }
+    TanaLifeCycleEventPublisher = new TanaLifeCycleEventPublisher(this,this.eventBus)
 
     getEventModuleInvokesOnCompletion(): InitEvent {
         return OnTanaModuleLoaderInitEvent;

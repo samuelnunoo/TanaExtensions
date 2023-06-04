@@ -1,36 +1,33 @@
-import EventBus from "../EventBus";
-import {InitEvent} from "../EventBus/types/Event";
 import TanaPubSubModule, {TanaPubSubComponent} from "../EventBus/types/TanaPubSubModule";
+import {InitEvent} from "../EventBus/types/Event";
 import DomNodePublisherInitEvent from "./types/DomNodePublisherInitEvent";
-import {NodeEventMessage} from "./types/NodeEvent";
 import NodeEventPublisher from "./NodeEventPublisher";
 import PanelEventSubscriber from "./PanelEventSubscriber";
+import {NodeEventMessage} from "./types/NodeEvent";
+import EventBus from "../EventBus";
 
-export default class TanaDomNodeEventModule extends TanaPubSubModule {
-
-    eventBus:EventBus
-    nodeEventPublisher = new NodeEventPublisher(this,this.eventBus.dispatchRuntimeEvent)
-    panelEventSubscriber = new PanelEventSubscriber(this,this.eventBus.subscribeToRuntimeEvent)
+export default class TanaDomNodeEventPublisher extends TanaPubSubModule {
 
     constructor(eventBus:EventBus) {
         super(eventBus);
-        this.eventBus = eventBus
     }
-
-    public invokeNodeEvent(message:NodeEventMessage) {
-        this.nodeEventPublisher.invokeNodeEvent(message)
-    }
+    NodeEventPublisher = new NodeEventPublisher(this,this.eventBus)
+    PanelEventSubscriber = new PanelEventSubscriber(this,this.eventBus)
     getEventModuleInvokesOnCompletion(): InitEvent {
         return DomNodePublisherInitEvent
     }
 
     getPubSubComponents(): TanaPubSubComponent[] {
         return [
-             this.nodeEventPublisher,
-            this.panelEventSubscriber
-
+            this.NodeEventPublisher,
+            this.PanelEventSubscriber
         ];
     }
+
+    invokeNodeEvent(message:NodeEventMessage) {
+        this.NodeEventPublisher.invokeNodeEvent(message)
+    }
+
 
 
 }

@@ -2,6 +2,7 @@ import EventBus from "../index";
 import {InitEvent} from "./Event";
 
 export abstract class TanaPubSubComponent {
+
     abstract getInitRequirements(): InitEvent[]
     abstract onInitComplete()
 
@@ -11,9 +12,9 @@ export default abstract class TanaPubSubModule {
     protected eventBus:EventBus
     private isInitialized:boolean = false
     private dependencies:Set<string>= new Set()
-    protected constructor(eventBus:EventBus) {
+    constructor(eventBus:EventBus) {
+        console.log("PubSubModule Loaded")
         this.eventBus = eventBus
-        this.init()
     }
 
     public getInitStatus() {
@@ -24,7 +25,8 @@ export default abstract class TanaPubSubModule {
 
     abstract getEventModuleInvokesOnCompletion():InitEvent
 
-    private init() {
+    public init() {
+        console.log(`Initializing ${this}...`)
         const components = this.getPubSubComponents()
         components.forEach(component =>  this.register(component.getInitRequirements()))
     }
@@ -32,7 +34,7 @@ export default abstract class TanaPubSubModule {
     private register(initEvents:InitEvent[]) {
         initEvents.forEach(initEvent => {
             this.dependencies.add(initEvent.getIdentifier())
-            this.eventBus.subscribeToInitEvent(initEvent,this.acknowledgeDependencyHasInitialized)
+            this.eventBus.subscribeToInitEvent(initEvent,this.acknowledgeDependencyHasInitialized.bind(this))
         })
     }
 
@@ -41,6 +43,7 @@ export default abstract class TanaPubSubModule {
             component.onInitComplete()
         }
         this.eventBus.dispatchInitEvent(this.getEventModuleInvokesOnCompletion())
+        console.log(`${this} has Initialized...`)
         this.isInitialized = true
     }
 

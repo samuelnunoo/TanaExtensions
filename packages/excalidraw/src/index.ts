@@ -1,18 +1,31 @@
-import {ITanaExtension} from "tana-extensions-core/src/TanaExtensionInitializer/types";
-import {ITanaReplacementElement} from "tana-extensions-core/src/TanaDomNodeReplacementHandler/types";
+
 import {Excalidraw} from "@excalidraw/excalidraw";
-import TanaNodeReplacementHandler from "../../core/src/ReactiveModules/TanaDomNodeReplacementHandler";
-import TanaNodeAttributeEnforcer from "../../core/src/StaticModules/TanaNodeAttributeInspector";
-import {EXCALIDRAW_CLASS_CSS_SELECTOR, EXCALIDRAW_CLASS_NAME, EXCALIDRAW_TEMPLATE_NAME} from "./types";
 import {createRoot} from 'react-dom/client';
 import React from "react";
 import TanaDOMNodeDecorator from "../../core/src/StaticModules/TanaDomNodeDecorator";
+import TanaExtension from "tana-extensions-core/src/types/TanaExtension";
+import { InitEvent } from "tana-extensions-core/src/ReactiveModules/EventBus/types/Event";
+import { TanaPubSubComponent } from "tana-extensions-core/src/ReactiveModules/EventBus/types/TanaPubSubModule";
+import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
+import NodeEventSubscriber from "./NodeEventSubscriber";
+import OnExcalidrawExtensionInitEvent from "./OnExcalidrawExtensionInitEvent";
 
-export default new class ExcalidrawExtension implements ITanaExtension, ITanaReplacementElement {
+export default class ExcalidrawExtension extends TanaExtension {
 
-    register(): void {
-        TanaNodeReplacementHandler.registerTanaReplacementElement(this)
+    NodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
+
+    getUniqueIdentifier(): string {
+        return "TanaExcalidrawExtension"
     }
+    getPubSubComponents(): TanaPubSubComponent[] {
+        return [
+            this.NodeEventSubscriber
+        ]
+    }
+    getEventModuleInvokesOnCompletion(): InitEvent {
+        return OnExcalidrawExtensionInitEvent
+    }
+
 
     async createInstance(node: TanaNode): Promise<HTMLElement> {
         const App = () => {
@@ -34,21 +47,6 @@ export default new class ExcalidrawExtension implements ITanaExtension, ITanaRep
         return TanaDOMNodeDecorator.wrapNodeWithViewContainer(container)
     }
 
-    async replaceElement(nodeEvent: NodeEvent) {
-        const excalidrawElement = await this.createInstance(nodeEvent.tanaNode)
-        TanaDOMNodeDecorator.insertAsView(nodeEvent.nodeElement,nodeEvent.panel,excalidrawElement)
-    }
 
-    shouldReplace(nodeEvent: NodeEvent): boolean {
-        if (nodeEvent.nodeEventType == NodeEventTypeEnum.Deletion) return false
-        const hasExcalidrawClass = !!nodeEvent.nodeElement.querySelector(EXCALIDRAW_CLASS_CSS_SELECTOR)
-        console.log(nodeEvent,hasExcalidrawClass)
-       return TanaNodeAttributeEnforcer.hasTemplateWithName(nodeEvent.tanaNode,EXCALIDRAW_TEMPLATE_NAME)
-        && !hasExcalidrawClass
-    }
-
-    uniqueIdentifier(): string {
-        return "TanaExcalidrawExtension";
-    }
 
 }

@@ -2,10 +2,10 @@ import CodeBlockComponentAccessor from "./CodeBlockComponentAccessor";
 import {
     CODE_BLOCK_INPUT_CSS_SELECTOR,
     CODE_BLOCK_LINTING_CSS_SELECTOR
-} from "./types";
+} from "./types/types";
 import highlightJS from "highlight.js"
 import TanaDomNodeProvider from "../../core/src/StaticModules/TanaDomNodeProvider";
-import TanaStateProvider from "../../core/src/ReactiveModules/TanaStateProvider";
+import TanaStateProvider from "../../core/src/StaticModules/TanaStateProvider";
 
 export default new class CodeEventHandler {
     public  registerBaseEventsForCodeBlock(codeBlockContainer:HTMLElement) {

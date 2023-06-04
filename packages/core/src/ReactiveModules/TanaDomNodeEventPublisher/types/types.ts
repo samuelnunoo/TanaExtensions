@@ -1,5 +1,3 @@
-import {TanaNode} from "../../TanaStateProvider/types/types";
-import {EventType, RuntimeEvent} from "../../EventBus/types/Event";
 import RuntimeEventInstance from "../../EventBus/types/RuntimeEventInstance";
 import {NodeEventMessage} from "./NodeEvent";
 

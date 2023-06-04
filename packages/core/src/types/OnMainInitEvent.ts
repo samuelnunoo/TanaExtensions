@@ -1,4 +1,4 @@
-import { InitEvent} from "./ReactiveModules/EventBus/types/Event";
+import { InitEvent} from "../ReactiveModules/EventBus/types/Event";
 
 
 export default new class OnMainInitEvent extends InitEvent {

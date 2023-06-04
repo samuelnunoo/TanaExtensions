@@ -1,4 +1,4 @@
-import ITanaExtension from "./ITanaExtension";
+import ITanaExtension from "./TanaExtension";
 
 
 export default interface IStatefulTanaModule {

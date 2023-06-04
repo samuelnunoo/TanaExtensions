@@ -3,7 +3,7 @@ import {InitEvent} from "../EventBus/types/Event";
 import onDomRenderCompleteEvent from "../TanaModuleLoader/types/OnDomRenderCompleteEvent";
 import  {NodeEventTypeEnum} from "./types/types";
 import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
-import TanaStateProvider from "../TanaStateProvider";
+import TanaStateProvider from "../../StaticModules/TanaStateProvider";
 import MutationRecordAttributeInspector from "./MutationRecordAttributeInspector";
 import NodeHelper from "./NodeHelper";
 import {Maybe} from "purify-ts";

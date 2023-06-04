@@ -1,9 +1,11 @@
 import TanaModuleLoader from "./ReactiveModules/TanaModuleLoader";
-import TanaLifeCycleObserver from "./ReactiveModules/TanaLifeCycleObserver";
-import IStatefulTanaModule from "./types/IStatefulTanaModule";
-import ITanaExtension from "./types/ITanaExtension";
-import TanaExtensionNotifier from "./ReactiveModules/TanaExtensionNotifier";
+import ITanaExtension from "./types/TanaExtension";
 import EventBus from "./ReactiveModules/EventBus";
+import TanaPubSubModule from "./ReactiveModules/EventBus/types/TanaPubSubModule";
+import TanaDomNodeEventModule from "./ReactiveModules/TanaDomNodeEventPublisher";
+import TanaDomPanelEventPublisher from "./ReactiveModules/TanaDomPanelEventPublisher";
+import OnMainInitEvent from "./types/OnMainInitEvent";
+import TanaExtension from "./types/TanaExtension";
 
 /*
 Module Responsibility
@@ -12,22 +14,25 @@ Module Responsibility
  */
 export default class TanaMain {
     eventBus:EventBus
-    tanaExtensions: ITanaExtension[]
-    constructor(tanaExtensionWrapper: (eventBus:EventBus) => ITanaExtension[]) {
+    moduleExtensions: TanaExtension[]
+    coreModules: TanaPubSubModule[]
+    constructor(tanaExtensionWrapper: (eventBus:EventBus) => TanaExtension[]) {
+        console.log("Loading Extension...")
         this.eventBus = new EventBus()
-        this.tanaExtensions = tanaExtensionWrapper(this.eventBus)
+        this.coreModules =  [
+            new TanaModuleLoader(this.eventBus) as TanaPubSubModule,
+            new TanaDomNodeEventModule(this.eventBus) as TanaPubSubModule,
+            new TanaDomPanelEventPublisher(this.eventBus) as TanaPubSubModule,
+        ]
+        this.moduleExtensions = tanaExtensionWrapper(this.eventBus)
+        this.init()
     }
 
-    public async init() {
-        new TanaModuleLoader(this.eventBus)
-        /*
-        TanaModuleLoader
-        TanaDomNodeEventPublisher
-        TanaDomPanelEventPublisher
-        TanaModuleLoader
-        TanaNodeTransactionPublisher
 
-         */
+    private init() {
+        this.coreModules.forEach(module => module.init())
+        this.moduleExtensions.forEach(module => module.init())
+        this.eventBus.dispatchInitEvent(OnMainInitEvent)
     }
 
 }

@@ -1,4 +1,4 @@
-import {CODE_BLOCK_CSS_CLASS, CODE_BLOCK_LINTING_CSS_CLASS, HLJS_CSS_CLASS} from "./types";
+import {CODE_BLOCK_CSS_CLASS, CODE_BLOCK_LINTING_CSS_CLASS, HLJS_CSS_CLASS} from "./types/types";
 
 
 export default new class CodeLintingElement {

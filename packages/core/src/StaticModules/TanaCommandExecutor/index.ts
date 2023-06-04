@@ -1,4 +1,4 @@
-import {TanaNode} from "../../ReactiveModules/TanaStateProvider/types/types";
+import {TanaNode} from "../TanaStateProvider/types/types";
 
 
 export default class TanaCommandExecutor {

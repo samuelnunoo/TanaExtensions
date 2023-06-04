@@ -1,6 +1,6 @@
 import RuntimeEventStatic from "../../EventBus/types/RuntimeEventStatic";
 import {NodeEventTypeEnum} from "./types";
-import {TanaNode} from "../../TanaStateProvider/types/types";
+import {TanaNode} from "../../../StaticModules/TanaStateProvider/types/types";
 
 
 export interface NodeEventMessage {

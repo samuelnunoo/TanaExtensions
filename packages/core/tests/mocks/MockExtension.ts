@@ -1,4 +1,4 @@
-import ITanaExtension from "../../src/types/ITanaExtension";
+import ITanaExtension from "../../src/types/TanaExtension";
 import IRequest from "../../src/types/IRequest";
 
 

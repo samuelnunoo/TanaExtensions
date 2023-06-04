@@ -4,7 +4,7 @@ import DomPanelPublisherInitEvent from "../TanaDomPanelEventPublisher/types/DomP
 import RuntimeEventInstance from "../EventBus/types/RuntimeEventInstance";
 import PanelEvent, {PanelEventMessage} from "../TanaDomPanelEventPublisher/types/PanelEvent";
 import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
-import TanaStateProvider from "../TanaStateProvider";
+import TanaStateProvider from "../../StaticModules/TanaStateProvider";
 import NodeHelper from "./NodeHelper";
 import {NodeEventTypeEnum} from "./types/types";
 import {TANA_WRAPPER_CSS_SELECTOR} from "../../StaticModules/TanaDomNodeProvider/types";
@@ -58,7 +58,7 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
     }
 
     onInitComplete() {
-        this.subscribeToRuntimeEvent<PanelEventMessage>(PanelEvent,this.onPanelEvent)
+        this.subscribeToRuntimeEvent<PanelEventMessage>(PanelEvent,this.onPanelEvent.bind(this))
     }
 
 }
