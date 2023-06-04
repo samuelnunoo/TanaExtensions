@@ -3,6 +3,7 @@
   "name": "Tana Extension",
   "version": "0.1.0",
   "description": "An extension to modify Tana.",
+  "key":"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmJG+YeRuMtNMXbkm04eST1mEcx6ohp8W2FiicjnNpvaqqSLya++L4xTHd/j8/P6vyNo5TGMebqceXna2OhrYqNZjt+7+LgdxvtJ8OgzACIqTbLfQu25+Hb6BVGgcOPP0nZxKRnLY6AEI5ddjiTIi4gwknwd/9D1qlRQzuZSkc4SvEGoCo8a8Y6uWLS/tyoES31YiJQCYIB0JSaEDGCa8X6B8O+YjGEbUF0sSbcH54xdIfmFJ3AmobkRyGaNHZmLebd7EgpWQggD6wmtUgLGYX5D2R6Y2D7eXfzm8oZv+rMDh2JbIpzXur+1E7QjjvCHNW/Si7gowi8ppnwQq5a+NvwIDAQAB",
   "content_scripts": [
     {
       "js": [
