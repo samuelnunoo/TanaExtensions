@@ -25,7 +25,7 @@ export default {
         commonjs(),
         typescript({
             sourceMap: false,
-            tsconfig: '../../tsconfig.json',
+            tsconfig: './tsconfig.json',
             tsconfigOverride: {
                 compilerOptions: {
                     types:["@types/chrome"]
