@@ -6,6 +6,7 @@ import {emptyDir} from "rollup-plugin-empty-dir";
 import commonjs from "@rollup/plugin-commonjs";
 import scss from "rollup-plugin-scss";
 import replace from "@rollup/plugin-replace"
+
 export default {
     input: 'src/manifest.json',
     output: {

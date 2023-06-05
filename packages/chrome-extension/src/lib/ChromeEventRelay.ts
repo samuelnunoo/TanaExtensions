@@ -1,10 +1,12 @@
 
 (async function() {
     const chromeApi = await import("./ChromeApi")
-    chromeApi.ChromeTask
-    window.addEventListener('myCustomEvent', function(event) {
+    window.addEventListener('myCustomEvent', async function(event) {
         console.log("I heard it")
-        chromeApi.sendEventToBackground(event)
+        const response = await chromeApi.sendEventToBackground(event)
+        console.log(response)
     });
+
+
 })()
 

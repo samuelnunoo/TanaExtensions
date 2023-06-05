@@ -11,8 +11,14 @@ export interface ChromeEventResponse<T> extends CustomEvent {
     }
 }
 
-export const sendEventToBackground = (event:Event) => {
-    chrome.runtime.sendMessage((event as ChromeEvent).detail)
+export const sendEventToBackground = async (event:Event) => {
+    console.log("got message")
+   const response = await chrome.runtime.sendMessage({
+        message: (event as ChromeEvent).detail
+    })
+    console.log(response)
+    return response
+
 }
 
 export enum ChromeTask {

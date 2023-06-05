@@ -4,7 +4,7 @@ import {InitEvent} from "./Event";
 export abstract class TanaPubSubComponent {
 
     abstract getInitRequirements(): InitEvent[]
-    abstract onInitComplete()
+    abstract onDependenciesInitComplete()
 
 }
 
@@ -38,9 +38,9 @@ export default abstract class TanaPubSubModule {
         })
     }
 
-    private async notifyComponentsOfInitCompletion() {
+    private async notifyComponentsThatDependenciesHaveInitialized() {
         for (const component of this.getPubSubComponents()) {
-            component.onInitComplete()
+            component.onDependenciesInitComplete()
         }
         this.eventBus.dispatchInitEvent(this.getEventModuleInvokesOnCompletion())
         console.log(`${this} has Initialized...`)
@@ -50,7 +50,7 @@ export default abstract class TanaPubSubModule {
     private async acknowledgeDependencyHasInitialized(event:InitEvent) {
         this.dependencies.delete(event.getIdentifier())
         if (this.dependencies.size == 0) {
-            await this.notifyComponentsOfInitCompletion()
+            await this.notifyComponentsThatDependenciesHaveInitialized()
         }
     }
 

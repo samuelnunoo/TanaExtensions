@@ -12,7 +12,7 @@ export default class PanelEventPublisher extends TanaPublisher<TanaDomPanelEvent
         ];
     }
 
-    onInitComplete() {
+    onDependenciesInitComplete() {
      this.mediator.initObservers()
     }
 

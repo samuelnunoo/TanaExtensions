@@ -57,7 +57,7 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
         })
     }
 
-    onInitComplete() {
+    onDependenciesInitComplete() {
         this.subscribeToRuntimeEvent<PanelEventMessage>(PanelEvent,this.onPanelEvent.bind(this))
     }
 

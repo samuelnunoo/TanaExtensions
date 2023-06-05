@@ -41,7 +41,7 @@ export default class NodeEventSubscriber extends TanaSubscriber<ExcalidrawExtens
       this.replaceElement(event)
     }
 
-    onInitComplete() {
+    onDependenciesInitComplete() {
         this.subscribeToRuntimeEvent(NodeEvent,this.handleNodeEvent.bind(this))
     }
 

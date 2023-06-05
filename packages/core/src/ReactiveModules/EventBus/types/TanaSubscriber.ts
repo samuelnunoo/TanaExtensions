@@ -16,7 +16,7 @@ export default abstract class TanaSubscriber<T extends TanaPubSubModule> impleme
 
     abstract getInitRequirements(): InitEvent[]
 
-    abstract onInitComplete()
+    abstract onDependenciesInitComplete()
 
     subscribeToRuntimeEvent<T>(event:RuntimeEventStatic<T>, callback:(event:RuntimeEventInstance<T>) => void) {
         this.eventBus.subscribeToRuntimeEvent(event,callback)

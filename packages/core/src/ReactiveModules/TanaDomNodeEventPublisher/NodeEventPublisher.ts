@@ -17,7 +17,7 @@ export default class NodeEventPublisher extends TanaPublisher<TanaDomNodeEventPu
         ];
     }
 
-    onInitComplete() {
+    onDependenciesInitComplete() {
         const originalMutationObserver = MutationObserver
         const {shouldProcessMutationRecord,processMutationRecord} = this
         const classThisArg = this

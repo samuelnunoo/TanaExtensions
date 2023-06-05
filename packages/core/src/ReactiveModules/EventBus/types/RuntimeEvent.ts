@@ -2,7 +2,7 @@ import {BaseEvent, EventType} from "./Event";
 
 
 export default class RuntimeEvent<T> implements BaseEvent {
-    identifier:string
+    private identifier:string
 
     constructor(identifier:string) {
         this.identifier = identifier

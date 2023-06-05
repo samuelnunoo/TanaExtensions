@@ -17,7 +17,7 @@ export default abstract class TanaPublisher<T extends TanaPubSubModule> implemen
 
     abstract getInitRequirements(): InitEvent[]
 
-    abstract onInitComplete()
+    abstract onDependenciesInitComplete()
 
 
     dispatchRuntimeEvent<T>(event:RuntimeEventInstance<T>) {

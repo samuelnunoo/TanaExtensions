@@ -9,7 +9,7 @@ export default class TanaLifeCycleEventPublisher extends TanaPublisher<TanaModul
         return [OnMainInitEvent];
     }
 
-    async onInitComplete() {
+    async onDependenciesInitComplete() {
         this.mediator.invokeOnStart()
         await TanaLoader.waitForFieldToInstantiate(window,"appState")
         this.mediator.onAppStateInitialized()

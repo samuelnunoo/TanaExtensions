@@ -37,7 +37,7 @@ export default class NodeEventSubscriber extends TanaSubscriber<CodeBlockExtensi
             await this.replaceElement(nodeEvent)
     }
 
-    onInitComplete() {
+    onDependenciesInitComplete() {
         this.subscribeToRuntimeEvent(NodeEvent,this.handleRequest.bind(this))
     }
 
