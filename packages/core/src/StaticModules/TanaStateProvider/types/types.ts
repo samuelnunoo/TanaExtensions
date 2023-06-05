@@ -65,6 +65,7 @@ export interface NavigationService {
 }
 
 export interface TanaNode {
+    id:string 
     docType: string
     insertTuple: (node:TanaNode,type:string) => void
     addTemplate: (template:TanaNode) => void

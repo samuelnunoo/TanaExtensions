@@ -9,7 +9,15 @@ import OnStartEvent from "tana-extensions-core/src/ReactiveModules/TanaModuleLoa
 import RuntimeEventInstance from "tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventInstance";
 import UpdateNodeDataEvent, {UpdateNodeDataEventMessage} from "../types/UpdateNodeDataEvent";
 import {Maybe} from "purify-ts";
-import {DB_NAME, DBNode, METADATA_DB_COLLECTION, NODE_DB_COLLECTION} from "../types/databaseTypes";
+import {
+    DB_NAME,
+    DBNode, LatestTransactionMetadata,
+    METADATA_DB_COLLECTION,
+    NODE_DB_COLLECTION,
+    TransactionMetaDataEnum
+} from "../types/databaseTypes";
+import GetNodeDataEvent, {NodeGetMessage} from "../types/GetNodeDataEvent";
+import SendNodeDataEvent from "../types/SendNodeDataEvent";
 
 
 export default class IndexedDBSyncSubscriber extends TanaSubscriber<TanaDatabaseExtension> {
@@ -19,20 +27,60 @@ export default class IndexedDBSyncSubscriber extends TanaSubscriber<TanaDatabase
         ];
     }
 
-    handleUpdateNodeDataEvent(event:RuntimeEventInstance<UpdateNodeDataEventMessage>) {
+    private insertData() {
+
+    }
+
+    private handleUpdateNodeDataEvent(event:RuntimeEventInstance<UpdateNodeDataEventMessage>) {
+        console.log("Handling updateNodeDataEvent ",event)
         const shouldInsert = event.message.isDelete == false
         const {nodeId,isDelete,content} = event.message
-        const transaction_id = this.mediator.getLatestTransactionId()
+        const transactionId = this.mediator.getLatestTransactionId()
         Maybe.fromNullable(this.mediator.dbInstance)
             .map(db => db.getCollection(NODE_DB_COLLECTION))
-            .map(nodeDB =>
-                shouldInsert ? nodeDB.insert({nodeId,isDelete,content, transactionId: transaction_id + 1} as DBNode)
-                    : nodeDB.remove(nodeDB.findOne({nodeId}))
-            )
-        this.mediator.updateLatestTransactionId(transaction_id + 1)
+            .map(nodeDB => {
+                const node = nodeDB.findOne({nodeId})
+                if (!!node) {
+                    node.nodeId = nodeId
+                    node.isDelete = isDelete
+                    node.content = content
+                    node.transactionId = transactionId + 1
+                }
+                const newNodeData = {nodeId, isDelete, content, transactionId: transactionId + 1} as DBNode
+                shouldInsert ? !!node ? nodeDB.update(node) : nodeDB.insert(newNodeData) : node.delete({nodeId})
+            })
+        this.mediator.updateLatestTransactionId(transactionId + 1)
+    }
+
+    private handleNodeGetEvent(event:RuntimeEventInstance<NodeGetMessage>) {
+            const {nodeId} = event.message
+            const content = Maybe.fromNullable(this.mediator.dbInstance)
+                .map(db => db.getCollection(NODE_DB_COLLECTION))
+                .map(nodeCollection => nodeCollection.findOne({nodeId}))
+                .extract()
+
+            const message = SendNodeDataEvent.createInstance({nodeId,content})
+            this.dispatchEventResponse(event,message)
     }
 
     onDependenciesInitComplete() {
+        const databaseInitialize = () => {
+            if (!db.getCollection(NODE_DB_COLLECTION)) {
+                db.addCollection(NODE_DB_COLLECTION);
+            }
+
+            if (!db.getCollection(METADATA_DB_COLLECTION)) {
+                db.addCollection(METADATA_DB_COLLECTION)
+                const metadata = db.getCollection(METADATA_DB_COLLECTION)
+                metadata.insert({type:TransactionMetaDataEnum.localDB,latest_transaction_id:0} as LatestTransactionMetadata)
+                metadata.insert({type:TransactionMetaDataEnum.remoteDB,latest_transaction_id:0 } as LatestTransactionMetadata)
+            }
+            this.mediator.setDBInstance(db)
+            this.subscribeToRuntimeEvent(UpdateNodeDataEvent,this.handleUpdateNodeDataEvent.bind(this))
+            this.subscribeToRuntimeEvent(GetNodeDataEvent,this.handleNodeGetEvent.bind(this))
+            console.log("Tana Local Database Initialized...")
+        }
+
         const db = new lokijs(DB_NAME,{
             adapter : new indexedDBAdapter(DB_NAME),
             autoload: true,
@@ -40,18 +88,6 @@ export default class IndexedDBSyncSubscriber extends TanaSubscriber<TanaDatabase
             autosave: true,
             autosaveInterval: 4000
         })
-        function databaseInitialize() {
-            console.log("Tana Local Database Initialized...")
-            if (!db.getCollection(NODE_DB_COLLECTION)) {
-                db.addCollection(NODE_DB_COLLECTION);
-            }
-
-            if (!db.getCollection(METADATA_DB_COLLECTION)) {
-                db.addCollection(METADATA_DB_COLLECTION)
-            }
-            this.mediator.setDBInstance(db)
-            this.subscribeToRuntimeEvent(UpdateNodeDataEvent,this.handleUpdateNodeDataEvent.bind(this))
-        }
 
 
     }

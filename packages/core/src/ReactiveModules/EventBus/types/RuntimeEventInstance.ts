@@ -1,6 +1,6 @@
 import RuntimeEvent from "./RuntimeEvent";
 
-export default class RuntimeEventInstance<T> extends RuntimeEvent<T> {
+export default class RuntimeEventInstance<T> extends RuntimeEvent {
     message:T
     constructor(identifier:string,message:T) {
         super(identifier);

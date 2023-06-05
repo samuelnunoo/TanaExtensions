@@ -13,7 +13,7 @@ import {
 
 export default class TanaDatabaseExtension extends TanaPubSubModule {
     private IndexedDBSyncSubscriber = new IndexedDBSyncSubscriber(this,this.eventBus)
-    dbInstance:LokiConstructor|null
+    dbInstance:LokiConstructor|null = null
 
     getEventModuleInvokesOnCompletion(): InitEvent {
         return OnDatabaseInitEvent;

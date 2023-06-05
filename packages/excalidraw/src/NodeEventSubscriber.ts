@@ -8,6 +8,7 @@ import TanaDomNodeDecorator from "tana-extensions-core/src/StaticModules/TanaDom
 import { NodeEventTypeEnum } from "tana-extensions-core/src/ReactiveModules/TanaDomNodeEventPublisher/types/types";
 import { EXCALIDRAW_CLASS_CSS_SELECTOR, EXCALIDRAW_TEMPLATE_NAME } from "./types";
 import TanaNodeAttributeInspector from "tana-extensions-core/src/StaticModules/TanaNodeAttributeInspector";
+import OnDatabaseInitEvent from "database-extension/types/OnDatabaseInitEvent";
 
 
 
@@ -16,7 +17,8 @@ export default class NodeEventSubscriber extends TanaSubscriber<ExcalidrawExtens
     
     getInitRequirements(): InitEvent[] {
         return [
-            DomNodePublisherInitEvent
+            OnDatabaseInitEvent,
+            DomNodePublisherInitEvent,
         ]
   
     }

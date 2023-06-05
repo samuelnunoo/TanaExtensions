@@ -2,8 +2,8 @@ import RuntimeEventInstance from "./RuntimeEventInstance";
 import RuntimeEvent from "./RuntimeEvent";
 
 
-export default class RuntimeEventStatic<T> extends RuntimeEvent<T> {
+export default class RuntimeEventStatic<T> extends RuntimeEvent {
     createInstance(message:T) {
-        return new RuntimeEventInstance(this.identifier,message)
+        return new RuntimeEventInstance<T>(this.identifier,message)
     }
 }

@@ -3,6 +3,7 @@ import {InitEvent} from "./Event";
 import TanaPubSubModule, {TanaPubSubComponent} from "./TanaPubSubModule";
 import RuntimeEventStatic from "./RuntimeEventStatic";
 import RuntimeEventInstance from "./RuntimeEventInstance";
+import RuntimeEvent from "./RuntimeEvent";
 
 export default abstract class TanaSubscriber<T extends TanaPubSubModule> implements TanaPubSubComponent {
     mediator: T
@@ -18,8 +19,15 @@ export default abstract class TanaSubscriber<T extends TanaPubSubModule> impleme
 
     abstract onDependenciesInitComplete()
 
-    subscribeToRuntimeEvent<T>(event:RuntimeEventStatic<T>, callback:(event:RuntimeEventInstance<T>) => void) {
+    public subscribeToRuntimeEvent<T>(event:RuntimeEventStatic<T>, callback:(event:RuntimeEventInstance<T>) => void) {
         this.eventBus.subscribeToRuntimeEvent(event,callback)
+    }
+
+    public async dispatchEventAndAWaitFirstReply<T>(runtimeEvent:RuntimeEventInstance<T>,secondsToWait:number) {
+        return this.eventBus.dispatchEventAndAWaitFirstReply(runtimeEvent,secondsToWait)
+    }
+    public dispatchEventResponse<T>(originalEvent:RuntimeEventInstance<any>,responseEvent:RuntimeEventInstance<T>) {
+        this.eventBus.dispatchEventResponse(originalEvent,responseEvent)
     }
 
 }

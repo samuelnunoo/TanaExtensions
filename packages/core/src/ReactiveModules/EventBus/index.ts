@@ -1,11 +1,11 @@
 import {BaseEvent, GenericEventCallback, InitEvent, InitEventCallback} from "./types/Event";
 import {Maybe} from "purify-ts";
 import RuntimeEventInstance from "./types/RuntimeEventInstance";
-import RuntimeEvent from "./types/RuntimeEvent";
 import RuntimeEventStatic from "./types/RuntimeEventStatic";
 
 export default class EventBus {
     private subscribers: Map<string,GenericEventCallback[]> = new Map()
+    private requests: Map<RuntimeEventInstance<any>,(response:any) => any> = new Map()
 
     constructor() {
         this.dispatchInitEvent = this.dispatchInitEvent.bind(this)
@@ -13,6 +13,23 @@ export default class EventBus {
         this.subscribeToRuntimeEvent = this.subscribeToRuntimeEvent.bind(this)
         this.subscribeToInitEvent = this.subscribeToInitEvent.bind(this)
     }
+
+
+    public dispatchEventAndAWaitFirstReply<T>(runtimeEvent:RuntimeEventInstance<T>,secondsToWait:number) {
+        return new Promise((resolve,reject) => {
+            console.log("Made dispatch Request")
+            this.requests.set(runtimeEvent,resolve)
+            this.dispatchEvent(runtimeEvent)
+            setTimeout(() => { reject("No Response in Time")}, secondsToWait * 1000)
+        })
+    }
+
+    public dispatchEventResponse<T>(originalEvent:RuntimeEventInstance<any>,responseEvent:RuntimeEventInstance<T>) {
+        Maybe.fromNullable(this.requests.get(originalEvent))
+            .map(resolve => resolve(responseEvent))
+            .map( _ => this.requests.delete(originalEvent))
+    }
+
 
     public dispatchInitEvent(event:InitEvent) {
 
