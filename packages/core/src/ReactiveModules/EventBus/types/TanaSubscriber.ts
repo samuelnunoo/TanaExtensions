@@ -9,6 +9,7 @@ export default abstract class TanaSubscriber<T extends TanaPubSubModule> impleme
     mediator: T
 
     eventBus:EventBus
+
     constructor(mediator: T, eventBus:EventBus) {
         this.mediator = mediator
         this.eventBus = eventBus

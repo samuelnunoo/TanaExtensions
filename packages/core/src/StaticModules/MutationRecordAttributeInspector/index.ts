@@ -2,10 +2,13 @@ import {
     BULLET_CONTENT_CSS_CLASS,
     BULLET_MODULE_CLASS_PREFIX,
     CONTENT_SIDE_CSS_CLASS,
-    EDITABLE_CSS_CLASS, EXPANDED_NODE_CSS_CLASS,
-    NodeEventTypeEnum, NON_TEMPLATE_CSS_CLASS, PANEL_CONTENT_CSS_CLASS
-} from "./types/types";
-import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
+    EDITABLE_CSS_CLASS,
+    EXPANDED_NODE_CSS_CLASS,
+    NodeEventTypeEnum,
+    NON_TEMPLATE_CSS_CLASS,
+    PANEL_CONTENT_CSS_CLASS
+} from "../../ReactiveModules/TanaDomNodeEventPublisher/types/types";
+import TanaDomNodeProvider from "../TanaDomNodeProvider";
 
 
 export default class MutationRecordAttributeInspector {
@@ -26,8 +29,14 @@ export default class MutationRecordAttributeInspector {
         if (isAddedEvent && isRemoveEvent) throw new Error("Tana content node exists in both the remove and added nodes array.")
         if (isRemoveEvent) return NodeEventTypeEnum.Deletion
         if (isAddedEvent) return NodeEventTypeEnum.Insertion
+        const isCollapseEvent = !!TanaDomNodeProvider.getNodeWithClassFromArray(removedNodes,EXPANDED_NODE_CSS_CLASS)
+        const isExpandEvent = !!TanaDomNodeProvider.getNodeWithClassFromArray(addedNodes,EXPANDED_NODE_CSS_CLASS)
+        if (isExpandEvent && isCollapseEvent) throw new Error("ExpandedNode exists in both the remove and added nodes array which should not be possible.")
+        if (isCollapseEvent) return NodeEventTypeEnum.BulletCollapse
+        if (isExpandEvent) return  NodeEventTypeEnum.BulletExpand
         return NodeEventTypeEnum.Update
     }
+
     public static nodeHasClassPrefix(node:HTMLElement,classPrefix:string) {
         if (!node.hasOwnProperty('classList')) return false
         for (const classItem of Array.from(node.classList)) {

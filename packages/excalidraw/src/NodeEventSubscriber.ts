@@ -1,26 +1,28 @@
 import TanaSubscriber from "tana-extensions-core/src/ReactiveModules/EventBus/types/TanaSubscriber";
 import ExcalidrawExtension from ".";
-import { InitEvent } from "tana-extensions-core/src/ReactiveModules/EventBus/types/Event";
-import DomNodePublisherInitEvent from "tana-extensions-core/src/ReactiveModules/TanaDomNodeEventPublisher/types/DomNodePublisherInitEvent";
-import NodeEvent, { NodeEventMessage } from "tana-extensions-core/src/ReactiveModules/TanaDomNodeEventPublisher/types/NodeEvent";
+import {InitEvent} from "tana-extensions-core/src/ReactiveModules/EventBus/types/Event";
+import DomNodePublisherInitEvent
+    from "tana-extensions-core/src/ReactiveModules/TanaDomNodeEventPublisher/types/DomNodePublisherInitEvent";
+import NodeEvent, {
+    NodeEventMessage
+} from "tana-extensions-core/src/ReactiveModules/TanaDomNodeEventPublisher/types/NodeEvent";
 import RuntimeEventInstance from "tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventInstance";
 import TanaDomNodeDecorator from "tana-extensions-core/src/StaticModules/TanaDomNodeDecorator";
-import { NodeEventTypeEnum } from "tana-extensions-core/src/ReactiveModules/TanaDomNodeEventPublisher/types/types";
-import { EXCALIDRAW_CLASS_CSS_SELECTOR, EXCALIDRAW_TEMPLATE_NAME } from "./types";
+import {NodeEventTypeEnum} from "tana-extensions-core/src/ReactiveModules/TanaDomNodeEventPublisher/types/types";
+import {EXCALIDRAW_TEMPLATE_NAME} from "../types/types";
 import TanaNodeAttributeInspector from "tana-extensions-core/src/StaticModules/TanaNodeAttributeInspector";
 import OnDatabaseInitEvent from "database-extension/types/OnDatabaseInitEvent";
-
-
+import {Maybe} from "purify-ts";
 
 
 export default class NodeEventSubscriber extends TanaSubscriber<ExcalidrawExtension> {
-    
+
+    excalidrawInstanceIds = new Set()
     getInitRequirements(): InitEvent[] {
         return [
             OnDatabaseInitEvent,
             DomNodePublisherInitEvent,
         ]
-  
     }
 
     async replaceElement(nodeEvent: RuntimeEventInstance<NodeEventMessage>) {
@@ -29,18 +31,34 @@ export default class NodeEventSubscriber extends TanaSubscriber<ExcalidrawExtens
         TanaDomNodeDecorator.insertAsView(nodeElement,panel,excalidrawElement)
     }
 
-    shouldReplace(nodeEvent: RuntimeEventInstance<NodeEventMessage>): boolean {
-        const {nodeEventType,nodeElement,tanaNode} = nodeEvent.message
-        if (nodeEventType == NodeEventTypeEnum.Deletion) return false
-        const hasExcalidrawClass = !!nodeElement.querySelector(EXCALIDRAW_CLASS_CSS_SELECTOR)
-        console.log(nodeEvent,hasExcalidrawClass)
-       return TanaNodeAttributeInspector.hasTemplateWithName(tanaNode,EXCALIDRAW_TEMPLATE_NAME)
-        && !hasExcalidrawClass
+    handleDeletion(nodeEvent: RuntimeEventInstance<NodeEventMessage>) {
+        console.log("Deleting Excalidraw instance")
+        const {nodeId} = nodeEvent.message
+        this.excalidrawInstanceIds.delete(nodeId)
+        Maybe.fromNullable(this.mediator.excalidrawInstances.get(nodeId))
+            .map(root => root.unmount())
     }
 
-    handleNodeEvent(event:RuntimeEventInstance<NodeEventMessage>) {
-      if (!this.shouldReplace(event)) return 
-      this.replaceElement(event)
+
+    shouldDelete(nodeEvent: RuntimeEventInstance<NodeEventMessage>): boolean {
+        const {nodeEventType,tanaNode,nodeId} = nodeEvent.message
+        const isDeletion = nodeEventType == NodeEventTypeEnum.Deletion || nodeEventType == NodeEventTypeEnum.BulletCollapse
+        const hasExcalidrawTemplate = TanaNodeAttributeInspector.hasTemplateWithName(tanaNode,EXCALIDRAW_TEMPLATE_NAME)
+        const hasBeenReplaced = this.excalidrawInstanceIds.has(nodeId)
+        return isDeletion && hasBeenReplaced && hasExcalidrawTemplate
+    }
+    shouldReplace(nodeEvent: RuntimeEventInstance<NodeEventMessage>): boolean {
+        const {nodeEventType,tanaNode,nodeId} = nodeEvent.message
+        const isDeletion = nodeEventType == NodeEventTypeEnum.Deletion || nodeEventType == NodeEventTypeEnum.BulletCollapse
+        const hasAlreadyBeenReplaced = this.excalidrawInstanceIds.has(nodeId)
+        const hasExcalidrawTemplate = TanaNodeAttributeInspector.hasTemplateWithName(tanaNode,EXCALIDRAW_TEMPLATE_NAME)
+        if (hasExcalidrawTemplate) this.excalidrawInstanceIds.add(nodeId)
+       return hasExcalidrawTemplate && !isDeletion && !hasAlreadyBeenReplaced
+    }
+
+    async handleNodeEvent(event:RuntimeEventInstance<NodeEventMessage>) {
+        if (this.shouldReplace(event))  await this.replaceElement(event)
+        else if (this.shouldDelete(event)) await this.handleDeletion(event)
     }
 
     onDependenciesInitComplete() {

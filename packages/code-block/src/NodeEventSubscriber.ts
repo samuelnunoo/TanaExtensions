@@ -17,7 +17,7 @@ export default class NodeEventSubscriber extends TanaSubscriber<CodeBlockExtensi
     }
 
     public shouldReplace(nodeEvent:RuntimeEventInstance<NodeEventMessage>): boolean {
-        const {nodeEventType,isHeaderNode,tanaNode, nodeElement} = nodeEvent.message
+        const {nodeEventType,isHeaderNode,tanaNode,nodeElement} = nodeEvent.message
         if (nodeEventType == NodeEventTypeEnum.Deletion) return false
         if (isHeaderNode) return false
         const isCodeBlock = tanaNode.isCodeBlock
@@ -28,7 +28,7 @@ export default class NodeEventSubscriber extends TanaSubscriber<CodeBlockExtensi
     public async replaceElement(nodeEvent:RuntimeEventInstance<NodeEventMessage>) {
         const {tanaNode,nodeElement} = nodeEvent.message
         const codeBlockContainer = await this.mediator.createInstance(tanaNode)
-        TanaDomNodeDecorator.replaceContentNode(nodeElement,codeBlockContainer)
+        TanaDomNodeDecorator.replaceHtmlDomNode(nodeElement,codeBlockContainer)
         CodeEventHandler.invokeInitialization(codeBlockContainer)
     }
 

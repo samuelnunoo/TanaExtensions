@@ -7,6 +7,7 @@ import {
 } from "./types/types";
 import {TANA_DATA_PANEL_CSS_SELECTOR} from "../TanaDomPanelEventPublisher/types/constants";
 import {PanelEvenTypeEnum} from "../TanaDomPanelEventPublisher/types/types";
+import {TANA_WRAPPER_CSS_SELECTOR} from "../../StaticModules/TanaDomNodeProvider/types";
 
 
 export default class NodeHelper {
@@ -27,7 +28,11 @@ export default class NodeHelper {
             panelEventType == PanelEvenTypeEnum.Insertion ? NodeEventTypeEnum.Insertion
                 : NodeEventTypeEnum.Update
     }
-    public static getBlockFromDescendant(target:HTMLElement,element:HTMLElement,targetType:NodeTargetTypeEnum) {
+
+    public static getWrapAndEditableNodeElementFromParent(element:HTMLElement) {
+        return element.querySelector(TANA_WRAPPER_CSS_SELECTOR)
+    }
+    public static getBulletAndContentNodeElementFromDescendant(target:HTMLElement, element:HTMLElement, targetType:NodeTargetTypeEnum) {
         switch(targetType) {
             case NodeTargetTypeEnum.Editable:
                 return target.closest(BULLET_CONTENT_CSS_SELECTOR) as HTMLElement
@@ -45,6 +50,5 @@ export default class NodeHelper {
                 return null
         }
     }
-
 
 }

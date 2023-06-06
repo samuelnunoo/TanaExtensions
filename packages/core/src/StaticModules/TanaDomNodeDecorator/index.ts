@@ -7,7 +7,7 @@ import {
 import TanaNodeAttributeEnforcer from "../TanaNodeAttributeInspector";
 
 export default new class TanaDomNodeDecorator {
-    public replaceContentNode(rootBlockNode:HTMLElement,newContentNode:HTMLElement) {
+    public replaceHtmlDomNode(rootBlockNode:HTMLElement, newContentNode:HTMLElement) {
         if (!TanaNodeAttributeEnforcer.hasValidTanaNodeContent(rootBlockNode)) {
             throw new Error(`Provided node is not a valid Tana Content Node`)
         }
@@ -25,10 +25,6 @@ export default new class TanaDomNodeDecorator {
         this.prependNodeToParent(nonTemplateContent,viewNode)
     }
 
-    private prependNodeToParent(parentNode:HTMLElement,childNode:HTMLElement) {
-        if (parentNode.childNodes.length == 0) parentNode.appendChild(childNode)
-        else parentNode.insertBefore(childNode,parentNode.firstChild)
-    }
     public wrapNodeWithViewContainer(contentNode:HTMLElement):HTMLElement {
         const container = document.createElement("div")
         container.classList.add(VIEW_CONTAINER_CLASS_NAME)
@@ -38,6 +34,7 @@ export default new class TanaDomNodeDecorator {
                 e.stopPropagation()
             })
         })
+
         container.addEventListener("focus",(e) => {
             if (!(e.target as HTMLElement).closest(VIEW_CONTAINER_CSS_SELECTOR)) {
                 e.preventDefault()
@@ -46,4 +43,10 @@ export default new class TanaDomNodeDecorator {
         container.appendChild(contentNode)
         return container
     }
+
+    private prependNodeToParent(parentNode:HTMLElement,childNode:HTMLElement) {
+        if (parentNode.childNodes.length == 0) parentNode.appendChild(childNode)
+        else parentNode.insertBefore(childNode,parentNode.firstChild)
+    }
+
 }

@@ -3,6 +3,11 @@ import {NodeEventTypeEnum} from "./types";
 import {TanaNode} from "../../../StaticModules/TanaStateProvider/types/types";
 
 
+
+export enum NodeElementType {
+        BulletAndContent = "bulletAndContent",
+        WrapEditableAndMenu = "wrapEditableAndMenu"
+}
 export interface NodeEventMessage {
         nodeElement: HTMLElement
         tanaNode:TanaNode
@@ -10,6 +15,7 @@ export interface NodeEventMessage {
         nodeEventType:NodeEventTypeEnum
         panel:HTMLElement
         isHeaderNode:boolean
+        nodeType: NodeElementType
 }
 
 

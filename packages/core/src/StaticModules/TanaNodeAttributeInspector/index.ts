@@ -1,7 +1,8 @@
 import {BULLET_CONTENT_CSS_CLASS} from "../../ReactiveModules/TanaDomNodeEventPublisher/types/types";
 import {EDITABLE_BLOCK_CSS_SELECTOR} from "../TanaDomNodeDecorator/types";
 import {TanaNode} from "../TanaStateProvider/types/types";
-import {TANA_PANEL_HEADER_ATTRIBUTE, TANA_PANEL_HEADER_CSS_SELECTOR} from "../TanaDomNodeProvider/types";
+import {TANA_PANEL_HEADER_ATTRIBUTE} from "../TanaDomNodeProvider/types";
+
 
 export default new class TanaNodeAttributeInspector {
 
@@ -17,6 +18,7 @@ export default new class TanaNodeAttributeInspector {
         return node.getAttribute(TANA_PANEL_HEADER_ATTRIBUTE) != null
     }
     public hasTemplateWithName(tanaNode:TanaNode,templateName:string) {
+        if (!tanaNode) return false
         if (!tanaNode.templates) return false
         for (const template of tanaNode.templates) {
             if (template.name == templateName) return true

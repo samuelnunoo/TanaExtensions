@@ -1,6 +1,6 @@
 
 import {Excalidraw} from "@excalidraw/excalidraw";
-import {createRoot} from 'react-dom/client';
+import {createRoot, Root} from 'react-dom/client';
 import React from "react";
 import TanaDOMNodeDecorator from "../../core/src/StaticModules/TanaDomNodeDecorator";
 import TanaExtension from "tana-extensions-core/src/types/TanaExtension";
@@ -8,7 +8,7 @@ import { InitEvent } from "tana-extensions-core/src/ReactiveModules/EventBus/typ
 import { TanaPubSubComponent } from "tana-extensions-core/src/ReactiveModules/EventBus/types/TanaPubSubModule";
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
 import NodeEventSubscriber from "./NodeEventSubscriber";
-import OnExcalidrawExtensionInitEvent from "./OnExcalidrawExtensionInitEvent";
+import OnExcalidrawExtensionInitEvent from "../types/OnExcalidrawExtensionInitEvent";
 import {AppState, BinaryFiles, ExcalidrawInitialDataState} from "@excalidraw/excalidraw/types/types";
 import {ExcalidrawElement} from "@excalidraw/excalidraw/types/element/types";
 import {ClipboardData} from "@excalidraw/excalidraw/types/clipboard";
@@ -23,6 +23,7 @@ export default class ExcalidrawExtension extends TanaExtension {
 
     NodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
 
+    excalidrawInstances: Map<string,Root> = new Map()
     getUniqueIdentifier(): string {
         return "TanaExcalidrawExtension"
     }
@@ -119,6 +120,7 @@ export default class ExcalidrawExtension extends TanaExtension {
         const container = document.createElement("div")
         container.classList.add("excalidraw-container")
         const root = createRoot(container)
+        this.excalidrawInstances.set(node.id,root)
         root.render(React.createElement(App))
         return TanaDOMNodeDecorator.wrapNodeWithViewContainer(container)
     }

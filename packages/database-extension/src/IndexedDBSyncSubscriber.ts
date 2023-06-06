@@ -2,7 +2,6 @@ import TanaSubscriber from "tana-extensions-core/src/ReactiveModules/EventBus/ty
 import TanaDatabaseExtension from "./index";
 import {InitEvent} from "tana-extensions-core/src/ReactiveModules/EventBus/types/Event";
 import  lokijs from "lokijs";
-
 //@ts-ignore
 import indexedDBAdapter from "lokijs/src/loki-indexed-adapter.js"
 import OnStartEvent from "tana-extensions-core/src/ReactiveModules/TanaModuleLoader/types/OnStartEvent";
@@ -25,10 +24,6 @@ export default class IndexedDBSyncSubscriber extends TanaSubscriber<TanaDatabase
         return [
             OnStartEvent
         ];
-    }
-
-    private insertData() {
-
     }
 
     private handleUpdateNodeDataEvent(event:RuntimeEventInstance<UpdateNodeDataEventMessage>) {

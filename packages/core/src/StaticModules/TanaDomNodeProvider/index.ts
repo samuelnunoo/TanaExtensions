@@ -2,13 +2,15 @@ import {
     DOM_NODE_CSS,
     TANA_DOCK_CSS_SELECTOR,
     TANA_PANEL_HEADER_CSS_SELECTOR,
-    TANA_PANEL_HEADER_TEMPLATE_CONTAINER_CLASS_PREFIX,
+    TANA_PANEL_HEADER_TEMPLATE_CONTAINER_CLASS_PREFIX, TANA_WRAPPER_CSS_CLASS,
     TANA_WRAPPER_CSS_SELECTOR
 } from "./types";
-import {BULLET_CONTENT_CSS_SELECTOR} from "../../ReactiveModules/TanaDomNodeEventPublisher/types/types";
-import {EDITABLE_BLOCK_CSS_SELECTOR} from "../TanaDomNodeDecorator/types";
-import TanaStateProvider from "../TanaStateProvider";
+import {
+    BULLET_CONTENT_CSS_CLASS,
+    BULLET_CONTENT_CSS_SELECTOR
+} from "../../ReactiveModules/TanaDomNodeEventPublisher/types/types";
 import {MAIN_PANEL_CSS_SELECTOR} from "../../ReactiveModules/TanaDomPanelEventPublisher/types/constants";
+import TanaNodeAttributeInspector from "../TanaNodeAttributeInspector";
 
 export default class TanaDomNodeProvider  {
     public static getAllContentNodesOnPage(dom:Document): HTMLElement[] {
@@ -52,8 +54,9 @@ export default class TanaDomNodeProvider  {
         return map
     }
     public static getIdFromElement(element:HTMLElement){
-        const dataId = element.getAttribute("data-id")
-        if (!dataId) return null
+       if (!element.classList.contains(BULLET_CONTENT_CSS_CLASS) && !element.classList.contains(TANA_WRAPPER_CSS_CLASS)) return null
+        const dataId = element.getAttribute("data-id") || element.id
+        if (!dataId || dataId == "") return null
         return dataId!.split("|").pop()
     }
 

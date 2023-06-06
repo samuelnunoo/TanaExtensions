@@ -1,6 +1,5 @@
 import TanaSubscriber from "../EventBus/types/TanaSubscriber";
 import {InitEvent} from "../EventBus/types/Event";
-import DomPanelPublisherInitEvent from "../TanaDomPanelEventPublisher/types/DomPanelPublisherInitEvent";
 import RuntimeEventInstance from "../EventBus/types/RuntimeEventInstance";
 import PanelEvent, {PanelEventMessage} from "../TanaDomPanelEventPublisher/types/PanelEvent";
 import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
@@ -9,15 +8,18 @@ import NodeHelper from "./NodeHelper";
 import {NodeEventTypeEnum} from "./types/types";
 import {TANA_WRAPPER_CSS_SELECTOR} from "../../StaticModules/TanaDomNodeProvider/types";
 import TanaDomNodeEventModule from "./index";
+import OnDomRenderCompleteEvent from "../TanaModuleLoader/types/OnDomRenderCompleteEvent";
+import {NodeElementType} from "./types/NodeEvent";
 
 
 export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEventModule> {
     getInitRequirements(): InitEvent[] {
         return [
-            DomPanelPublisherInitEvent
+            OnDomRenderCompleteEvent
         ]
     }
     onPanelEvent(event:RuntimeEventInstance<PanelEventMessage>) {
+        console.log("Captured Panel Event")
         const {panel,panelEventType} = event.message
         const contentNodes = TanaDomNodeProvider.getAllContentNodesOnPanel(panel)
         const headerNode = TanaDomNodeProvider.getPanelHeaderFromPanel(panel)
@@ -26,14 +28,15 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
         contentNodes.forEach(nodeElement => {
             const nodeId = TanaDomNodeProvider.getIdFromElement(nodeElement)
             if (!nodeId) return
-            const tanaNode = TanaStateProvider.getNodeWithId(nodeId)
+            const tanaNode = TanaStateProvider.getNodeWithId(nodeId).extract()
             if (!tanaNode) return
             this.mediator.invokeNodeEvent({
                 nodeElement,
-                tanaNode:tanaNode.extract()!,
+                tanaNode,
                 nodeId,
                 nodeEventType,
                 panel,
+                nodeType: NodeElementType.BulletAndContent,
                 isHeaderNode:false
             })
         })
@@ -53,6 +56,7 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
             isHeaderNode:true,
             panel,
             nodeEventType,
+            nodeType: NodeElementType.BulletAndContent,
             nodeId,
         })
     }
