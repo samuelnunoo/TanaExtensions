@@ -67,7 +67,6 @@ export default class NodeEventPublisher extends TanaPublisher<TanaDomNodeEventPu
         }
     }
     private processMutationRecord(mutation:MutationRecord) {
-        console.log("Processing Potential NodeEvent", mutation)
         if (!mutation.target) return
         const nodeEventType = MutationRecordAttributeInspector.getMutationEventType(mutation)
         const mutatingElement = this.getMutatingElement(mutation,nodeEventType) as HTMLElement

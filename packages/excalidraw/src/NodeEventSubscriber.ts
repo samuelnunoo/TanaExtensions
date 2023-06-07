@@ -25,10 +25,11 @@ export default class NodeEventSubscriber extends TanaSubscriber<ExcalidrawExtens
         ]
     }
 
-    async replaceElement(nodeEvent: RuntimeEventInstance<NodeEventMessage>) {
+       replaceElement(nodeEvent: RuntimeEventInstance<NodeEventMessage>) {
         const {tanaNode,nodeElement,panel} = nodeEvent.message
-        const excalidrawElement = await this.mediator.createInstance(tanaNode)
-        TanaDomNodeDecorator.insertAsView(nodeElement,panel,excalidrawElement)
+        this.mediator.createInstance(tanaNode).then(excalidrawElement => {
+            TanaDomNodeDecorator.insertAsView(nodeElement,panel,excalidrawElement)
+        })
     }
 
     handleDeletion(nodeEvent: RuntimeEventInstance<NodeEventMessage>) {
@@ -56,9 +57,9 @@ export default class NodeEventSubscriber extends TanaSubscriber<ExcalidrawExtens
        return hasExcalidrawTemplate && !isDeletion && !hasAlreadyBeenReplaced
     }
 
-    async handleNodeEvent(event:RuntimeEventInstance<NodeEventMessage>) {
-        if (this.shouldReplace(event))  await this.replaceElement(event)
-        else if (this.shouldDelete(event)) await this.handleDeletion(event)
+    handleNodeEvent(event:RuntimeEventInstance<NodeEventMessage>) {
+        if (this.shouldReplace(event)) this.replaceElement(event)
+        else if (this.shouldDelete(event))this.handleDeletion(event)
     }
 
     onDependenciesInitComplete() {

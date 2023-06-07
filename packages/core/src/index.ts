@@ -1,12 +1,11 @@
 import TanaModuleLoader from "./ReactiveModules/TanaModuleLoader";
-import ITanaExtension from "./types/TanaExtension";
 import EventBus from "./ReactiveModules/EventBus";
 import TanaPubSubModule from "./ReactiveModules/EventBus/types/TanaPubSubModule";
 import TanaDomNodeEventModule from "./ReactiveModules/TanaDomNodeEventPublisher";
 import TanaDomPanelEventPublisher from "./ReactiveModules/TanaDomPanelEventPublisher";
 import OnMainInitEvent from "./types/OnMainInitEvent";
 import TanaExtension from "./types/TanaExtension";
-
+import "../assets/default.css"
 /*
 Module Responsibility
     This module is responsible for initializing the tana extension

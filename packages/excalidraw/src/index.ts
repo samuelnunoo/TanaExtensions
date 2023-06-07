@@ -1,7 +1,7 @@
 
 import {Excalidraw} from "@excalidraw/excalidraw";
-import {createRoot, Root} from 'react-dom/client';
-import React from "react";
+import {createPortal} from 'react-dom';
+import React, {ReactNode} from "react";
 import TanaDOMNodeDecorator from "../../core/src/StaticModules/TanaDomNodeDecorator";
 import TanaExtension from "tana-extensions-core/src/types/TanaExtension";
 import { InitEvent } from "tana-extensions-core/src/ReactiveModules/EventBus/types/Event";
@@ -18,6 +18,8 @@ import {array, Codec, Maybe, record, string, unknown} from "purify-ts";
 import _ from "lodash";
 import _default from "@excalidraw/excalidraw/types/packages/excalidraw/example/initialData";
 import elements = _default.elements;
+import {createRoot, Root} from "react-dom/client";
+import {VIEW_CONTAINER_CSS_SELECTOR} from "tana-extensions-core/src/StaticModules/TanaDomNodeDecorator/types";
 
 export default class ExcalidrawExtension extends TanaExtension {
 
@@ -84,7 +86,12 @@ export default class ExcalidrawExtension extends TanaExtension {
             }
             return false
         }
+
+
+        const panelContent = document.querySelector(".panelContent") as HTMLElement
+        const reactFiber = this.getReactFiber(panelContent!) as ReactNode
         const App = () => {
+            let hasFocus = false
             return React.createElement(
                 React.Fragment,
                 null,
@@ -92,6 +99,15 @@ export default class ExcalidrawExtension extends TanaExtension {
                     "div",
                     {
                         style: { height: "500px" },
+                        onWheelCapture: (e) =>  {
+                            if (!hasFocus) e.stopPropagation();
+                        },
+                        onClick: (e) => hasFocus = true,
+                        onBlur: ({relatedTarget}) => {
+                            if (!relatedTarget || !(relatedTarget as HTMLElement).closest(VIEW_CONTAINER_CSS_SELECTOR)) {
+                                hasFocus = false
+                            }
+                        }
                     },
                     React.createElement(Excalidraw,{
                         autoFocus: false,
@@ -114,7 +130,7 @@ export default class ExcalidrawExtension extends TanaExtension {
                             console.log("paste",data,event)
                             return true
                         }
-                    })
+                    },  )
                 ))
         };
         const container = document.createElement("div")
@@ -123,6 +139,14 @@ export default class ExcalidrawExtension extends TanaExtension {
         this.excalidrawInstances.set(node.id,root)
         root.render(React.createElement(App))
         return TanaDOMNodeDecorator.wrapNodeWithViewContainer(container)
+    }
+
+
+    private getReactFiber(element:HTMLElement) {
+        for (const key of Object.keys(element)) {
+            if (key.match("__reactFiber")) return element[key]
+        }
+        return null
     }
 
 

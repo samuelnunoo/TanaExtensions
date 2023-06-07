@@ -30,7 +30,6 @@ export default class EventBus {
             .map( _ => this.requests.delete(originalEvent))
     }
 
-
     public dispatchInitEvent(event:InitEvent) {
 
         this.dispatchEvent(event)
