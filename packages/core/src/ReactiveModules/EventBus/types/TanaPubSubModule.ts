@@ -13,7 +13,6 @@ export default abstract class TanaPubSubModule {
     private isInitialized:boolean = false
     private dependencies:Set<string>= new Set()
     constructor(eventBus:EventBus) {
-        console.log("PubSubModule Loaded")
         this.eventBus = eventBus
     }
 

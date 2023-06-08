@@ -112,7 +112,6 @@ export default class PanelObserver {
     }
     private invokePanelIdChangeEvent(mutation:MutationRecord) {
         const isRemove = mutation.removedNodes.length > 0
-        console.log("invokePanelIdChangeEvent: ",mutation)
     }
 
     private invokePanelEvent(mutation:MutationRecord) {

@@ -27,7 +27,6 @@ export default class IndexedDBSyncSubscriber extends TanaSubscriber<TanaDatabase
     }
 
     private handleUpdateNodeDataEvent(event:RuntimeEventInstance<UpdateNodeDataEventMessage>) {
-        console.log("Handling updateNodeDataEvent ",event)
         const shouldInsert = event.message.isDelete == false
         const {nodeId,isDelete,content} = event.message
         const transactionId = this.mediator.getLatestTransactionId()

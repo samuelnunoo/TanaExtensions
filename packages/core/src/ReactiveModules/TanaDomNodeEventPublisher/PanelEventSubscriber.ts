@@ -19,7 +19,6 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
         ]
     }
     onPanelEvent(event:RuntimeEventInstance<PanelEventMessage>) {
-        console.log("Captured Panel Event")
         const {panel,panelEventType} = event.message
         const contentNodes = TanaDomNodeProvider.getAllContentNodesOnPanel(panel)
         const headerNode = TanaDomNodeProvider.getPanelHeaderFromPanel(panel)

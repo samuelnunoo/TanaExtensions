@@ -15,3 +15,5 @@ dist
 coverage
 scratch
 build
+!/wallaby.js
+.favorites.json

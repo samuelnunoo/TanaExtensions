@@ -99,6 +99,7 @@ export default class ExcalidrawExtension extends TanaExtension {
                     "div",
                     {
                         style: { height: "500px" },
+
                         onWheelCapture: (e) =>  {
                             if (!hasFocus) e.stopPropagation();
                         },

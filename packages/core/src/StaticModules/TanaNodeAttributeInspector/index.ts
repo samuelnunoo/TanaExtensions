@@ -13,11 +13,15 @@ export default new class TanaNodeAttributeInspector {
         return true
     }
 
+    public isExpandedNode(node:HTMLElement) {
+        if (!this.isValidClassNode(node)) return false
+        return !!node.querySelector(".contentSide.expanded")
+    }
     public hasPanelHeaderAttribute(node:HTMLElement) {
         if (!this.isValidClassNode(node)) return false
         return node.getAttribute(TANA_PANEL_HEADER_ATTRIBUTE) != null
     }
-    public hasTemplateWithName(tanaNode:TanaNode,templateName:string) {
+    public hasDirectTemplateWithName(tanaNode:TanaNode,templateName:string) {
         if (!tanaNode) return false
         if (!tanaNode.templates) return false
         for (const template of tanaNode.templates) {
@@ -26,9 +30,22 @@ export default new class TanaNodeAttributeInspector {
         return false
     }
 
+
+    public hasDescendantWithTemplateName(tanaNode:TanaNode,templateName:string) {
+        if (!tanaNode || !tanaNode.templates) return false 
+        for (const template of tanaNode.templates) {
+            if (template.name == templateName) return true 
+            if (!this.isSystemNode(tanaNode)) this.hasDescendantWithTemplateName(template,templateName)
+        }
+    }
+
     private isValidClassNode(node:HTMLElement) {
         if (!node) return false
         if (!('classList' in node)) return false
         return true
+    }
+
+    private isSystemNode(tanaNode:TanaNode) {
+        return !!tanaNode.name.match("SYS")
     }
 }

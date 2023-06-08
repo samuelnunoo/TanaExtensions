@@ -7,5 +7,7 @@ export default {
     },
     "nodeArguments": [
         "--loader=tsx"
-    ]
+    ],
+    "require": ["babel-register"]
+
 }

@@ -4,7 +4,12 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "redux": "^4.2.1"
+    "@fluffy-spoon/substitute": "^1.208.0",
+    "moq.ts": "^10.0.6",
+    "redux": "^4.2.1",
+    "ts-mockito": "^2.6.1",
+    "ts-sinon": "^2.0.2",
+    "ttypescript": "^1.5.15"
   },
   "devDependencies": {
     "config": "*"

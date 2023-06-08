@@ -6,7 +6,6 @@ import TanaDatabaseExtension from "database-extension/src";
 
 export default function (eventBus:EventBus) {
     return [
-        new CodeBlockExtension(eventBus),
         new ExcalidrawExtension(eventBus),
         new TanaDatabaseExtension(eventBus)
     ] as TanaExtension[]

@@ -17,7 +17,6 @@ export default class EventBus {
 
     public dispatchEventAndAWaitFirstReply<T>(runtimeEvent:RuntimeEventInstance<T>,secondsToWait:number) {
         return new Promise((resolve,reject) => {
-            console.log("Made dispatch Request")
             this.requests.set(runtimeEvent,resolve)
             this.dispatchEvent(runtimeEvent)
             setTimeout(() => { reject("No Response in Time")}, secondsToWait * 1000)
@@ -54,15 +53,11 @@ export default class EventBus {
     }
 
     private dispatchEvent(event:BaseEvent) {
-        console.log(`Dispatching Event ${event.getIdentifier()}`)
-        console.log(`Subscribers ${this.subscribers.toString()}`)
         Maybe.fromNullable(this.subscribers.get(event.getIdentifier()))
             .map(callbacks => callbacks.forEach(callback => callback(event)))
     }
 
     private subscribe(event:BaseEvent,callback:GenericEventCallback) {
-        console.log(`Subscribing to Event ${event.getIdentifier()}`)
-        console.log(`Subscribers ${(this.subscribers.toString())}`)
         Maybe.of(this.subscribers.has(event.getIdentifier()) || this.subscribers.set(event.getIdentifier(),[]))
             .chain( _ => Maybe.of(this.subscribers.get(event.getIdentifier()) as GenericEventCallback[]))
             .map( callbacks => callbacks.push(callback))
