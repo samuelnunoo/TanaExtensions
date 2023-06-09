@@ -1,17 +1,17 @@
 import TanaSubscriber from "../EventBus/types/TanaSubscriber";
-import TanaNodeReplacementPublisher from "./index";
+import TanaViewReplacementPublisher from "./index";
 import {InitEvent} from "../EventBus/types/Event";
-import DomNodePublisherInitEvent from "../TanaDomNodeEventPublisher/types/DomNodePublisherInitEvent";
 import NodeEvent, {NodeEventMessage} from "../TanaDomNodeEventPublisher/types/NodeEvent";
 import RuntimeEventInstance from "../EventBus/types/RuntimeEventInstance";
 import { NodeEventTypeEnum } from "../TanaDomNodeEventPublisher/types/types";
 import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector";
+import OnAppStateInitEvent from "../TanaModuleLoader/types/OnAppStateInitEvent";
 
 
-export default class NodeEventSubscriber extends TanaSubscriber<TanaNodeReplacementPublisher> {
+export default class NodeEventSubscriber extends TanaSubscriber<TanaViewReplacementPublisher> {
 
     getInitRequirements(): InitEvent[] {
-        return [DomNodePublisherInitEvent];
+        return [OnAppStateInitEvent];
     }
 
     meetsViewDeletionCritiera(event:RuntimeEventInstance<NodeEventMessage>):boolean {
@@ -21,9 +21,9 @@ export default class NodeEventSubscriber extends TanaSubscriber<TanaNodeReplacem
         if (!TanaNodeAttributeInspector.hasDescendantWithTemplateName(tanaNode,'view-extension')) return false 
         return true 
     }
+
     meetsViewInsertionCriteria(event:RuntimeEventInstance<NodeEventMessage>):boolean {
         const {nodeEventType,nodeId,tanaNode,nodeElement,isHeaderNode} = event.message
-        console.log(nodeId)
         if (!(nodeEventType == NodeEventTypeEnum.Insertion || nodeEventType == NodeEventTypeEnum.BulletExpand)) return false 
         if (this.mediator.replacedNodeIds.has(nodeId)) return false 
         if (!isHeaderNode && !TanaNodeAttributeInspector.isExpandedNode(nodeElement)) return false
@@ -39,6 +39,7 @@ export default class NodeEventSubscriber extends TanaSubscriber<TanaNodeReplacem
             this.mediator.dispatchRemoveViewEvent(event)
         }
     }
+    
      onDependenciesInitComplete() {
         this.subscribeToRuntimeEvent(NodeEvent,this.handleNodeEvent.bind(this))
     }

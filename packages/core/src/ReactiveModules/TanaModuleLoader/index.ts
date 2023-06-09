@@ -16,10 +16,10 @@ Module Responsibility:
 export default class TanaModuleLoader extends TanaPubSubModule {
 
     constructor(eventBus:EventBus) {
-        console.log("RUnning Tana Module Loader")
+        console.log("Running Tana Module Loader")
         super(eventBus);
-
     }
+
     TanaLifeCycleEventPublisher = new TanaLifeCycleEventPublisher(this,this.eventBus)
 
     getEventModuleInvokesOnCompletion(): InitEvent {
@@ -31,7 +31,7 @@ export default class TanaModuleLoader extends TanaPubSubModule {
             this.TanaLifeCycleEventPublisher
         ];
     }
-
+    
     invokeOnStart() {
         this.eventBus.dispatchInitEvent(OnStartEvent)
     }

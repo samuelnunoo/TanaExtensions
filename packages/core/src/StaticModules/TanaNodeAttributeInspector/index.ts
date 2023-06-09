@@ -35,8 +35,9 @@ export default new class TanaNodeAttributeInspector {
         if (!tanaNode || !tanaNode.templates) return false 
         for (const template of tanaNode.templates) {
             if (template.name == templateName) return true 
-            if (!this.isSystemNode(tanaNode)) this.hasDescendantWithTemplateName(template,templateName)
+            if (!template.isSystemNode) return this.hasDescendantWithTemplateName(template,templateName)
         }
+        return false 
     }
 
     private isValidClassNode(node:HTMLElement) {
@@ -45,7 +46,4 @@ export default new class TanaNodeAttributeInspector {
         return true
     }
 
-    private isSystemNode(tanaNode:TanaNode) {
-        return !!tanaNode.name.match("SYS")
-    }
 }

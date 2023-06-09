@@ -76,6 +76,7 @@ export interface TanaNode {
     nodeSpace: NodeSpace
     systemNodes
     parentFile: TanaFile
+    isSystemNode:boolean
     insertNewNodeAtEnd: () => TanaNode
 }
 

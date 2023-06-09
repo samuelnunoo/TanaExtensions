@@ -1,5 +1,5 @@
 import test from "ava"
-import TanaNodeReplacementPublisher from '../src/ReactiveModules/TanaNodeReplacementPublisher/index';
+import TanaNodeReplacementPublisher from '../src/ReactiveModules/TanaViewReplacementPublisher/index';
 import EventBus from "../src/ReactiveModules/EventBus";
 import RuntimeEventInstance from "../src/ReactiveModules/EventBus/types/RuntimeEventInstance";
 import {NodeEventMessage} from "../src/ReactiveModules/TanaDomNodeEventPublisher/types/NodeEvent";
@@ -9,6 +9,10 @@ import {expandedBlockContent} from "./mocks/DomMocks";
 import {Mock} from "moq.ts"
 import {JSDOM} from "jsdom"
 import Sinon from "sinon";
+import ReplaceViewEvent, {
+    ReplaceViewEnum,
+    ReplaceViewEventMessage
+} from "../src/ReactiveModules/TanaViewReplacementPublisher/types/ReplaceViewEvent";
 const  {document} = (new JSDOM(`<!DOCTYPE html><p>Hello world</p>`)).window;
 function createMediator() {
     const bus = new EventBus()
@@ -204,6 +208,24 @@ function HandleNodeEvent() {
             .object()
         const {busSpy} = handleNodeEvent([deletion])
         t.is(busSpy.dispatchRuntimeEvent.callCount,0)
+    })
+
+    test("HandleNodeEvent: it dispatches a ReplaceViewEvent with the proper type for insertion", t => {
+        const insertion = createNodeEventMeetingInsertingCritiera().object()
+        const {busSpy} = handleNodeEvent([insertion])
+        busSpy.dispatchRuntimeEvent.getCalls().forEach(call => {
+            t.is((call.firstArg as RuntimeEventInstance<ReplaceViewEventMessage>).getIdentifier(),ReplaceViewEvent.getIdentifier())
+            t.is((call.firstArg as RuntimeEventInstance<ReplaceViewEventMessage>).message.type, ReplaceViewEnum.Insertion)
+        })
+    })
+
+    test("HandleNodeEvent: it dispatches a ReplaceViewEvent with the proper type for deletion", t => {
+        const deletion = createNodeEventMeetingDeletionCritiera().object()
+        const {busSpy} = handleNodeEvent([deletion])
+        busSpy.dispatchRuntimeEvent.getCalls().forEach(call => {
+            t.is((call.firstArg as RuntimeEventInstance<ReplaceViewEventMessage>).getIdentifier(),ReplaceViewEvent.getIdentifier())
+            t.is((call.firstArg as RuntimeEventInstance<ReplaceViewEventMessage>).message.type, ReplaceViewEnum.Deletion)
+        })
     })
 }
 

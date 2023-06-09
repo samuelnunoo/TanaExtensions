@@ -1,3 +1,5 @@
+export type MutationHandler = (mutations:MutationRecord[], observer:MutationObserver) => any 
+
 export enum PanelEventEnum {
     PanelIdChangeEvent,
     PanelAddedEvent,

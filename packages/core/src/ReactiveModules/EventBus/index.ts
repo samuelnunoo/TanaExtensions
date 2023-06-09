@@ -30,7 +30,6 @@ export default class EventBus {
     }
 
     public dispatchInitEvent(event:InitEvent) {
-
         this.dispatchEvent(event)
     }
 

@@ -1,6 +1,4 @@
-
 import {Excalidraw} from "@excalidraw/excalidraw";
-import {createPortal} from 'react-dom';
 import React, {ReactNode} from "react";
 import TanaDOMNodeDecorator from "../../core/src/StaticModules/TanaDomNodeDecorator";
 import TanaExtension from "tana-extensions-core/src/types/TanaExtension";
@@ -14,10 +12,9 @@ import {ExcalidrawElement} from "@excalidraw/excalidraw/types/element/types";
 import {ClipboardData} from "@excalidraw/excalidraw/types/clipboard";
 import UpdateNodeDataEvent, { UpdateNodeDataEventMessage } from "database-extension/types/UpdateNodeDataEvent";
 import GetNodeDataEvent from "database-extension/types/GetNodeDataEvent";
-import {array, Codec, Maybe, record, string, unknown} from "purify-ts";
+import {array, Codec, unknown} from "purify-ts";
 import _ from "lodash";
 import _default from "@excalidraw/excalidraw/types/packages/excalidraw/example/initialData";
-import elements = _default.elements;
 import {createRoot, Root} from "react-dom/client";
 import {VIEW_CONTAINER_CSS_SELECTOR} from "tana-extensions-core/src/StaticModules/TanaDomNodeDecorator/types";
 
@@ -89,7 +86,6 @@ export default class ExcalidrawExtension extends TanaExtension {
 
 
         const panelContent = document.querySelector(".panelContent") as HTMLElement
-        const reactFiber = this.getReactFiber(panelContent!) as ReactNode
         const App = () => {
             let hasFocus = false
             return React.createElement(
@@ -141,15 +137,4 @@ export default class ExcalidrawExtension extends TanaExtension {
         root.render(React.createElement(App))
         return TanaDOMNodeDecorator.wrapNodeWithViewContainer(container)
     }
-
-
-    private getReactFiber(element:HTMLElement) {
-        for (const key of Object.keys(element)) {
-            if (key.match("__reactFiber")) return element[key]
-        }
-        return null
-    }
-
-
-
 }

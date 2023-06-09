@@ -4,9 +4,10 @@ import NodeReplacementPublisherInitEvent from "./types/NodeReplacementPublisherI
 import NodeEventSubscriber from './NodeEventSubscriber';
 import RuntimeEventInstance from "../EventBus/types/RuntimeEventInstance";
 import { NodeEventMessage } from "../TanaDomNodeEventPublisher/types/NodeEvent";
+import ReplaceViewEvent, { ReplaceViewEnum } from "./types/ReplaceViewEvent";
 
 
-export default class TanaNodeReplacementPublisher extends TanaPubSubModule {
+export default class TanaViewReplacementPublisher extends TanaPubSubModule {
     nodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
     replacedNodeIds: Set<string> = new Set() 
     deletedNodeIds: Set<string> = new Set() 
@@ -24,15 +25,21 @@ export default class TanaNodeReplacementPublisher extends TanaPubSubModule {
     dispatchInsertViewEvent(event:RuntimeEventInstance<NodeEventMessage>) {
         this.deletedNodeIds.delete(event.message.nodeId)
         this.replacedNodeIds.add(event.message.nodeId)
-        this.eventBus.dispatchRuntimeEvent(event)
+        const replaceEvent = ReplaceViewEvent.createInstance({
+            nodeEvent:event.message,
+            type: ReplaceViewEnum.Insertion
+        })
+        this.eventBus.dispatchRuntimeEvent(replaceEvent)
     }
 
     dispatchRemoveViewEvent(event:RuntimeEventInstance<NodeEventMessage>) {
         this.replacedNodeIds.delete(event.message.nodeId)
         this.deletedNodeIds.add(event.message.nodeId)
-        this.eventBus.dispatchRuntimeEvent(event)
+        const replaceEvent = ReplaceViewEvent.createInstance({
+            nodeEvent:event.message,
+            type: ReplaceViewEnum.Deletion
+        })
+        this.eventBus.dispatchRuntimeEvent(replaceEvent)
 
     }
-
-
 }
