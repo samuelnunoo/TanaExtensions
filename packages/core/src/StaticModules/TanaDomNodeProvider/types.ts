@@ -1,9 +1,62 @@
 
-export const TANA_WRAPPER_CSS_CLASS = "wrapEditableAndMenu"
-export const TANA_WRAPPER_CSS_SELECTOR = ".wrapEditableAndMenu"
-export const TANA_PANEL_HEADER_TEMPLATE_CONTAINER_CLASS_PREFIX = "PanelHeader-module_templates"
-export const TANA_PANEL_HEADER_CSS_SELECTOR = "[data-is-panel-header='true']"
 
-export const TANA_PANEL_HEADER_ATTRIBUTE = "data-is-panel-header"
-export const TANA_DOCK_CSS_SELECTOR = "[data-dock]"
-export const DOM_NODE_CSS = ".bulletAndContent"
+export default abstract class TanaConstants {
+
+    getTanaWrapperCssClass() {
+        return "wrapEditableAndMenu"
+    }
+
+    getBulletModulePrefix() {
+        return "Bullet-module"
+    }
+
+    getContentSideCssClass() {
+        return "contentSide"
+    }
+
+    getPanelContentCssClass() {
+        return "panelContent"
+    }
+
+    getNonTemplateCssClass() {
+        return "nonTemplateContent"
+    }
+
+    getTanaPanelHeaderPrefix() {
+        return "PanelHeader-module_templates"
+    }
+
+    getTanaPanelHeaderAttribute() {
+        return "data-is-panel-header"
+    }
+
+    getTanaDockAttribute() {
+        return "data-dock"
+    }
+
+    getContentNodeCssClass() {
+        return "bulletAndContent"
+    }
+
+    getEditableNodeCssClass() {
+        return "editable"
+    }
+
+    getPanelAttribute() {
+        return "data-panel-id"
+    }
+
+    getExpandedNodeCssClass() {
+        return "expandedNodeContent"
+    }
+
+    classSelector(classString:string) {
+        return `.${classString}`
+    }
+
+    attributeSelector(attribute:string){
+        return `[${attribute}]`
+    }
+
+
+}

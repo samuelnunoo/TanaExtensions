@@ -78,7 +78,7 @@ export default class NodeEventPublisher extends TanaPublisher<TanaDomNodeEventPu
         if (!bulletAndContentNodeElement && !wrapAndEditableNodeElement) return
         const blockId = TanaDomNodeProvider.getIdFromElement(bulletAndContentNodeElement || wrapAndEditableNodeElement)
         if (blockId == null) return
-        const panel = TanaDomNodeProvider.getPanelFromNode(bulletAndContentNodeElement || wrapAndEditableNodeElement) as HTMLElement
+        const panel = TanaDomNodeProvider.getPanelFromDescendant(bulletAndContentNodeElement || wrapAndEditableNodeElement) as HTMLElement
         if (!panel) return
         const tanaNode = TanaStateProvider.getNodeWithId(blockId).extract()
         if (!tanaNode) return

@@ -14,6 +14,7 @@ import ReplaceViewEvent, {
     ReplaceViewEventMessage
 } from "../src/ReactiveModules/TanaViewReplacementPublisher/types/ReplaceViewEvent";
 const  {document} = (new JSDOM(`<!DOCTYPE html><p>Hello world</p>`)).window;
+
 function createMediator() {
     const bus = new EventBus()
     const mediator = new TanaNodeReplacementPublisher(bus)

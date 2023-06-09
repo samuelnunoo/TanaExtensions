@@ -13,7 +13,7 @@ export default new class CodeBlockComponentAccessor {
 
     public  getCodeBlockTanaNodeFromEvent(event:Event) {
         const node = event.target as HTMLElement
-        return TanaDomNodeProvider.getBlockNodeFromDescendant(node)
+        return TanaDomNodeProvider.getContentNodeFromDescendant(node)
     }
 
     public  getCodeBlockInputElementFromEvent(event:Event) {

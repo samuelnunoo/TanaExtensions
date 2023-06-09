@@ -1,54 +1,66 @@
 import {
     TANA_DATA_PANEL_ATTRIBUTE
-} from "../types/constants";
-import TanaDomNodeProvider from "../../../StaticModules/TanaDomNodeProvider";
+} from "./types/constants";
+import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
 import { Maybe } from "purify-ts/Maybe";
-import { MutationHandler } from "../types/types";
-import PanelStateHandler from "../PanelStateHandler";
-import PanelMutationHandler from "../PanelMutationHandler";
+import PanelStateHandler from "./PanelStateHandler";
+import PanelMutationHandler from './PanelMutationHandler';
 
 
-export default class PanelObserver {
-  
+export default class PanelObserverRegistrationHandler {
+
+    public static observerMainDock(panelStateHandler:PanelStateHandler, mainDock:HTMLElement) {
+        panelStateHandler.getMainDockObserver().observe(mainDock,{ childList:true })
+    }
+
+    public static observeDockContainer(panelStateHandler:PanelStateHandler, dockContainer:HTMLElement) {
+        panelStateHandler.getDockContainerObserver().observe(dockContainer, { childList: true })
+    }
+
+    public static unObserverMainDock(panelStateHandler:PanelStateHandler) {
+        panelStateHandler.getMainDockObserver().disconnect()
+    }
+
+    public static unObserveDockContainer(panelStateHandler:PanelStateHandler) {
+        panelStateHandler.getDockContainerObserver().disconnect()
+    }
+
     public static observeDocks(
         docks:HTMLElement[],
-        observeDockPanelContainers: (panelContainers:HTMLElement[]) => void,
-        observePanels: (panels:HTMLElement[]) => void 
+        panelStateHandler:PanelStateHandler,
+        panelMutationHandler:PanelMutationHandler
     ) {
         docks.forEach(dock => {
             Maybe.fromNullable(dock.querySelector("div"))
                 .map(panelContainer => ({panelContainer, panels:Array.from(panelContainer.childNodes) as HTMLElement[]}))
                 .map(({panelContainer,panels}) => {
-                    observeDockPanelContainers([panelContainer])
-                    observePanels(panels)
+                    this.observeDockPanelContainers([panelContainer],panelMutationHandler,panelStateHandler)
+                    this.observePanels(panels,panelMutationHandler,panelStateHandler)
                 })
         })
     }
 
-     
     public static unobserveDocks(
         docks: HTMLElement[],
-        unObserveDockPanelContainers: (panelContainers: HTMLElement[]) => any,
-        unObservePanels: (panels: HTMLElement[]) => any 
+        panelStateHandler:PanelStateHandler
         ) {
         docks.forEach(dock => {
             Maybe.fromNullable(dock.querySelector("div"))
                 .map(panelContainer =>({panelContainer, panels: Array.from(panelContainer!.childNodes) as HTMLElement[]}))
                 .map(({panelContainer,panels}) => {
-                    unObserveDockPanelContainers([panelContainer])
-                    unObservePanels(panels)
+                    this.unObserveDockPanelContainers([panelContainer],panelStateHandler)
+                    this.unObservePanels(panels,panelStateHandler)
                 })
         })
     }
-    
 
-    public observePanels(
+    public static observePanels(
         panels:HTMLElement[],
         panelMutationHandler: PanelMutationHandler,
         panelStateHandler: PanelStateHandler
     ) {
         panels.forEach(panel => {
-            this.unobservePanels([panel],panelStateHandler)
+            this.unObservePanels([panel],panelStateHandler)
             const mutationObserver = new MutationObserver(panelMutationHandler.panelIdChangeMutationHandler)
             mutationObserver.observe(panel,{ attributeFilter: [TANA_DATA_PANEL_ATTRIBUTE] })
             panelStateHandler.addPanelObserver(panel,mutationObserver)
@@ -60,7 +72,7 @@ export default class PanelObserver {
         })
     }
 
-    public unobservePanels(
+    public static unObservePanels(
         panels:HTMLElement[],
         panelStateHandler: PanelStateHandler
         ) {
@@ -75,20 +87,20 @@ export default class PanelObserver {
         })
     }
 
-    public observeDockPanelContainers( 
+    public static observeDockPanelContainers( 
         panelContainers:HTMLElement[],
-        panelContainerChildListMutationHandler:MutationHandler,
+        panelMutationHandler:PanelMutationHandler,
         panelStateHandler:PanelStateHandler
     ) {
         panelContainers.forEach(panelContainer => {
-            this.unobserveDockPanelContainers([panelContainer],panelStateHandler)
-            const mutationObserver = new MutationObserver(panelContainerChildListMutationHandler)
+            this.unObserveDockPanelContainers([panelContainer],panelStateHandler)
+            const mutationObserver = new MutationObserver(panelMutationHandler.handleDockContainerChildListMutationEvent)
             mutationObserver.observe(panelContainer,{ childList:true })
-            this.panelContainerObservers.set(panelContainer,mutationObserver)
+            panelStateHandler.addPanelContainerObserver(panelContainer,mutationObserver)
         })
     }
 
-    public unobserveDockPanelContainers(panelContainers:HTMLElement[],panelStateHandler:PanelStateHandler) {
+    public static unObserveDockPanelContainers(panelContainers:HTMLElement[],panelStateHandler:PanelStateHandler) {
         panelContainers.forEach(panelContainer => {
             Maybe.fromNullable(panelStateHandler.getPanelContainerObserver(panelContainer))
                 .map(panelContainerObserver => panelContainerObserver.disconnect())

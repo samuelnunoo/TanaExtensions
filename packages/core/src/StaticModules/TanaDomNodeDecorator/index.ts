@@ -1,17 +1,16 @@
-import {
-    EDITABLE_BLOCK_CSS_SELECTOR,
-    NON_TEMPLATE_CONTENT_CSS_SELECTOR,
-    VIEW_CONTAINER_CLASS_NAME,
-    VIEW_CONTAINER_CSS_SELECTOR
-} from "./types";
 import TanaNodeAttributeEnforcer from "../TanaNodeAttributeInspector";
+import TanaDomNodeProvider from "../TanaDomNodeProvider";
+
+const VIEW_CONTAINER_CSS_SELECTOR = ".view-container"
+const VIEW_CONTAINER_CLASS_NAME = "view-container"
+const NON_TEMPLATE_CONTENT_CSS_SELECTOR = ".nonTemplateContent"
 
 export default new class TanaDomNodeDecorator {
     public replaceHtmlDomNode(rootBlockNode:HTMLElement, newContentNode:HTMLElement) {
         if (!TanaNodeAttributeEnforcer.hasValidTanaNodeContent(rootBlockNode)) {
             throw new Error(`Provided node is not a valid Tana Content Node`)
         }
-        const editableBlock = rootBlockNode.querySelector(EDITABLE_BLOCK_CSS_SELECTOR)
+        const editableBlock = TanaDomNodeProvider.getEditableNodeFromAncestor(rootBlockNode)
         const editableBlockContainer = editableBlock!.parentElement
         editableBlock!.remove()
         editableBlockContainer!.appendChild(newContentNode)

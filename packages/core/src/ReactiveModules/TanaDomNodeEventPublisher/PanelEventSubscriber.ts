@@ -23,6 +23,7 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
         const contentNodes = TanaDomNodeProvider.getAllContentNodesOnPanel(panel)
         const headerNode = TanaDomNodeProvider.getPanelHeaderFromPanel(panel)
         const nodeEventType = NodeHelper.getNodeEventType(panelEventType)
+        
         this.createEventForPanelHeaderNode(headerNode as HTMLElement,panel,nodeEventType)
         contentNodes.forEach(nodeElement => {
             const nodeId = TanaDomNodeProvider.getIdFromElement(nodeElement)

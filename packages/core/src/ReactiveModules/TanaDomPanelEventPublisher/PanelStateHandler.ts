@@ -1,9 +1,25 @@
+import PanelMutationHandler from "./PanelMutationHandler"
 
 
 export default class PanelStateHandler {
     private panelObservers:Map<HTMLElement,MutationObserver> = new Map()
     private panelHeaderObservers:Map<HTMLElement,MutationObserver> = new Map()
     private panelContainerObservers: Map<HTMLElement,MutationObserver> = new Map()
+    private mainDockObserver: MutationObserver
+    private dockContainerObserver: MutationObserver
+
+    constructor(panelMutationHandler:PanelMutationHandler) {
+        this.mainDockObserver = new MutationObserver(panelMutationHandler.handleMainDockChildListMutationEvent)
+        this.dockContainerObserver = new MutationObserver(panelMutationHandler.handleDockContainerChildListMutationEvent)
+    }
+
+    getMainDockObserver() {
+        return this.mainDockObserver
+    }
+
+    getDockContainerObserver() {
+        return this.dockContainerObserver
+    }
 
     getPanelContainerObserver(panelContainer:HTMLElement) {
         return this.panelContainerObservers.get(panelContainer)
