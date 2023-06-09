@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import TanaDomNodeProvider from "../TanaDomNodeProvider";
 import TanaConstants from "../TanaDomNodeProvider/types";
+import { NodeEventTypeEnum } from "../../ReactiveModules/TanaDomNodeEventPublisher/types/types";
 
 
 
