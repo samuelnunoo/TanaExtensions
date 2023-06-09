@@ -3,8 +3,6 @@ import TanaDomNodeProvider from "../TanaDomNodeProvider";
 import TanaConstants from "../TanaDomNodeProvider/types";
 import { NodeEventTypeEnum } from "../../ReactiveModules/TanaDomNodeEventPublisher/types/types";
 
-
-
 export default new class MutationRecordAttributeInspector extends TanaConstants {
 
     private  classList:string[] = [
@@ -49,7 +47,7 @@ export default new class MutationRecordAttributeInspector extends TanaConstants 
         }
         return false
     }
-    
+
     public mutationRecordContainsBulletModule(mutation:MutationRecord):boolean{
         const isRemoval = mutation.removedNodes.length > 0
         const node = (isRemoval ? mutation.removedNodes[0] : mutation.addedNodes[0] ) as HTMLElement
