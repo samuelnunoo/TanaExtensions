@@ -1,13 +1,13 @@
-import {BULLET_CONTENT_CSS_CLASS} from "../../ReactiveModules/TanaDomNodeEventPublisher/types/types";
-import {EDITABLE_BLOCK_CSS_SELECTOR} from "../TanaDomNodeDecorator/types";
+import TanaConstants from "../TanaDomNodeProvider/types";
 import {TanaNode} from "../TanaStateProvider/types/types";
 
-export default new class TanaNodeAttributeInspector {
+export default new class TanaNodeAttributeInspector extends TanaConstants{
 
     public hasValidTanaNodeContent(node:HTMLElement) {
+        const editableContentSelector = this.classSelector(this.getEditableNodeCssClass())
         if (!this.isValidClassNode(node)) return false
-        if (!node.classList.contains(BULLET_CONTENT_CSS_CLASS)) return false
-        if (! node.querySelector(EDITABLE_BLOCK_CSS_SELECTOR)) return false
+        if (!node.classList.contains(this.getContentNodeCssClass())) return false
+        if (! node.querySelector(editableContentSelector)) return false
         return true
     }
 
@@ -15,10 +15,12 @@ export default new class TanaNodeAttributeInspector {
         if (!this.isValidClassNode(node)) return false
         return !!node.querySelector(".contentSide.expanded")
     }
+
     public hasPanelHeaderAttribute(node:HTMLElement) {
         if (!this.isValidClassNode(node)) return false
-        return node.getAttribute(TANA_PANEL_HEADER_ATTRIBUTE) != null
+        return node.getAttribute(this.getTanaPanelHeaderAttribute()) != null
     }
+
     public hasDirectTemplateWithName(tanaNode:TanaNode,templateName:string) {
         if (!tanaNode) return false
         if (!tanaNode.templates) return false
@@ -27,7 +29,6 @@ export default new class TanaNodeAttributeInspector {
         }
         return false
     }
-
 
     public hasDescendantWithTemplateName(tanaNode:TanaNode,templateName:string) {
         if (!tanaNode || !tanaNode.templates) return false 
