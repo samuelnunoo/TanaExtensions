@@ -7,12 +7,14 @@ import PanelObserverRegistrationHandler from "./PanelObserverRegistrationHandler
 import { PanelContainerType, PanelEvenTypeEnum } from "./types/types";
 import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
 import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector";
+import OnDomRenderCompleteEvent from "../TanaModuleLoader/types/OnDomRenderCompleteEvent";
 
 export default class PanelEventPublisher extends TanaPublisher<TanaDomPanelEventPublisher> {
 
     getInitRequirements(): InitEvent[] {
         return [
-            DomNodePublisherInitEvent
+            DomNodePublisherInitEvent,
+            OnDomRenderCompleteEvent,
         ];
     }
     

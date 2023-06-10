@@ -34,8 +34,8 @@ function panelHeaderChangeMutationHandler() {
 
     const createPanelHeaderMutationRecord = () => {
         return new Mock<MutationRecord>()
-            .setup(instance => instance.addedNodes)
-            .returns(toNodeList(document,[templateContainer(document)]))
+            .setup(instance => instance.target)
+            .returns(templateContainer(document)
             .setup(instance => instance.target)
             .returns(panelWithAncestors(document))
             .setup(instance => instance.removedNodes)

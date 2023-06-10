@@ -53,11 +53,11 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
         if (!wrapperNode) return
         const nodeId = wrapperNode.id
         if (!nodeId) return
-        const tanaNode = TanaStateProvider.getNodeWithId(nodeId)
+        const tanaNode = TanaStateProvider.getNodeWithId(nodeId).extract()
         if (!tanaNode) return
         this.mediator.invokeNodeEvent({
             nodeElement:panelHeaderNode,
-            tanaNode:tanaNode.extract()!,
+            tanaNode:tanaNode,
             isHeaderNode:true,
             panel,
             nodeEventType,

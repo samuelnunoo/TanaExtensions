@@ -12,8 +12,6 @@ export default class PanelMutationHandler {
         autoBind(this)
     }
     
- 
-
     /*
     Here the mutation.target is the panelHeader and the desired mutations are templateButtons 
     */
@@ -98,9 +96,7 @@ export default class PanelMutationHandler {
                 )
             })
     }
-
-
-
+    
     private invokePanelEventsFromPanelContainer(panelContainer:HTMLElement,isRemoval:boolean) {
         const panels = TanaDomNodeProvider.getDescendantPanels(panelContainer)
         panels.forEach(panel => this.invokePanelEvent(panel,panelContainer,isRemoval))

@@ -16,6 +16,7 @@ export default new class PanelObserverRegistrationHandler extends TanaConstants 
         panelStateHandler.removeDockObserver(dock)
         const mutationObserver = new MutationObserver(panelMutationHandler.handleDockChildListMutationEvent)
         panelStateHandler.addDockObserver(dock,mutationObserver)
+        mutationObserver.observe(dock, {childList: true})
         const panelContainer = TanaDomNodeProvider.getPanelContainerFromDock(dock)
         if (!panelContainer) throw Error("Could not retrieve panel container from dock")
         this.observeDockPanelContainers([panelContainer],panelMutationHandler,panelStateHandler)

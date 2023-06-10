@@ -30,12 +30,12 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
     This method provides all of the nodes with the BulletAndContent class
     which in Tana wraps the editable data
      */
-    public  getAllContentNodesOnPage(dom:Document): HTMLElement[] {
-        const bulletAndContent = this.classSelector(this.getContentNodeCssClass())
-        return Array.from(dom.querySelectorAll(bulletAndContent)) as HTMLElement[]
+    public getAllContentNodesOnPage(dom:Document): HTMLElement[] {
+        const bulletAndContentCssSelector = this.classSelector(this.getContentNodeCssClass())
+        return Array.from(dom.querySelectorAll(bulletAndContentCssSelector)) as HTMLElement[]
     }
 
-    public  getWrapperNodeFromAncestor(ancestor:HTMLElement) {
+    public getWrapperNodeFromAncestor(ancestor:HTMLElement) {
         if (!ancestor) return
         const wrapperAndMenu = this.classSelector(this.getTanaWrapperCssClass())
         return ancestor.querySelector(wrapperAndMenu)
@@ -45,7 +45,7 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
     This method provides the panel header node from a panel
     where the panel header is the main title block (title text and template tags) you see on any panel.
     */
-    public  getPanelHeaderFromAncestor(ancestor:HTMLElement) {
+    public getPanelHeaderFromAncestor(ancestor:HTMLElement) {
         if (!ancestor) return
         const panelHeader = this.attributeSelector(this.getTanaPanelHeaderAttribute())
         return ancestor.querySelector(panelHeader) as HTMLElement
@@ -60,35 +60,35 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         return wrapperNode.querySelector("div")
     }
 
-    public  getAllContentNodesOnPanel(panel:HTMLElement) {
-        const bulletAndContent = this.classSelector(this.getContentNodeCssClass())
-        return Array.from(panel.querySelectorAll(bulletAndContent)) as HTMLElement[]
+    public getAllContentNodesOnPanel(panel:HTMLElement) {
+        const bulletAndContentSelector = this.classSelector(this.getContentNodeCssClass())
+        return Array.from(panel.querySelectorAll(bulletAndContentSelector)) as HTMLElement[]
     }
 
     /*
     This method takes a descendant of a content node and tries to find its
     BulletAndContent ancestor
      */
-    public  getContentNodeFromDescendant(descendant:HTMLElement) {
-        const bulletAndContent = this.classSelector(this.getContentNodeCssClass())
-        return descendant.closest(bulletAndContent)
+    public getContentNodeFromDescendant(descendant:HTMLElement) {
+        const bulletAndContentSelector = this.classSelector(this.getContentNodeCssClass())
+        return descendant.closest(bulletAndContentSelector)
     }
 
-    public  getEditableNodeFromAncestor(ancestor:HTMLElement) {
-        const bulletAndContent = this.classSelector(this.getContentNodeCssClass())
-        return ancestor.querySelector(bulletAndContent)
+    public getEditableNodeFromAncestor(ancestor:HTMLElement) {
+        const bulletAndContentSelector = this.classSelector(this.getContentNodeCssClass())
+        return ancestor.querySelector(bulletAndContentSelector)
     }
 
     /*
     This method takes a descendant of a panel and returns
     the panel it belongs to
      */
-    public  getPanelFromDescendant(node: HTMLElement) {
+    public getPanelFromDescendant(node: HTMLElement) {
         const panelSelector = this.attributeSelector(this.getPanelAttribute())
         return node.closest(panelSelector)
     }
 
-    public  getAllContentNodesOnPageAsMap() {
+    public getAllContentNodesOnPageAsMap() {
         const map:Map<string,HTMLElement> = new Map()
         const domNodes = this.getAllContentNodesOnPage(document)
         domNodes.forEach(domNode => {
@@ -98,16 +98,16 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         return map
     }
 
-    public  getIdFromElement(element:HTMLElement){
-       const bulletAndContent = this.classSelector(this.getContentNodeCssClass())
-       const wrapperSelector = this.classSelector(this.getTanaWrapperCssClass())
-       if (!element.classList.contains(bulletAndContent) && !element.classList.contains(wrapperSelector)) return null
+    public getIdFromElement(element:HTMLElement){
+       if (!this.elementHasContentNodeClass(element) && !this.elementHasWrapperClass(element)) return null
        const dataId = element.getAttribute("data-id") || element.id
        if (!dataId || dataId == "") return null
        return dataId!.split("|").pop()
     }
 
-    public  getNodeWithClassPrefixFromArray(elementArray:HTMLElement[],classPrefix:string) {
+  
+
+    public getNodeWithClassPrefixFromArray(elementArray:HTMLElement[],classPrefix:string) {
         for (const element of elementArray) {
             if (!('classList' in element)) continue
             for (const classItem of Array.from(element.classList)) {
@@ -117,14 +117,12 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         return null
     }
 
-    public  getContentNodeFromArray(nodes:HTMLElement[]) {
-        const bulletAndContent = this.classSelector(this.getContentNodeCssClass())
-        return this.getNodeWithClassFromArray(nodes,bulletAndContent)
+    public getContentNodeFromArray(nodes:HTMLElement[]) {
+        return this.getNodeWithClassFromArray(nodes,this.getContentNodeCssClass())
     }
 
     public getExpandedNodeFromArray(nodes:HTMLElement[]){
-        const expandedNode = this.classSelector(this.getExpandedNodeCssClass())
-        return this.getNodeWithClassFromArray(nodes,expandedNode)
+        return this.getNodeWithClassFromArray(nodes,this.getExpandedNodeCssClass())
     }
 
     private getNodeWithClassFromArray(elementArray:HTMLElement[],className:string) {
@@ -133,6 +131,14 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
             if (element.classList.contains(className)) return element
         }
         return null
+    }
+
+    private elementHasWrapperClass(element: HTMLElement) {
+        return element.classList.contains(this.getTanaWrapperCssClass());
+    }
+
+    private elementHasContentNodeClass(element: HTMLElement) {
+        return element.classList.contains(this.getContentNodeCssClass());
     }
 
 }
