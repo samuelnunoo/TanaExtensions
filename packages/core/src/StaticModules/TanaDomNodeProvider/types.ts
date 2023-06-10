@@ -6,6 +6,22 @@ export default abstract class TanaConstants {
         return "wrapEditableAndMenu"
     }
 
+    protected getDataRoleAttribute() {
+        return "data-role"
+    }
+
+    protected getMainPanelContainerAttributeValue() {
+        return "layout-builder"
+    }
+
+    protected getDockContainerAttributeSelector() {
+        return '[data-role="layout-and-docks"]'
+    }
+
+    protected getMainDockAttributeSelector() {
+        return 'data-role="layout-builder"'
+    }
+
     protected getBulletModulePrefix() {
         return "Bullet-module"
     }
@@ -30,9 +46,18 @@ export default abstract class TanaConstants {
         return "data-is-panel-header"
     }
 
+    protected getTopDockAttributeValue() {
+        return "top"
+    }
+
+    protected getRightDockAttributeValue() {
+        return "right"
+    }
+    
     protected getTanaDockAttribute() {
         return "data-dock"
     }
+
 
     protected getContentNodeCssClass() {
         return "bulletAndContent"

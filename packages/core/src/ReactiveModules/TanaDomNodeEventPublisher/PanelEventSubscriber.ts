@@ -20,10 +20,10 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
     onPanelEvent(event:RuntimeEventInstance<PanelEventMessage>) {
         const {panel,panelEventType} = event.message
         const contentNodes = TanaDomNodeProvider.getAllContentNodesOnPanel(panel)
-        const headerNode = TanaDomNodeProvider.getPanelHeaderFromAncestor(panel)
+        const panelHeaderNode = TanaDomNodeProvider.getPanelHeaderFromAncestor(panel)
         const nodeEventType = NodeHelper.getNodeEventType(panelEventType)
         
-        this.createEventForPanelHeaderNode(headerNode as HTMLElement,panel,nodeEventType)
+        this.createEventForPanelHeaderNode(panelHeaderNode as HTMLElement,panel,nodeEventType)
         contentNodes.forEach(nodeElement => {
             const nodeId = TanaDomNodeProvider.getIdFromElement(nodeElement)
             if (!nodeId) return
@@ -41,8 +41,13 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
         })
     }
 
+    onDependenciesInitComplete() {
+        this.subscribeToRuntimeEvent<PanelEventMessage>(PanelEvent,this.onPanelEvent.bind(this))
+    }
     
-    private createEventForPanelHeaderNode(panelHeaderNode:HTMLElement|null|undefined,panel:HTMLElement,nodeEventType:NodeEventTypeEnum) {
+    private createEventForPanelHeaderNode(
+        panelHeaderNode:HTMLElement|null|undefined,panel:HTMLElement,nodeEventType:NodeEventTypeEnum
+    ) {
         if (!panelHeaderNode) return
         const wrapperNode =  TanaDomNodeProvider.getWrapperNodeFromAncestor(panelHeaderNode)
         if (!wrapperNode) return
@@ -59,11 +64,6 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
             nodeType: NodeElementType.BulletAndContent,
             nodeId,
         })
-    }
-
-
-    onDependenciesInitComplete() {
-        this.subscribeToRuntimeEvent<PanelEventMessage>(PanelEvent,this.onPanelEvent.bind(this))
     }
 
 }

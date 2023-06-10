@@ -2,7 +2,6 @@ import TanaDomPanelEventPublisher from "."
 import PanelObserverRegistrationHandler from "./PanelObserverRegistrationHandler"
 import MutationRecordAttributeInspector from "../../StaticModules/MutationRecordAttributeInspector"
 import { Maybe } from "purify-ts"
-import { TANA_DATA_PANEL_CSS_SELECTOR, TANA_DATA_PANEL_ATTRIBUTE } from "./types/constants"
 import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider"
 
 export default class PanelMutationHandler {

@@ -1,7 +1,7 @@
 import TanaConstants from "../TanaDomNodeProvider/types";
 import {TanaNode} from "../TanaStateProvider/types/types";
 
-export default new class TanaNodeAttributeInspector extends TanaConstants{
+export default new class TanaNodeAttributeInspector extends TanaConstants {
 
     public hasValidTanaNodeContent(node:HTMLElement) {
         const editableContentSelector = this.classSelector(this.getEditableNodeCssClass())
@@ -9,6 +9,22 @@ export default new class TanaNodeAttributeInspector extends TanaConstants{
         if (!node.classList.contains(this.getContentNodeCssClass())) return false
         if (! node.querySelector(editableContentSelector)) return false
         return true
+    }
+
+    public isMainPanelContainer(paneContainer:HTMLElement) {
+        return paneContainer.getAttribute(this.getDataRoleAttribute()) == this.getMainPanelContainerAttributeValue()
+    }
+
+    public isTopPanelContainer(panelContainer:HTMLElement) {
+        return panelContainer.getAttribute(this.getTanaDockAttribute()) == this.getTopDockAttributeValue()
+    }
+
+    public isRightPanelContainer(panelContainer:HTMLElement) {
+        return panelContainer.getAttribute(this.getTanaDockAttribute()) == this.getRightDockAttributeValue()
+    }
+
+    public getPanelId(panel:HTMLElement) {
+        return  panel.getAttribute(this.getPanelAttribute())
     }
 
     public isExpandedNode(node:HTMLElement) {

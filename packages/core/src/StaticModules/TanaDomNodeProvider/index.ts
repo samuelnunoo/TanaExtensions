@@ -1,6 +1,19 @@
 import TanaConstants from "./types";
 
 export default new class TanaDomNodeProvider extends TanaConstants  {
+
+    public getDockContainer(doc:Document) {
+        return doc.querySelector(this.getDockContainerAttributeSelector())
+    }
+
+    public getMainDock(doc:Document) {
+        return doc.querySelector(this.getMainDockAttributeSelector())
+    }
+
+    public getPanelContainerFromDock(dock:HTMLElement) {
+        return dock.querySelector("div")
+    }
+
     /*
     This method provides all of the nodes with the BulletAndContent class
     which in Tana wraps the editable data
@@ -25,9 +38,6 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         const panelHeader = this.attributeSelector(this.getTanaPanelHeaderAttribute())
         return ancestor.querySelector(panelHeader) as HTMLElement
     }
-
-
- 
 
     public  getAllContentNodesOnPanel(panel:HTMLElement) {
         const bulletAndContent = this.classSelector(this.getContentNodeCssClass())

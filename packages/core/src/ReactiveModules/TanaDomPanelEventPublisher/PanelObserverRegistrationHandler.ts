@@ -1,6 +1,3 @@
-import {
-    TANA_DATA_PANEL_ATTRIBUTE
-} from "./types/constants";
 import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
 import { Maybe } from "purify-ts/Maybe";
 import PanelStateHandler from "./PanelStateHandler";
