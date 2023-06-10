@@ -1,0 +1,4 @@
+div[data-role="panel-toolbar"] {
+    z-index: 10 !important;
+}
+

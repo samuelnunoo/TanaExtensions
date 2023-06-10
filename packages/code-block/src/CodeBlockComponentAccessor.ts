@@ -2,8 +2,8 @@ import {
     CODE_BLOCK_CONTAINER_CSS_SELECTOR,
     CODE_BLOCK_INPUT_CSS_SELECTOR,
     CODE_BLOCK_LINTING_CSS_SELECTOR
-} from "./types";
-import TanaDomNodeProvider from "tana-extensions-core/src/TanaDOMNodeProvider";
+} from "./types/types";
+import TanaDomNodeProvider from "../../core/src/StaticModules/TanaDomNodeProvider";
 
 export default new class CodeBlockComponentAccessor {
     public  getCodeBlockContainerFromEvent(event:Event) {
@@ -13,7 +13,7 @@ export default new class CodeBlockComponentAccessor {
 
     public  getCodeBlockTanaNodeFromEvent(event:Event) {
         const node = event.target as HTMLElement
-        return TanaDomNodeProvider.getBlockNodeFromDescendant(node)
+        return TanaDomNodeProvider.getContentNodeFromDescendant(node)
     }
 
     public  getCodeBlockInputElementFromEvent(event:Event) {

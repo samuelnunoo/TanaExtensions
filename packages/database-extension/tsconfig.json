@@ -1,0 +1,10 @@
+{
+  "extends": "config/src/tsconfigBase.json",
+  "compilerOptions": {
+    "outDir": "./build",
+    "types": ["@types/lokijs"],
+  },
+  "include": [
+    "./src"
+  ]
+}

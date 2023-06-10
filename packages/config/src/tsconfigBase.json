@@ -1,0 +1,22 @@
+{
+ 
+    "compilerOptions": {
+        "target": "es6",
+        "module": "es6",
+        "lib": [ "es2017","dom"],
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "types": ["@types/sinon"],
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "strict": true,
+        "jsx": "react",
+        "outDir": "build"
+    },
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+      ]
+}

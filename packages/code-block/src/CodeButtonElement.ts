@@ -1,4 +1,4 @@
-import {CODE_BUTTON_CSS_CLASS} from "./types";
+import {CODE_BUTTON_CSS_CLASS} from "./types/types";
 
 
 export default new class CodeButtonElement {

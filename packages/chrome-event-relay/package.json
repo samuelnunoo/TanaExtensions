@@ -1,0 +1,18 @@
+{
+  "name": "chrome-event-relay",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Samuel Nunoo <38366722+samuelnunoo@users.noreply.github.com>",
+  "homepage": "https://github.com/samuelnunoo/TanaExtensions#readme",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuelnunoo/TanaExtensions.git"
+  },
+  "scripts": {
+    "test": "ava"
+  },
+  "bugs": {
+    "url": "https://github.com/samuelnunoo/TanaExtensions/issues"
+  }
+}

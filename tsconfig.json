@@ -1,11 +1,4 @@
+
 {
-  "compilerOptions": {
-    "target": "es5",
-    "module": "esnext",
-    "lib": ["es5", "es6", "dom"],
-    "sourceMap": true,
-    "rootDir": "./",
-    "esModuleInterop": true,
-    "strict": true
-  }
+  "extends": "config/src/tsconfigBase.json"
 }

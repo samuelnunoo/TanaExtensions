@@ -1,0 +1,15 @@
+
+{
+  "extends": "config/src/tsconfigBase.json",
+  "ts-node": {
+    // This can be omitted when using ts-patch
+    "compiler": "ttypescript"
+  },
+  "compilerOptions": {
+    "outDir": "./build",
+    "plugins": [{ "transform": "ts-auto-mock/transformer" }]
+  },
+  "include": [
+    "./src"
+  ]
+}

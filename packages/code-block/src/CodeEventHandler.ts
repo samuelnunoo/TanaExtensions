@@ -2,10 +2,10 @@ import CodeBlockComponentAccessor from "./CodeBlockComponentAccessor";
 import {
     CODE_BLOCK_INPUT_CSS_SELECTOR,
     CODE_BLOCK_LINTING_CSS_SELECTOR
-} from "./types";
+} from "./types/types";
 import highlightJS from "highlight.js"
-import TanaDomNodeProvider from "tana-extensions-core/src/TanaDOMNodeProvider";
-import TanaStateProvider from "tana-extensions-core/src/TanaStateProvider";
+import TanaDomNodeProvider from "../../core/src/StaticModules/TanaDomNodeProvider";
+import TanaStateProvider from "../../core/src/StaticModules/TanaStateProvider";
 
 export default new class CodeEventHandler {
     public  registerBaseEventsForCodeBlock(codeBlockContainer:HTMLElement) {
@@ -49,7 +49,7 @@ export default new class CodeEventHandler {
             lintingElement!.textContent = inputElement.value
             const tanaElement = CodeBlockComponentAccessor.getCodeBlockTanaNodeFromEvent(event)
             const id = TanaDomNodeProvider.getIdFromElement(tanaElement as HTMLElement)
-            const tanaNode = TanaStateProvider.getNodeWithId(id!)
+            const tanaNode = TanaStateProvider.getNodeWithId(id!).extract()
             tanaNode!.name = inputElement.value
             this.invokeRefreshLintingElementHighlightsEvent(event)
             this.invokeUpdateCodeBlockSizeEvent(event)

@@ -1,0 +1,18 @@
+{
+  "name": "extension-excalidraw",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@excalidraw/excalidraw": "^0.15.2",
+    "@types/react-dom": "^18.2.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tana-extensions-core": "*",
+    "config":"*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.7",
+    "@types/react-dom": "^18.2.4"
+  }
+}
