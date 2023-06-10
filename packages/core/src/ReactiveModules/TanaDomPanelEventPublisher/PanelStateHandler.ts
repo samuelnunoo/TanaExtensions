@@ -1,24 +1,33 @@
+import { Maybe } from "purify-ts"
 import PanelMutationHandler from "./PanelMutationHandler"
 
 
 export default class PanelStateHandler {
-    private panelObservers:Map<HTMLElement,MutationObserver> = new Map()
     private panelHeaderObservers:Map<HTMLElement,MutationObserver> = new Map()
     private panelContainerObservers: Map<HTMLElement,MutationObserver> = new Map()
-    private mainDockObserver: MutationObserver
+    private dockObservers: Map<HTMLElement,MutationObserver> = new Map()
     private dockContainerObserver: MutationObserver
 
     constructor(panelMutationHandler:PanelMutationHandler) {
-        this.mainDockObserver = new MutationObserver(panelMutationHandler.panelIdChangeMutationHandler)
         this.dockContainerObserver = new MutationObserver(panelMutationHandler.handleDockContainerChildListMutationEvent)
-    }
-
-    getMainDockObserver() {
-        return this.mainDockObserver
     }
 
     getDockContainerObserver() {
         return this.dockContainerObserver
+    }
+
+    getDockObserver(dock:HTMLElement) {
+        return this.dockObservers.get(dock)
+    }
+
+    addDockObserver(dock:HTMLElement, observer:MutationObserver) {
+        this.dockObservers.set(dock,observer)
+    }
+
+    removeDockObserver(dock:HTMLElement) {
+        Maybe.fromNullable(this.dockObservers.get(dock))
+        .map(observer => observer.disconnect())
+        this.dockObservers.delete(dock)
     }
 
     getPanelContainerObserver(panelContainer:HTMLElement) {
@@ -30,31 +39,25 @@ export default class PanelStateHandler {
     }
 
     removePanelContainerObserver(panelContainer:HTMLElement) {
+        Maybe.fromNullable(this.panelContainerObservers.get(panelContainer))
+            .map(observer => observer.disconnect())
         this.panelContainerObservers.delete(panelContainer)
-    }
-
-    getPanelObserver(panel:HTMLElement) {
-        return this.panelObservers.get(panel)
-    }
-
-    addPanelObserver(panel:HTMLElement,observer:MutationObserver) {
-        this.panelObservers.set(panel,observer)
-    }
-
-    removePanelObserver(panel:HTMLElement) {
-        this.panelObservers.delete(panel)
     }
 
     getPanelHeaderObserver(panelHeader:HTMLElement) {
         return this.panelHeaderObservers.get(panelHeader)
     }
 
-    addPanelHeaderObserver(panelHeader:HTMLElement,observer:MutationObserver) {
-        this.panelHeaderObservers.set(panelHeader,observer)
+    addPanelHeaderObserver(panelContainer:HTMLElement,observer:MutationObserver) {
+        this.panelHeaderObservers.set(panelContainer,observer)
     }
 
-    removePanelHeaderObserver(panelHeader:HTMLElement) {
-        this.panelHeaderObservers.delete(panelHeader)
+    removePanelHeaderObserver(panelContainer:HTMLElement) {
+        Maybe.fromNullable(this.panelHeaderObservers.get(panelContainer))
+        .map(observer => observer.disconnect())
+        this.panelHeaderObservers.delete(panelContainer)
     }
+
+
 
 }

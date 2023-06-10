@@ -10,6 +10,14 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         return doc.querySelector(this.getMainDockAttributeSelector())
     }
 
+    public getViewPanelContainerFromDescendant(descendant:HTMLElement) {
+        return descendant.closest(this.classSelector(this.getViewPanelContainerCssClass()))
+    }
+
+    public getDescendantPanels(panelAncestor:HTMLElement) {
+        return Array.from(panelAncestor.querySelectorAll(this.attributeSelector(this.getPanelAttribute()))) as HTMLElement[]
+    }
+
     public getPanelContainerFromDock(dock:HTMLElement) {
         return dock.querySelector("div")
     }
@@ -41,6 +49,15 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         if (!ancestor) return
         const panelHeader = this.attributeSelector(this.getTanaPanelHeaderAttribute())
         return ancestor.querySelector(panelHeader) as HTMLElement
+    }
+
+    public getPanelHeaderTemplateContainerFromPanelContainer(panelContainer:HTMLElement) {
+        if (!panelContainer) return 
+        const panelHeader = this.getPanelHeaderFromAncestor(panelContainer)
+        if (!panelHeader) return 
+        const wrapperNode = panelHeader.querySelector(this.classSelector(this.getTanaWrapperCssClass()))
+        if (!wrapperNode) return 
+        return wrapperNode.querySelector("div")
     }
 
     public  getAllContentNodesOnPanel(panel:HTMLElement) {

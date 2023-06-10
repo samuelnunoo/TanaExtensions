@@ -10,6 +10,7 @@
     "@babel/preset-env": "^7.22.4",
     "@fluffy-spoon/substitute": "^1.208.0",
     "@types/jsdom": "^21.1.1",
+    "auto-bind": "^5.0.1",
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-jest": "^29.5.0",

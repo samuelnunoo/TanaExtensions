@@ -1,5 +1,5 @@
 import {Excalidraw} from "@excalidraw/excalidraw";
-import React, {ReactNode} from "react";
+import React from "react";
 import TanaDOMNodeDecorator from "../../core/src/StaticModules/TanaDomNodeDecorator";
 import TanaExtension from "tana-extensions-core/src/types/TanaExtension";
 import { InitEvent } from "tana-extensions-core/src/ReactiveModules/EventBus/types/Event";
@@ -16,7 +16,7 @@ import {array, Codec, unknown} from "purify-ts";
 import _ from "lodash";
 import _default from "@excalidraw/excalidraw/types/packages/excalidraw/example/initialData";
 import {createRoot, Root} from "react-dom/client";
-import {VIEW_CONTAINER_CSS_SELECTOR} from "tana-extensions-core/src/StaticModules/TanaDomNodeDecorator/types";
+import TanaDomNodeProvider from "tana-extensions-core/src/StaticModules/TanaDomNodeProvider";
 
 export default class ExcalidrawExtension extends TanaExtension {
 
@@ -99,9 +99,9 @@ export default class ExcalidrawExtension extends TanaExtension {
                         onWheelCapture: (e) =>  {
                             if (!hasFocus) e.stopPropagation();
                         },
-                        onClick: (e) => hasFocus = true,
+                        onClick: (_) => hasFocus = true,
                         onBlur: ({relatedTarget}) => {
-                            if (!relatedTarget || !(relatedTarget as HTMLElement).closest(VIEW_CONTAINER_CSS_SELECTOR)) {
+                            if (!relatedTarget || TanaDomNodeProvider.getViewPanelContainerFromDescendant(relatedTarget)) {
                                 hasFocus = false
                             }
                         }

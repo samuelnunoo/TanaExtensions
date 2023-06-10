@@ -1,3 +1,4 @@
+import { Maybe } from "purify-ts";
 import TanaConstants from "../TanaDomNodeProvider/TanaConstants";
 import {TanaNode} from "../TanaStateProvider/types/types";
 
@@ -16,16 +17,22 @@ export default new class TanaNodeAttributeInspector extends TanaConstants {
         && !!element.closest(this.classSelector(this.getTanaWrapperCssClass()))
     }
 
-    public isMainPanelContainer(paneContainer:HTMLElement) {
-        return paneContainer.getAttribute(this.getDataRoleAttribute()) == this.getMainPanelContainerAttributeValue()
+    public isMainPanelContainer(panelContainer:HTMLElement) {
+        return Maybe.fromNullable(panelContainer.parentElement)
+            .map(dock => dock.getAttribute(this.getDataRoleAttribute()) == this.getMainPanelContainerAttributeValue())
+            .orDefault(false)
     }
 
     public isTopPanelContainer(panelContainer:HTMLElement) {
-        return panelContainer.getAttribute(this.getTanaDockAttribute()) == this.getTopDockAttributeValue()
+        return Maybe.fromNullable(panelContainer.parentElement)
+            .map(dock => dock.getAttribute(this.getTanaDockAttribute()) == this.getTopDockAttributeValue())
+            .orDefault(false)
     }
 
     public isRightPanelContainer(panelContainer:HTMLElement) {
-        return panelContainer.getAttribute(this.getTanaDockAttribute()) == this.getRightDockAttributeValue()
+        return Maybe.fromNullable(panelContainer.parentElement)
+            .map(dock => dock.getAttribute(this.getTanaDockAttribute()) == this.getRightDockAttributeValue())
+            .orDefault(false)
     }
 
     public getPanelId(panel:HTMLElement) {

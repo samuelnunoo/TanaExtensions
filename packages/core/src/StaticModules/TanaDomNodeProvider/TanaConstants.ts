@@ -5,6 +5,10 @@ export default abstract class TanaConstants {
         return "wrapEditableAndMenu"
     }
 
+    protected getViewPanelContainerCssClass() {
+        return "view-container"
+    }
+
     protected getPanelHeaderTemplateContainerPrefix() {
         return "PanelHeader-module_templates"
     }
@@ -22,7 +26,7 @@ export default abstract class TanaConstants {
     }
 
     protected getMainDockAttributeSelector() {
-        return 'data-role="layout-builder"'
+        return '[data-role="layout-builder"]'
     }
 
     protected getBulletModulePrefix() {

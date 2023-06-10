@@ -3,7 +3,6 @@ import {InitEvent} from "../EventBus/types/Event";
 import TanaDomPanelEventPublisher from "./index";
 import PanelEvent, {PanelEventMessage} from "./types/PanelEvent";
 import DomNodePublisherInitEvent from "../TanaDomNodeEventPublisher/types/DomNodePublisherInitEvent";
-import { Maybe } from "purify-ts";
 import PanelObserverRegistrationHandler from "./PanelObserverRegistrationHandler";
 import { PanelContainerType, PanelEvenTypeEnum } from "./types/types";
 import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
@@ -41,39 +40,22 @@ export default class PanelEventPublisher extends TanaPublisher<TanaDomPanelEvent
     private initObservers() {
         const dockContainer = TanaDomNodeProvider.getDockContainer(document) as HTMLElement
         if (!dockContainer) throw Error("dockContainer not Found")
-        const mainDock = TanaDomNodeProvider.getMainDock(document)as HTMLElement
-        if (!mainDock) throw Error("mainDock not Found")
-        
-        const docks = Array.from(dockContainer.childNodes)as HTMLElement[]
         const panelStateHandler = this.mediator.getPanelStateHandler()
         const panelMutationHandler = this.mediator.getPanelMutationHandler()
+        PanelObserverRegistrationHandler.observeDockContainer(panelStateHandler,panelMutationHandler,dockContainer)
 
-        PanelObserverRegistrationHandler.observeDockContainer(panelStateHandler,dockContainer)
-        PanelObserverRegistrationHandler.observeMainDockPanel(panelStateHandler,mainDock)
-        PanelObserverRegistrationHandler.observeDescendantsOfDocks(docks,panelStateHandler,panelMutationHandler)
     }
 
     private invokeInitialPanelEvents() {
         const dockContainer = TanaDomNodeProvider.getDockContainer(document) as HTMLElement
         if (!dockContainer) throw Error("DockContainer not found")
         const docks = Array.from(dockContainer.childNodes) as HTMLElement[]
-
         docks.forEach(dock => {
-            Maybe.fromNullable(TanaDomNodeProvider.getPanelContainerFromDock(dock) as HTMLElement)
-                .map(panelContainer => ({panelContainer,panels:Array.from(panelContainer!.childNodes) as HTMLElement[]}))
-                .map(({panels,panelContainer}) => panels.forEach(panel => this.invokeInitialPanelEvent(panel,panelContainer)))
-        })
-    }
-
-    private invokeInitialPanelEvent(panel:HTMLElement,panelContainer:HTMLElement) {
-        Maybe.fromNullable(TanaNodeAttributeInspector.getPanelId(panel))
-            .map(dataPanelId => {
-                this.dispatchPanelEvent(panel,panelContainer,dataPanelId,false)
+            this.mediator.getPanelMutationHandler().invokeEventFromDock(dock,false)
         })
     }
 
     private getPanelContainerType(panelContainer:HTMLElement): PanelContainerType|null {
-
         if (TanaNodeAttributeInspector.isMainPanelContainer(panelContainer)) {
             return PanelContainerType.MainPanelContainer
         }

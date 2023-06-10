@@ -1,20 +1,20 @@
 export type MutationHandler = (mutations:MutationRecord[], observer:MutationObserver) => any 
 
 export enum PanelEventEnum {
-    PanelIdChangeEvent,
-    PanelAddedEvent,
-    PanelRemovedEvent,
+    PanelIdChangeEvent = "panelIdChangeEvent",
+    PanelAddedEvent = "panelAddedEvent",
+    PanelRemovedEvent = "panelRemovedEvent"
 }
 
 export enum PanelContainerType {
-    MainPanelContainer,
-    TopPanelContainer,
-    RightPanelContainer,
+    MainPanelContainer = "mainPanelContainer",
+    TopPanelContainer = "topPanelContainer",
+    RightPanelContainer = "rightPanelContainer"
 }
 
 export enum PanelEvenTypeEnum {
-    Insertion,
-    Deletion,
+    Insertion = "insertion",
+    Deletion = "deletion"
 }
 
 export interface PanelEvent {

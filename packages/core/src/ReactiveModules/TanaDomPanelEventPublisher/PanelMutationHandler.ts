@@ -3,37 +3,32 @@ import PanelObserverRegistrationHandler from "./PanelObserverRegistrationHandler
 import { Maybe } from "purify-ts"
 import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider"
 import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector"
-
+import autoBind from "auto-bind"
 export default class PanelMutationHandler {
     mediator:TanaDomPanelEventPublisher
 
     constructor(mediator:TanaDomPanelEventPublisher) {
         this.mediator = mediator
+        autoBind(this)
     }
     
-    //@todo Figure out if and when this is needed
-    public panelIdChangeMutationHandler(mutationList:MutationRecord[]) {
-        for (const mutation of mutationList) {
-            console.log("invokePanelIdChangeEvent: ",mutation)
-        }
-    }
+ 
 
     /*
     Here the mutation.target is the panelHeader and the desired mutations are templateButtons 
     */
     public panelHeaderChangeMutationHandler(mutationList:MutationRecord[]) {
         for (const mutation of mutationList) {
-            if (!TanaNodeAttributeInspector.elementIsDescendantOfPanelHeaderTemplateContainer(mutation.target as HTMLElement)) return 
-            const isRemoval = mutation.removedNodes.length > mutation.addedNodes.length
-            const element = isRemoval ? mutation.removedNodes[0] : mutation.addedNodes[0]
-            const panel = TanaDomNodeProvider.getPanelFromDescendant(element as HTMLElement) as HTMLElement
+            const templateContainer = mutation.target
+            const panel = TanaDomNodeProvider.getPanelFromDescendant(templateContainer as HTMLElement) as HTMLElement
             if (!panel) return
             const panelContainer = panel.parentElement
             if (!panelContainer) return
             const dataPanelId =  TanaNodeAttributeInspector.getPanelId(panel)
             if (!dataPanelId) return
 
-            this.mediator.dispatchPanelEvent(panel,panelContainer,dataPanelId,isRemoval)
+            this.mediator.dispatchPanelEvent(panel,panelContainer,dataPanelId,true)
+            this.mediator.dispatchPanelEvent(panel,panelContainer,dataPanelId,false)
         }
     }
 
@@ -46,44 +41,70 @@ export default class PanelMutationHandler {
             const addedDocks = Array.from(mutation.addedNodes) as HTMLElement[]
             const panelStateHandler = this.mediator.getPanelStateHandler()
 
-            PanelObserverRegistrationHandler.unobserveDescendantsOfDocks(removedDocks,panelStateHandler)
-            PanelObserverRegistrationHandler.observeDescendantsOfDocks(addedDocks,panelStateHandler,this)
-            removedDocks.forEach(dock => this.invokeEventForDockDescendants(dock,true))
-            addedDocks.forEach(dock => this.invokeEventForDockDescendants(dock,false))
+            removedDocks.forEach(dock => {
+                PanelObserverRegistrationHandler.unObserveDock(panelStateHandler,dock)
+            })
+
+            addedDocks.forEach(dock => {
+                PanelObserverRegistrationHandler.observeDock(panelStateHandler,this,dock)
+            })
+
+            removedDocks.forEach(dock => {
+                this.invokeEventFromDock(dock,true)
+            })
+
+            addedDocks.forEach(dock => {
+                this.invokeEventFromDock(dock,false)
+            })
         }
     }
 
     public handlePanelContainerChildListMutationEvent(mutationList: MutationRecord[]) {
-        const panelStateHandler = this.mediator.getPanelStateHandler()
-        const panelMutationHandler = this.mediator.getPanelMutationHandler()
         for (const mutation of mutationList) {
             const removedPanels = Array.from(mutation.removedNodes) as HTMLElement[]
             const addedPanels = Array.from(mutation.addedNodes) as HTMLElement[]
+            const panelContainer = mutation.target as HTMLElement
 
-            PanelObserverRegistrationHandler.unObservePanels(removedPanels,panelStateHandler)
-            PanelObserverRegistrationHandler.observePanels(addedPanels, panelMutationHandler,panelStateHandler)
-            removedPanels.forEach(panel => this.invokeEventForPanel(panel,true))
-            addedPanels.forEach(panel => this.invokeEventForPanel(panel,false))
+            removedPanels.forEach(panel => this.invokePanelEvent(panel,panelContainer,true))
+            addedPanels.forEach(panel => this.invokePanelEvent(panel,panelContainer,false))
         }
     }
 
-    private invokeEventForPanel(panel:HTMLElement,isRemoval:boolean) {
-        const panelContainer = panel.parentElement
-        if (!panelContainer) throw Error("Could not find PanelContainer from Panel")
+    public handleDockChildListMutationEvent(mutationList: MutationRecord[]) {
+        const panelStateHandler = this.mediator.getPanelStateHandler()
+        for (const mutation of mutationList) {
+            const addedPanelContainers = Array.from(mutation.addedNodes) as HTMLElement[]
+            const removedPanelContainers = Array.from(mutation.removedNodes) as HTMLElement[]
 
+            PanelObserverRegistrationHandler.unObserveDockPanelContainers(removedPanelContainers,panelStateHandler)
+            PanelObserverRegistrationHandler.observeDockPanelContainers(addedPanelContainers,this,panelStateHandler)
+
+            addedPanelContainers.forEach(panelContainer => this.invokePanelEventsFromPanelContainer(panelContainer,false))
+            removedPanelContainers.forEach(panelContainer => this.invokePanelEventsFromPanelContainer(panelContainer,true))
+        }
+    }
+
+    public invokeEventFromDock(dock: HTMLElement,isRemoval:boolean) {
+        const panelContainer = TanaDomNodeProvider.getPanelContainerFromDock(dock)
+        if (!panelContainer) throw Error("Can not find Panel Container from Dock")
+        this.invokePanelEventsFromPanelContainer(panelContainer, isRemoval)
+    }
+
+    private invokePanelEvent(panel: HTMLElement, panelContainer: HTMLElement, isRemoval: boolean) {
         Maybe.fromNullable(TanaNodeAttributeInspector.getPanelId(panel))
             .map(dataPanelId => {
                 this.mediator.dispatchPanelEvent(
-                    panel, panelContainer, dataPanelId, isRemoval,
+                    panel, panelContainer, dataPanelId, isRemoval
                 )
             })
     }
 
-    private invokeEventForDockDescendants(dock:HTMLElement,isRemoval:boolean) {
-        const panelContainer = TanaDomNodeProvider.getPanelContainerFromDock(dock)
-        if (!panelContainer) throw Error("Cant find panelContainer for Dock")
-        const panels = Array.from(panelContainer.childNodes) as HTMLElement[]
-        panels.forEach(panel => this.invokeEventForPanel(panel,isRemoval))
+
+
+    private invokePanelEventsFromPanelContainer(panelContainer:HTMLElement,isRemoval:boolean) {
+        const panels = TanaDomNodeProvider.getDescendantPanels(panelContainer)
+        panels.forEach(panel => this.invokePanelEvent(panel,panelContainer,isRemoval))
     }
+
 
 }
