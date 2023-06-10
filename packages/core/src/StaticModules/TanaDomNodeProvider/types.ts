@@ -2,59 +2,59 @@
 
 export default abstract class TanaConstants {
 
-    getTanaWrapperCssClass() {
+    protected getTanaWrapperCssClass() {
         return "wrapEditableAndMenu"
     }
 
-    getBulletModulePrefix() {
+    protected getBulletModulePrefix() {
         return "Bullet-module"
     }
 
-    getContentSideCssClass() {
+    protected getContentSideCssClass() {
         return "contentSide"
     }
 
-    getPanelContentCssClass() {
+    protected getPanelContentCssClass() {
         return "panelContent"
     }
 
-    getNonTemplateCssClass() {
+    protected getNonTemplateCssClass() {
         return "nonTemplateContent"
     }
 
-    getTanaPanelHeaderPrefix() {
+    protected getTanaPanelHeaderPrefix() {
         return "PanelHeader-module_templates"
     }
 
-    getTanaPanelHeaderAttribute() {
+    protected getTanaPanelHeaderAttribute() {
         return "data-is-panel-header"
     }
 
-    getTanaDockAttribute() {
+    protected getTanaDockAttribute() {
         return "data-dock"
     }
 
-    getContentNodeCssClass() {
+    protected getContentNodeCssClass() {
         return "bulletAndContent"
     }
 
-    getEditableNodeCssClass() {
+    protected getEditableNodeCssClass() {
         return "editable"
     }
 
-    getPanelAttribute() {
+    protected getPanelAttribute() {
         return "data-panel-id"
     }
 
-    getExpandedNodeCssClass() {
+    protected getExpandedNodeCssClass() {
         return "expandedNodeContent"
     }
 
-    classSelector(classString:string) {
+    protected classSelector(classString:string) {
         return `.${classString}`
     }
 
-    attributeSelector(attribute:string){
+    protected attributeSelector(attribute:string){
         return `[${attribute}]`
     }
 

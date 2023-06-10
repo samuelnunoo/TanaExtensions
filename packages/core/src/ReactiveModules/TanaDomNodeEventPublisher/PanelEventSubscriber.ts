@@ -6,11 +6,9 @@ import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
 import TanaStateProvider from "../../StaticModules/TanaStateProvider";
 import NodeHelper from "./NodeHelper";
 import {NodeEventTypeEnum} from "./types/types";
-import {TANA_WRAPPER_CSS_SELECTOR} from "../../StaticModules/TanaDomNodeProvider/types";
 import TanaDomNodeEventModule from "./index";
 import OnDomRenderCompleteEvent from "../TanaModuleLoader/types/OnDomRenderCompleteEvent";
 import {NodeElementType} from "./types/NodeEvent";
-
 
 export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEventModule> {
     getInitRequirements(): InitEvent[] {
@@ -18,10 +16,11 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
             OnDomRenderCompleteEvent
         ]
     }
+    
     onPanelEvent(event:RuntimeEventInstance<PanelEventMessage>) {
         const {panel,panelEventType} = event.message
         const contentNodes = TanaDomNodeProvider.getAllContentNodesOnPanel(panel)
-        const headerNode = TanaDomNodeProvider.getPanelHeaderFromPanel(panel)
+        const headerNode = TanaDomNodeProvider.getPanelHeaderFromAncestor(panel)
         const nodeEventType = NodeHelper.getNodeEventType(panelEventType)
         
         this.createEventForPanelHeaderNode(headerNode as HTMLElement,panel,nodeEventType)
@@ -42,9 +41,10 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
         })
     }
 
+    
     private createEventForPanelHeaderNode(panelHeaderNode:HTMLElement|null|undefined,panel:HTMLElement,nodeEventType:NodeEventTypeEnum) {
         if (!panelHeaderNode) return
-        const wrapperNode = panelHeaderNode.querySelector(TANA_WRAPPER_CSS_SELECTOR)
+        const wrapperNode =  TanaDomNodeProvider.getWrapperNodeFromAncestor(panelHeaderNode)
         if (!wrapperNode) return
         const nodeId = wrapperNode.id
         if (!nodeId) return
@@ -60,6 +60,7 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
             nodeId,
         })
     }
+
 
     onDependenciesInitComplete() {
         this.subscribeToRuntimeEvent<PanelEventMessage>(PanelEvent,this.onPanelEvent.bind(this))

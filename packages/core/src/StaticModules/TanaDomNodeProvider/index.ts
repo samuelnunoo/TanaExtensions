@@ -10,21 +10,24 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         return Array.from(dom.querySelectorAll(bulletAndContent)) as HTMLElement[]
     }
 
-    public  getWrapperNodeFromPanel(panel:HTMLElement) {
-        if (!panel) return
+    public  getWrapperNodeFromAncestor(ancestor:HTMLElement) {
+        if (!ancestor) return
         const wrapperAndMenu = this.classSelector(this.getTanaWrapperCssClass())
-        return panel.querySelector(wrapperAndMenu)
+        return ancestor.querySelector(wrapperAndMenu)
    }
 
    /*
     This method provides the panel header node from a panel
     where the panel header is the main title block (title text and template tags) you see on any panel.
     */
-    public  getPanelHeaderFromPanel(panel:HTMLElement) {
-        if (!panel) return
+    public  getPanelHeaderFromAncestor(ancestor:HTMLElement) {
+        if (!ancestor) return
         const panelHeader = this.attributeSelector(this.getTanaPanelHeaderAttribute())
-        return panel.querySelector(panelHeader) as HTMLElement
+        return ancestor.querySelector(panelHeader) as HTMLElement
     }
+
+
+ 
 
     public  getAllContentNodesOnPanel(panel:HTMLElement) {
         const bulletAndContent = this.classSelector(this.getContentNodeCssClass())

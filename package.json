@@ -15,6 +15,7 @@
     "babel-jest": "^29.5.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.26.0",
+    "fp-ts": "^2.16.0",
     "jsdom": "^22.1.0",
     "jsonfile": "^6.1.0",
     "lodash": "^4.17.21",
