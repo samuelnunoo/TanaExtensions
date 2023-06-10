@@ -1,4 +1,4 @@
-import TanaConstants from "./types";
+import TanaConstants from "./TanaConstants";
 
 export default new class TanaDomNodeProvider extends TanaConstants  {
 
@@ -12,6 +12,10 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
 
     public getPanelContainerFromDock(dock:HTMLElement) {
         return dock.querySelector("div")
+    }
+
+    public getPanelFromAncestor(ancestor:HTMLElement) {
+        return ancestor.querySelector(this.attributeSelector(this.getPanelAttribute()))
     }
 
     /*
@@ -101,12 +105,12 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         return this.getNodeWithClassFromArray(nodes,bulletAndContent)
     }
 
-    public  getExpandedNodeFromArray(nodes:HTMLElement[]){
+    public getExpandedNodeFromArray(nodes:HTMLElement[]){
         const expandedNode = this.classSelector(this.getExpandedNodeCssClass())
         return this.getNodeWithClassFromArray(nodes,expandedNode)
     }
 
-    private  getNodeWithClassFromArray(elementArray:HTMLElement[],className:string) {
+    private getNodeWithClassFromArray(elementArray:HTMLElement[],className:string) {
         for (const element of elementArray) {
             if (!('classList' in element)) continue
             if (element.classList.contains(className)) return element

@@ -1,9 +1,12 @@
 
-
 export default abstract class TanaConstants {
 
     protected getTanaWrapperCssClass() {
         return "wrapEditableAndMenu"
+    }
+
+    protected getPanelHeaderTemplateContainerPrefix() {
+        return "PanelHeader-module_templates"
     }
 
     protected getDataRoleAttribute() {
@@ -53,7 +56,7 @@ export default abstract class TanaConstants {
     protected getRightDockAttributeValue() {
         return "right"
     }
-    
+
     protected getTanaDockAttribute() {
         return "data-dock"
     }
@@ -82,6 +85,5 @@ export default abstract class TanaConstants {
     protected attributeSelector(attribute:string){
         return `[${attribute}]`
     }
-
 
 }

@@ -1,4 +1,4 @@
-import TanaConstants from "../TanaDomNodeProvider/types";
+import TanaConstants from "../TanaDomNodeProvider/TanaConstants";
 import {TanaNode} from "../TanaStateProvider/types/types";
 
 export default new class TanaNodeAttributeInspector extends TanaConstants {
@@ -9,6 +9,11 @@ export default new class TanaNodeAttributeInspector extends TanaConstants {
         if (!node.classList.contains(this.getContentNodeCssClass())) return false
         if (! node.querySelector(editableContentSelector)) return false
         return true
+    }
+
+    public elementIsDescendantOfPanelHeaderTemplateContainer(element:HTMLElement) {
+        return !element.classList.contains(this.getEditableNodeCssClass())
+        && !!element.closest(this.classSelector(this.getTanaWrapperCssClass()))
     }
 
     public isMainPanelContainer(paneContainer:HTMLElement) {

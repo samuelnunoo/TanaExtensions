@@ -1,5 +1,5 @@
 import {PanelEvenTypeEnum} from "../TanaDomPanelEventPublisher/types/types";
-import TanaConstants from "../../StaticModules/TanaDomNodeProvider/types";
+import TanaConstants from "../../StaticModules/TanaDomNodeProvider/TanaConstants";
 import { NodeTargetTypeEnum, NodeEventTypeEnum } from "./types/types";
 
 export default new class NodeHelper extends TanaConstants {

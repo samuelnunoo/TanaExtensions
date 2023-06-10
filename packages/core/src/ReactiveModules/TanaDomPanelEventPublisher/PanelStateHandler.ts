@@ -9,7 +9,7 @@ export default class PanelStateHandler {
     private dockContainerObserver: MutationObserver
 
     constructor(panelMutationHandler:PanelMutationHandler) {
-        this.mainDockObserver = new MutationObserver(panelMutationHandler.handleMainDockChildListMutationEvent)
+        this.mainDockObserver = new MutationObserver(panelMutationHandler.panelIdChangeMutationHandler)
         this.dockContainerObserver = new MutationObserver(panelMutationHandler.handleDockContainerChildListMutationEvent)
     }
 

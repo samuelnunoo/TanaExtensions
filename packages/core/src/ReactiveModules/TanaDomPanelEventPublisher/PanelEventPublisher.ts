@@ -9,7 +9,6 @@ import { PanelContainerType, PanelEvenTypeEnum } from "./types/types";
 import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
 import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector";
 
-
 export default class PanelEventPublisher extends TanaPublisher<TanaDomPanelEventPublisher> {
 
     getInitRequirements(): InitEvent[] {
@@ -50,8 +49,8 @@ export default class PanelEventPublisher extends TanaPublisher<TanaDomPanelEvent
         const panelMutationHandler = this.mediator.getPanelMutationHandler()
 
         PanelObserverRegistrationHandler.observeDockContainer(panelStateHandler,dockContainer)
-        PanelObserverRegistrationHandler.observerMainDock(panelStateHandler,mainDock)
-        PanelObserverRegistrationHandler.observeDocks(docks,panelStateHandler,panelMutationHandler)
+        PanelObserverRegistrationHandler.observeMainDockPanel(panelStateHandler,mainDock)
+        PanelObserverRegistrationHandler.observeDescendantsOfDocks(docks,panelStateHandler,panelMutationHandler)
     }
 
     private invokeInitialPanelEvents() {
