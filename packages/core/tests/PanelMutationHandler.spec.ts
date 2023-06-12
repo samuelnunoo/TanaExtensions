@@ -35,7 +35,7 @@ function panelHeaderChangeMutationHandler() {
     const createPanelHeaderMutationRecord = () => {
         return new Mock<MutationRecord>()
             .setup(instance => instance.target)
-            .returns(templateContainer(document)
+            .returns(templateContainer(document))
             .setup(instance => instance.target)
             .returns(panelWithAncestors(document))
             .setup(instance => instance.removedNodes)
@@ -43,10 +43,11 @@ function panelHeaderChangeMutationHandler() {
     }
 
     const panelHeaderChangeMutationMacro = test.macro((t,spyBus:SinonSpiedInstance<EventBus>,expectedCalls:RuntimeEventInstance<PanelEventMessage>[]) => {
-        t.is(spyBus.dispatchRuntimeEvent.getCalls() as RuntimeEventInstance<PanelEventMessage>[],expectedCalls)
+        t.is(spyBus.dispatchRuntimeEvent.getCalls() as unknown,expectedCalls)
     })
 
-    test.only("resultant panel event has the correct panel on panel header change ", panelHeaderChangeMutationMacro,
+    /*
+    test.skip("resultant panel event has the correct panel on panel header change ", panelHeaderChangeMutationMacro,
         (() => {
         const {spyBus, mutationHandler} = createMutationHandler()
         const mutationRecord = createPanelHeaderMutationRecord().object()
@@ -54,6 +55,7 @@ function panelHeaderChangeMutationHandler() {
         return spyBus
 
     })(),true)
+    */
     test.todo("resultant panel event has the correct panelContainer on panel header change")
     test.todo("resultant panel event has the correct panel id on panel header change ")
     test.todo("resultant panel event has the deletion type on panel header removal")

@@ -3,6 +3,7 @@ import { InitEvent } from "../EventBus/types/Event";
 import RuntimeEventInstance from "../EventBus/types/RuntimeEventInstance";
 import TanaSubscriber from "../EventBus/types/TanaSubscriber";
 import { RegisterNodeViewMessage } from "./types/RegisterNodeViewEvent";
+import OnDatabaseInitEvent from 'database-extension/types/OnDatabaseInitEvent';
 
 
 
@@ -10,10 +11,12 @@ import { RegisterNodeViewMessage } from "./types/RegisterNodeViewEvent";
 export default class ViewReplacementSubscriber extends TanaSubscriber<TanaViewReplacementPublisher> {
 
     getInitRequirements(): InitEvent[] {
-        throw new Error("Method not implemented.");
+        return [
+            OnDatabaseInitEvent
+        ]
     }
     onDependenciesInitComplete() {
-        throw new Error("Method not implemented.");
+        
     }
 
     onRegisterNodeView({message}:RuntimeEventInstance<RegisterNodeViewMessage>) {

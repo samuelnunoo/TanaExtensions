@@ -4,16 +4,20 @@ import TanaPubSubModule, {
 import {InitEvent} from "tana-extensions-core/src/ReactiveModules/EventBus/types/Event";
 import OnDatabaseInitEvent from "../types/OnDatabaseInitEvent";
 import IndexedDBSyncSubscriber from "./IndexedDBSyncSubscriber";
-import {identity, Maybe} from "purify-ts";
+import {Maybe} from "purify-ts";
 import {
-    INDEXED_DB_LATEST_TRANSACTION_DB_ID,
     LatestTransactionMetadata,
     METADATA_DB_COLLECTION, TransactionMetaDataEnum
 } from "../types/databaseTypes";
+import DatabaseStateHandler from "./DatabaseStateHandler";
 
 export default class TanaDatabaseExtension extends TanaPubSubModule {
+    updateLatestTransactionId(arg0: any) {
+        throw new Error("Method not implemented.");
+    }
     private IndexedDBSyncSubscriber = new IndexedDBSyncSubscriber(this,this.eventBus)
-    dbInstance:LokiConstructor|null = null
+    dbInstance:DatabaseStateHandler|null = null
+    Maybe: any;
 
     getEventModuleInvokesOnCompletion(): InitEvent {
         return OnDatabaseInitEvent;
@@ -25,26 +29,13 @@ export default class TanaDatabaseExtension extends TanaPubSubModule {
         ];
     }
 
-    updateLatestTransactionId(latest_transaction_id:number) {
-        Maybe.fromNullable(this.dbInstance)
-            .map(db => db.getCollection(METADATA_DB_COLLECTION))
-            .map(metadataCollection => {
-                const entry = metadataCollection.findOne({type:TransactionMetaDataEnum.localDB}) ||
-                    metadataCollection.insert({ type:TransactionMetaDataEnum.localDB } as LatestTransactionMetadata)
-                entry.latest_transaction_id = latest_transaction_id
-                metadataCollection.update(entry)
-            })
+
+
+    getDBStateHandler() {
+        return this.dbInstance
     }
 
-    getLatestTransactionId() {
-        return Maybe.fromNullable(this.dbInstance)
-            .map(db => db.getCollection(METADATA_DB_COLLECTION))
-            .map(metadataCollection => metadataCollection.findOne({type:TransactionMetaDataEnum.localDB}))
-            .map((transactionMetaData:LatestTransactionMetadata) =>  transactionMetaData.latest_transaction_id)
-            .orDefault(0)
-    }
-
-    setDBInstance(db:LokiConstructor) {
+    setDBStateHandler(db:DatabaseStateHandler) {
         this.dbInstance = db
     }
 

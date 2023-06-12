@@ -2,6 +2,7 @@ import RuntimeEventStatic from "tana-extensions-core/src/ReactiveModules/EventBu
 
 export interface NodeGetMessage {
     nodeId:string
+    collection:string  
 }
 
 

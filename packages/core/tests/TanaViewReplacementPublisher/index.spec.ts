@@ -5,21 +5,6 @@ import { Mock } from 'moq.ts';
 import RegisterNodeViewEvent, { RegisterNodeViewMessage } from "../../src/ReactiveModules/TanaViewReplacementPublisher/types/RegisterNodeViewEvent";
 import test from "ava"
 
-function data() {
-    const eventBus = new EventBus();
-    const publisher = new TanaViewReplacementPublisher(eventBus);
-    const viewReplacementSub = new ViewReplacementSubscriber(publisher, eventBus);
-    const viewEvent = (message:RegisterNodeViewMessage) => RegisterNodeViewEvent.createInstance(message);
-    return { viewReplacementSub, viewEvent, publisher };
-}
-
-function createRegisterNodeViewMessage() {
-    return  new Mock<RegisterNodeViewMessage>()
-}
-
-function defaultConfig() {
-    return {}
-}
 
 // -------------------------------------------------------- //
 function TestOnRegisterNodeView() {
@@ -63,11 +48,45 @@ function TestOnRegisterNodeView() {
         viewReplacementSub.onRegisterNodeView(viewEvent(message2))
         t.deepEqual(viewReplacementSub.mediator.getNodeViewStateHandler().getEntry("template123"),defaultConfig())
     })
+    
+    test("It will merge database data to the configuration", t => {
+        const { viewReplacementSub, viewEvent, publisher } = data();
+        const message = defaultViewMessage()
+
+        viewReplacementSub.onRegisterNodeView(viewEvent(message))
+        t.deepEqual(viewReplacementSub.mediator.getNodeViewStateHandler().getEntry("template123"),{newdata:"newdata"})
+    })
 }
 
 
+//-----------------
 
+
+
+function data() {
+    const eventBus = new EventBus();
+    const publisher = new TanaViewReplacementPublisher(eventBus);
+    const viewReplacementSub = new ViewReplacementSubscriber(publisher, eventBus);
+    const viewEvent = (message:RegisterNodeViewMessage) => RegisterNodeViewEvent.createInstance(message);
+    return { viewReplacementSub, viewEvent, publisher };
+}
+
+function createRegisterNodeViewMessage() {
+    return  new Mock<RegisterNodeViewMessage>()
+}
+
+function defaultConfig() {
+    return {}
+}
+
+
+function defaultViewMessage() {
+    return createRegisterNodeViewMessage()
+        .setup(instance => instance.templateId)
+        .returns("template123")
+        .setup(instance => instance.config)
+        .returns(defaultConfig())
+        .object();
+}
 
 TestOnRegisterNodeView()
-
-

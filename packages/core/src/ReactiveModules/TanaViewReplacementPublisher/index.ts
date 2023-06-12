@@ -11,8 +11,8 @@ import NodeViewStateHandler from "./NodeViewStateHandler";
 export default class TanaViewReplacementPublisher extends TanaPubSubModule {
     private nodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
     private nodeViewStateHandler = new NodeViewStateHandler()
-    private replacedNodeIds: Set<string> = new Set() 
-    private deletedNodeIds: Set<string> = new Set() 
+    replacedNodeIds: Set<string> = new Set() 
+    deletedNodeIds: Set<string> = new Set() 
 
     getEventModuleInvokesOnCompletion(): InitEvent {
         return NodeReplacementPublisherInitEvent
