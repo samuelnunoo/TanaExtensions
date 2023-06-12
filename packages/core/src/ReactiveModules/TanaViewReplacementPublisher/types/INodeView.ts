@@ -1,0 +1,11 @@
+
+
+
+
+
+export default interface NodeViewConfig {
+
+
+
+
+}

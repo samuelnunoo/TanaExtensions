@@ -16,4 +16,8 @@ export default class TanaCommandExecutor {
     public static createTemplateWithName(templateName:string) {
 
     }
+
+    public static insertNodeToTarget(targetNode:TanaNode,nodeToInsert:TanaNode) {
+        
+    }
 }

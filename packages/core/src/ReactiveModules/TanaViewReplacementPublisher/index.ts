@@ -5,12 +5,14 @@ import NodeEventSubscriber from './NodeEventSubscriber';
 import RuntimeEventInstance from "../EventBus/types/RuntimeEventInstance";
 import { NodeEventMessage } from "../TanaDomNodeEventPublisher/types/NodeEvent";
 import ReplaceViewEvent, { ReplaceViewEnum } from "./types/ReplaceViewEvent";
+import NodeViewStateHandler from "./NodeViewStateHandler";
 
 
 export default class TanaViewReplacementPublisher extends TanaPubSubModule {
-    nodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
-    replacedNodeIds: Set<string> = new Set() 
-    deletedNodeIds: Set<string> = new Set() 
+    private nodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
+    private nodeViewStateHandler = new NodeViewStateHandler()
+    private replacedNodeIds: Set<string> = new Set() 
+    private deletedNodeIds: Set<string> = new Set() 
 
     getEventModuleInvokesOnCompletion(): InitEvent {
         return NodeReplacementPublisherInitEvent
@@ -20,6 +22,10 @@ export default class TanaViewReplacementPublisher extends TanaPubSubModule {
         return [
             this.nodeEventSubscriber
         ];
+    }
+
+    getNodeViewStateHandler() {
+        return this.nodeViewStateHandler
     }
 
     dispatchInsertViewEvent(event:RuntimeEventInstance<NodeEventMessage>) {

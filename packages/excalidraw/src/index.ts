@@ -7,7 +7,7 @@ import { TanaPubSubComponent } from "tana-extensions-core/src/ReactiveModules/Ev
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
 import NodeEventSubscriber from "./NodeEventSubscriber";
 import OnExcalidrawExtensionInitEvent from "../types/OnExcalidrawExtensionInitEvent";
-import {AppState, BinaryFiles, ExcalidrawInitialDataState} from "@excalidraw/excalidraw/types/types";
+import {AppState, ExcalidrawInitialDataState} from "@excalidraw/excalidraw/types/types";
 import {ExcalidrawElement} from "@excalidraw/excalidraw/types/element/types";
 import {ClipboardData} from "@excalidraw/excalidraw/types/clipboard";
 import UpdateNodeDataEvent, { UpdateNodeDataEventMessage } from "database-extension/types/UpdateNodeDataEvent";
@@ -17,29 +17,29 @@ import _ from "lodash";
 import _default from "@excalidraw/excalidraw/types/packages/excalidraw/example/initialData";
 import {createRoot, Root} from "react-dom/client";
 import TanaDomNodeProvider from "tana-extensions-core/src/StaticModules/TanaDomNodeProvider";
+import App from "@excalidraw/excalidraw/types/components/App";
 
 export default class ExcalidrawExtension extends TanaExtension {
-
     NodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
-
     excalidrawInstances: Map<string,Root> = new Map()
+
     getUniqueIdentifier(): string {
         return "TanaExcalidrawExtension"
     }
+
     getPubSubComponents(): TanaPubSubComponent[] {
         return [
             this.NodeEventSubscriber
         ]
     }
+
     getEventModuleInvokesOnCompletion(): InitEvent {
         return OnExcalidrawExtensionInitEvent
     }
 
     saveData(
         nodeId:string,
-        elements: readonly ExcalidrawElement[],
-        appState: AppState,
-        files: BinaryFiles,
+        elements: readonly ExcalidrawElement[]
     ) {
         const data:ExcalidrawInitialDataState = {
             elements
@@ -74,6 +74,7 @@ export default class ExcalidrawExtension extends TanaExtension {
         const saveData = this.saveData.bind(this)
         const initialData = await this.getData(node)
         let prevElements = 'elements' in initialData ? initialData.elements : []
+
         const hasChanged = (elements: readonly any[]) => {
             if (elements.length !== prevElements!.length) return true
             for (let i = 0; i < elements.length; i++) {
@@ -84,10 +85,12 @@ export default class ExcalidrawExtension extends TanaExtension {
             return false
         }
 
-
-        const panelContent = document.querySelector(".panelContent") as HTMLElement
         const App = () => {
             let hasFocus = false
+
+            //@ts-ignore
+            window.excalidraw = {}
+       
             return React.createElement(
                 React.Fragment,
                 null,
@@ -111,14 +114,16 @@ export default class ExcalidrawExtension extends TanaExtension {
                         initialData,
                         onChange:  (
                             elements: readonly ExcalidrawElement[],
-                            appState: AppState,
-                            files: BinaryFiles,
+                            AppState: AppState
                         ) => {
+                            //@ts-ignore
+                            window.excalidraw.elements = elements 
+                            //@ts-ignore 
+                            window.excalidraw.appState = AppState
                             if (hasChanged(elements)) {
                                 prevElements = elements
-                                saveData(node.id,elements,appState,files)
+                                saveData(node.id,elements)
                             }
-
                         },
                         onPaste: (
                             data: ClipboardData,

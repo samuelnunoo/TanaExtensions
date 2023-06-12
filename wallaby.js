@@ -6,7 +6,7 @@ export default function (wallaby) {
             'packages/**/*.ts',
             '!packages/**/*.spec.ts'
         ],
-        
+        workers: { restart: true },
         tests: [
             'packages/**/*.spec.ts'
         ],
@@ -18,6 +18,7 @@ export default function (wallaby) {
             }
           },
           
-        testFramework: 'ava'
+        testFramework: 'ava',
+        workers: { restart: true }
     };
 };
