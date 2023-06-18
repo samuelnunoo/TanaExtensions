@@ -1,6 +1,11 @@
 export interface AppState {
-    nodeSpace:NodeSpace;
+    nodeSpace:NodeSpace
     transactionStore: TransactionStore
+     getAllSystemNodes: () => Iterator<TanaNode>
+}
+
+export interface Iterator<T> {
+    next: () => {value: T, done:boolean}
 }
 
 export interface SystemNodes {
@@ -37,7 +42,7 @@ export interface NodeSpace {
 }
 
 export interface TanaFile {
-
+    getOrCreateSchemaNode: () => TanaNode
 }
 
 export interface UserSettings {
@@ -64,6 +69,10 @@ export interface NavigationService {
     history: TanaHistory
 }
 
+export interface MetaNode {
+    getOrCreateTupleByAttributeId:(attributeId:string) => TanaNode
+}
+
 export interface TanaNode {
     id:string 
     docType?: string 
@@ -71,12 +80,17 @@ export interface TanaNode {
     addTemplate: (template:TanaNode) => void
     runInitializations: () => void
     name:string
+    tupleValue:TanaNode
     isCodeBlock:boolean
+    metaNode?:MetaNode
     templates:TanaNode[]
     nodeSpace: NodeSpace
+    addChild: (node:TanaNode) => TanaNode
     systemNodes
     parentFile: TanaFile
     isSystemNode:boolean
+    children: TanaNode[]
+    isTemplate: boolean
     insertNewNodeAtEnd: () => TanaNode
 }
 

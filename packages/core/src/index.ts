@@ -6,7 +6,7 @@ import TanaDomPanelEventPublisher from "./ReactiveModules/TanaDomPanelEventPubli
 import OnMainInitEvent from "./types/OnMainInitEvent";
 import TanaExtension from "./types/TanaExtension";
 import "../assets/default.css"
-import TanaViewReplacementPublisher from "./ReactiveModules/TanaViewReplacementPublisher";
+import TanaNodeViewModule from "./ReactiveModules/TanaNodeViewPublisher";
 /*
 Module Responsibility
     This module is responsible for initializing the tana extension
@@ -23,12 +23,11 @@ export default class TanaMain {
             new TanaModuleLoader(this.eventBus) as TanaPubSubModule,
             new TanaDomNodeEventModule(this.eventBus) as TanaPubSubModule,
             new TanaDomPanelEventPublisher(this.eventBus) as TanaPubSubModule,
-            new TanaViewReplacementPublisher(this.eventBus) as TanaPubSubModule
+            new TanaNodeViewModule(this.eventBus) as TanaPubSubModule
         ]
         this.moduleExtensions = tanaExtensionWrapper(this.eventBus)
         this.init()
     }
-
 
     private init() {
         this.coreModules.forEach(module => module.init())

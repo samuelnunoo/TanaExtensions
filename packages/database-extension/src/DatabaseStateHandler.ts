@@ -1,20 +1,23 @@
 import  lokijs from "lokijs";
 //@ts-ignore
 import indexedDBAdapter from "lokijs/src/loki-indexed-adapter.js"
-import { DBNode, LatestTransactionMetadata, TransactionMetaDataEnum } from "../types/databaseTypes";
+import LatestTransactionMetadata, {TransactionMetaDataEnum } from "../types/database/LatestTransactionMetadata";
 import { Maybe } from "purify-ts";
-import BaseDBCollection from "../types/BaseDB";
-import DBCollectionEntry from "../types/DBCollectionEntry";
-import DBCollection from '../types/DBCollection';
+import DBCollectionEntry from "../types/database/DBCollectionEntry";
+import DBCollection from '../types/database/DBCollection';
+import DBNode from "../types/database/DBNode";
 
 const DB_NAME = "tana.db"
 const NODE_DB_COLLECTION = "node"
 const METADATA_DB_COLLECTION = "metadata"
 
-
+/*
+This module is responsible for providing access to
+data within the database
+ */
 export default class DatabaseStateHandler {
 
-    private database:lokijs|null  = null 
+    private database:lokijs|null  = null
 
     public async init() {
         return new Promise((response) => {
@@ -28,75 +31,54 @@ export default class DatabaseStateHandler {
         })
     }
 
-    public updateLatestTransactionId(latest_transaction_id:number) {
-        Maybe.fromNullable(this.database)
-            .map(db => db.getCollection(METADATA_DB_COLLECTION))
-            .map(metadataCollection => {
-                const entry = metadataCollection.findOne({type:TransactionMetaDataEnum.localDB}) ||
-                    metadataCollection.insert({ type:TransactionMetaDataEnum.localDB } as LatestTransactionMetadata)
-                entry.latest_transaction_id = latest_transaction_id
-                metadataCollection.update(entry)
-            })
+    public getEntry<T>(dbCollection:DBCollection<T>,nodeId:string) {
+        const node = this.getLokiNode(dbCollection,nodeId)
+        if (!node) return null
+        return dbCollection.createInstance(nodeId,node.content)
     }
 
-    public getEntry<T>(baseCollection:DBCollection<T>,nodeId:string) {
-        return Maybe.fromNullable(this.database)
-            .map(database => database.getCollection<T>(baseCollection.getCollectionName()))
-            .map(collection => collection.findOne({nodeId}) )
-            .extractNullable()
-    }
-
-    public updateEntry<T>(newEntry:DBCollectionEntry<T>) {
-        let currentEntry = this.getEntry(dbCollectionName,nodeId) as DBNode
+    public updateEntry<T>(dbCollection:DBCollection<T>,nodeId:string,content:T) {
+        let currentEntry = this.getLokiNode(dbCollection,nodeId)
 
         if (!currentEntry) {
-            return this.insertEntry(dbCollectionName, nodeId, content)
+            return this.insertEntry(dbCollection.createInstance(nodeId,content))
         }
 
         const newContent = {...currentEntry.content,...content}
         currentEntry.content = newContent
                  
-        Maybe.fromNullable(this.getDBCollection(dbCollectionName))
-        .map(collection => collection.update(newContent))
+        Maybe.fromNullable(this.getDBCollection(dbCollection.getCollectionName()))
+        .map(collection => collection.update(currentEntry!))
     } 
 
-    public getLatestTransactionId() {
-        return Maybe.fromNullable(this.database)
-            .map(db => db.getCollection(METADATA_DB_COLLECTION))
-            .map(metadataCollection => metadataCollection.findOne({type:TransactionMetaDataEnum.localDB}))
-            .map((transactionMetaData:LatestTransactionMetadata) =>  transactionMetaData.latest_transaction_id)
-            .orDefault(0)
-    }
-
-    public createCollectionIfNotExists(collection:string) {
+    public createCollectionIfNotExists<T>(collection:DBCollection<T>) {
         Maybe.fromNullable(this.database)
             .map(database => {
-                if (database.getCollection(collection)) return 
-                database.addCollection(collection)
+                if (database.getCollection(collection.getCollectionName())) return
+                database.addCollection(collection.getCollectionName())
             })
     }
 
-    private insertEntry(collectionName:string, nodeId:string, content:object) {
-        Maybe.fromNullable(this.getDBCollection(collectionName))
+    private insertEntry<T>(dbEntry: DBCollectionEntry<T>) {
+        Maybe.fromNullable(this.getDBCollection(dbEntry.getCollectionName()))
             .map(collection => {
-                const latestTransactionId = this.getLatestTransactionId()
-                const dbEntry = {
-                    transactionId: latestTransactionId + 1,
-                    nodeId,
-                    content 
-                } as DBNode
-    
-                collection.insert(dbEntry)
-                this.updateLatestTransactionId(latestTransactionId + 1)
+                collection.insert(dbEntry.getDBNodeData())
             })
     }
 
-    private getDBCollection(collectionName:string) {
+    private getDBCollection<T>(collectionName:string) {
         return Maybe.fromNullable(this.database)
-        .map(database => database.getCollection(collectionName))
+        .map(database => database.getCollection<DBNode<T>>(collectionName))
         .ifNothing(() => {throw Error(`Could not find Collection ${collectionName}`)})
         .extractNullable()
     } 
+
+    private getLokiNode<T>(dbCollection:DBCollection<T>,nodeId:string) {
+       return Maybe.fromNullable(this.database)
+            .map(database => database.getCollection<DBNode<T>>(dbCollection.getCollectionName()))
+            .map(collection => collection.findOne({'nodeId': {"$eq": nodeId}}))
+            .extractNullable()
+    }
 
     private createInitialCollections(response) {
         return () => {

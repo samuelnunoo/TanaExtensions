@@ -1,5 +1,3 @@
-import { BULLET_CONTENT_CSS_CLASS, CONTENT_SIDE_CSS_CLASS } from '../../src/ReactiveModules/TanaDomNodeEventPublisher/types/types';
-import {TANA_WRAPPER_CSS_CLASS} from "../../src/StaticModules/TanaDomNodeProvider/types";
 /*
 
 These mocks are not complete but 
@@ -9,6 +7,10 @@ Additional child nodes may need to be added for your
 purposes.
 
 */
+
+import {Window} from "happy-dom";
+import path from "path";
+import fs from "fs";
 
 export const panelWithAncestors = (doc:Document) => {
 
@@ -103,4 +105,35 @@ export const expandedNodeMock = (doc) => {
     expandedNode.classList.add(CONTENT_SIDE_CSS_CLASS)
     expandedNode.classList.add("expanded")
     return expandedNode
+}
+
+
+export const getNodeWithTemplateContent = (doc:Document) => {
+    return doc.querySelector('[data-id="z5oiLLETKg|u8o-Nx_aig|qPVwIT3wX9|ehTmtoM4sM"]')
+}
+export const getFakeNodeView = (doc:Document) => {
+    const div = doc.createElement("div")
+    const paths = path.resolve("tests/mocks/fakeNodeViewElement.html")
+    const fileContent = fs.readFileSync(paths, 'utf8');
+    div.innerHTML = fileContent
+    div.classList.add("epic-node-view")
+    return div as Node
+}
+
+
+export const getFakeMethodsNode = (doc:Document) => {
+    return doc.querySelector('[data-id="z5oiLLETKg|u8o-Nx_aig|qPVwIT3wX9"]')
+}
+
+export const setupFakeTanaDOM = () => {
+    const window = new Window();
+    const document = window.document;
+    const paths = path.resolve("tests/mocks/FakeTanaDOM.html")
+    const fileContent = fs.readFileSync(paths, 'utf8');
+    const trimmedFileContent = fileContent.replaceAll(/\n|\r|\s{2,}/g, "");
+    document.body.innerHTML = trimmedFileContent
+    return {window, document}
+}
+export const getTestApproachBullet = (doc: Document) => {
+    return doc.querySelector('[data-id="z5oiLLETKg|u8o-Nx_aig|o1UqiAdoam"]')
 }

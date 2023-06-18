@@ -9,6 +9,10 @@ import NodeHelper from "./NodeHelper";
 import {Maybe} from "purify-ts";
 import NodeEvent, {NodeElementType, NodeEventMessage} from "./types/NodeEvent";
 import TanaDomNodeEventPublisher from './index';
+import {NodeViewType} from "../TanaNodeViewPublisher/types/configs/NodeViewType";
+import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector";
+import {TanaNode} from "../../StaticModules/TanaStateProvider/types/types";
+
 
 export default class NodeEventPublisher extends TanaPublisher<TanaDomNodeEventPublisher> {
     getInitRequirements(): InitEvent[] {
@@ -66,6 +70,12 @@ export default class NodeEventPublisher extends TanaPublisher<TanaDomNodeEventPu
                 return null
         }
     }
+
+    private getNodeViewType(node:TanaNode, panel:HTMLElement): NodeViewType {
+        const isPanelHeader = TanaNodeAttributeInspector.isPanelHeader(node,panel)
+        return isPanelHeader ? NodeViewType.Expanded : NodeViewType.Default
+    }
+
     private processMutationRecord(mutation:MutationRecord) {
         if (!mutation.target) return
         const nodeEventType = MutationRecordAttributeInspector.getMutationEventType(mutation)
@@ -85,9 +95,11 @@ export default class NodeEventPublisher extends TanaPublisher<TanaDomNodeEventPu
         const nodeType = !!bulletAndContentNodeElement ? NodeElementType.BulletAndContent : NodeElementType.WrapEditableAndMenu
         const hasBullet = nodeType == NodeElementType.BulletAndContent
         const nodeElement = hasBullet ? bulletAndContentNodeElement : wrapAndEditableNodeElement
+        const nodeViewType = this.getNodeViewType(tanaNode,panel)
         const nodeMessage: NodeEventMessage = {
             nodeElement,
             tanaNode,
+            nodeViewType,
             nodeId:blockId,
             nodeEventType,
             panel,

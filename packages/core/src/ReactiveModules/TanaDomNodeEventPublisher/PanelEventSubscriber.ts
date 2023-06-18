@@ -9,6 +9,9 @@ import {NodeEventTypeEnum} from "./types/types";
 import TanaDomNodeEventModule from "./index";
 import OnDomRenderCompleteEvent from "../TanaModuleLoader/types/OnDomRenderCompleteEvent";
 import {NodeElementType} from "./types/NodeEvent";
+import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector";
+import {NodeViewType} from "../TanaNodeViewPublisher/types/configs/NodeViewType";
+import {TanaNode} from "../../StaticModules/TanaStateProvider/types/types";
 
 export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEventModule> {
     getInitRequirements(): InitEvent[] {
@@ -34,6 +37,7 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
                 tanaNode,
                 nodeId,
                 nodeEventType,
+                nodeViewType: this.getNodeViewType(tanaNode,panel),
                 panel,
                 nodeType: NodeElementType.BulletAndContent,
                 isHeaderNode:false
@@ -44,7 +48,11 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
     onDependenciesInitComplete() {
         this.subscribeToRuntimeEvent<PanelEventMessage>(PanelEvent,this.onPanelEvent.bind(this))
     }
-    
+
+    private getNodeViewType(tanaNode:TanaNode,panel:HTMLElement) {
+       return TanaNodeAttributeInspector.isPanelHeader(tanaNode,panel) ?  NodeViewType.Expanded : NodeViewType.Default
+    }
+
     private createEventForPanelHeaderNode(
         panelHeaderNode:HTMLElement|null|undefined,panel:HTMLElement,nodeEventType:NodeEventTypeEnum
     ) {
@@ -59,6 +67,7 @@ export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEven
             nodeElement:panelHeaderNode,
             tanaNode:tanaNode,
             isHeaderNode:true,
+            nodeViewType: this.getNodeViewType(tanaNode,panel),
             panel,
             nodeEventType,
             nodeType: NodeElementType.BulletAndContent,

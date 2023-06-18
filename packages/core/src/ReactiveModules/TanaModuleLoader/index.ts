@@ -35,6 +35,7 @@ export default class TanaModuleLoader extends TanaPubSubModule {
     invokeOnStart() {
         this.eventBus.dispatchInitEvent(OnStartEvent)
     }
+
     onAppStateInitialized() {
         this.eventBus.dispatchInitEvent(OnAppStateInitEvent)
     }

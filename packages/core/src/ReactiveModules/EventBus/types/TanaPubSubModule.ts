@@ -2,10 +2,8 @@ import EventBus from "../index";
 import {InitEvent} from "./Event";
 
 export abstract class TanaPubSubComponent {
-
     abstract getInitRequirements(): InitEvent[]
     abstract onDependenciesInitComplete()
-
 }
 
 export default abstract class TanaPubSubModule {

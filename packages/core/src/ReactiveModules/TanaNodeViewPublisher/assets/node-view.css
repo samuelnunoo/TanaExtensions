@@ -1,0 +1,25 @@
+
+
+
+.node-view-container {
+    display: flex;
+    gap: 10px;
+}
+
+
+
+.modal-button {
+
+}
+
+.node-view-settings-modal {
+
+}
+
+.node-view-settings-button {
+    width: 20px;
+    height: 20px;
+    background: white;
+    display: none;
+    border-radius: 10px;
+}

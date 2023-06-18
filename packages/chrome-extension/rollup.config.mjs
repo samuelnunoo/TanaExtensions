@@ -5,7 +5,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import {emptyDir} from "rollup-plugin-empty-dir";
 import commonjs from "@rollup/plugin-commonjs";
 import scss from "rollup-plugin-scss";
-import replace from "@rollup/plugin-replace"
+import replace from "@rollup/plugin-replace";
 
 export default {
     input: 'src/manifest.json',
@@ -34,6 +34,6 @@ export default {
             }
         }),
         emptyDir(),
-        scss({ fileName: 'assets/bundle.css'}),
+        scss({ fileName: 'assets/bundle.assets'}),
     ]
 }

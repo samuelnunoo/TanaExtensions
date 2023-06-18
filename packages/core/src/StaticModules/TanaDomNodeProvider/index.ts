@@ -1,7 +1,19 @@
 import TanaConstants from "./TanaConstants";
+import {Maybe} from "purify-ts";
 
 export default new class TanaDomNodeProvider extends TanaConstants  {
 
+    public getContentNodeHeaderFromAncestor(ancestor:HTMLElement) {
+        return Maybe.fromNullable(ancestor.querySelector(this.classSelector(this.getContentSideCssClass())))
+            .map(contentSide => contentSide.firstChild as HTMLElement)
+            .extractNullable()
+    }
+    public getListItemContainerFromAncestor(ancestor:HTMLElement) {
+        return ancestor.querySelector(this.classSelector(this.getListItemCssClass()))
+    }
+    public getNonTemplateNodeFromAncestor(ancestor:HTMLElement) {
+        return ancestor.querySelector(this.classSelector(this.getNonTemplateCssClass()))
+    }
     public getDockContainer(doc:Document) {
         return doc.querySelector(this.getDockContainerAttributeSelector())
     }

@@ -1,6 +1,8 @@
 
 export default abstract class TanaConstants {
 
+    protected getContentNodeHeaderPrefix() { return "Content-module_contentAndRefCount"}
+    protected getListItemCssClass() { return "listItems"}
     protected getTanaWrapperCssClass() {
         return "wrapEditableAndMenu"
     }

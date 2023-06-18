@@ -2,22 +2,17 @@ import TanaPubSubModule, {
     TanaPubSubComponent
 } from "tana-extensions-core/src/ReactiveModules/EventBus/types/TanaPubSubModule";
 import {InitEvent} from "tana-extensions-core/src/ReactiveModules/EventBus/types/Event";
-import OnDatabaseInitEvent from "../types/OnDatabaseInitEvent";
+import OnDatabaseInitEvent from "../types/events/OnDatabaseInitEvent";
 import IndexedDBSyncSubscriber from "./IndexedDBSyncSubscriber";
-import {Maybe} from "purify-ts";
-import {
-    LatestTransactionMetadata,
-    METADATA_DB_COLLECTION, TransactionMetaDataEnum
-} from "../types/databaseTypes";
 import DatabaseStateHandler from "./DatabaseStateHandler";
 
 export default class TanaDatabaseExtension extends TanaPubSubModule {
     updateLatestTransactionId(arg0: any) {
         throw new Error("Method not implemented.");
     }
+
     private IndexedDBSyncSubscriber = new IndexedDBSyncSubscriber(this,this.eventBus)
-    dbInstance:DatabaseStateHandler|null = null
-    Maybe: any;
+    private dbInstance:DatabaseStateHandler|null = null
 
     getEventModuleInvokesOnCompletion(): InitEvent {
         return OnDatabaseInitEvent;
@@ -28,8 +23,6 @@ export default class TanaDatabaseExtension extends TanaPubSubModule {
             this.IndexedDBSyncSubscriber
         ];
     }
-
-
 
     getDBStateHandler() {
         return this.dbInstance

@@ -1,5 +1,5 @@
 import test from "ava"
-import TanaNodeReplacementPublisher from '../src/ReactiveModules/TanaViewReplacementPublisher/index';
+import TanaNodeReplacementPublisher from '../src/ReactiveModules/TanaNodeViewPublisher/index';
 import EventBus from "../src/ReactiveModules/EventBus";
 import RuntimeEventInstance from "../src/ReactiveModules/EventBus/types/RuntimeEventInstance";
 import {NodeEventMessage} from "../src/ReactiveModules/TanaDomNodeEventPublisher/types/NodeEvent";
@@ -8,11 +8,11 @@ import {NodeEventTypeEnum} from "../src/ReactiveModules/TanaDomNodeEventPublishe
 import {expandedBlockContent} from "./mocks/DomMocks";
 import {Mock} from "moq.ts"
 import {JSDOM} from "jsdom"
-import Sinon from "sinon";
 import ReplaceViewEvent, {
     ReplaceViewEnum,
     ReplaceViewEventMessage
-} from "../src/ReactiveModules/TanaViewReplacementPublisher/types/ReplaceViewEvent";
+} from "../src/ReactiveModules/TanaNodeViewPublisher/types/events/ReplaceViewEvent";
+import {createSandbox} from "sinon";
 const  {document} = (new JSDOM(`<!DOCTYPE html><p>Hello world</p>`)).window;
 
 function createMediator() {
@@ -38,12 +38,12 @@ const template = new Mock<TanaNode>()
 
 const meetsViewDeletionCriteriaMacro = test.macro((t, event: RuntimeEventInstance<NodeEventMessage>, expected: boolean) => {
     const mediator = createMediator()
-    t.is(mediator.nodeEventSubscriber.meetsViewDeletionCritiera(event), expected)
+    t.is(mediator.getNodeEventSubscriber().meetsViewDeletionCritiera(event), expected)
 })
 
 const meetsViewInsertionCriteriaMacro = test.macro((t,event:RuntimeEventInstance<NodeEventMessage>,expected:boolean) => {
     const mediator = createMediator();
-    t.is(mediator.nodeEventSubscriber.meetsViewInsertionCriteria(event), expected)
+    t.is(mediator.getNodeEventSubscriber().meetsViewInsertionCriteria(event), expected)
 })
 
 const createNodeEventMeetingDeletionCritiera = () => {
@@ -135,11 +135,11 @@ function MeetsViewDeletionCriteria() {
     })(), true)
 }
 function handleNodeEvent(events:RuntimeEventInstance<NodeEventMessage>[]) {
-    const sandbox = Sinon.createSandbox()
+    const sandbox = createSandbox()
     const {mediator, bus} = createMediatorAndBus()
     const busSpy = sandbox.spy(bus)
     events.forEach(event => {
-        mediator.nodeEventSubscriber.handleNodeEvent(event)
+        mediator.getNodeEventSubscriber().handleNodeEvent(event)
     })
     return {busSpy}
 }
@@ -235,7 +235,5 @@ const TestMethods = [
     MeetsViewInsertionCriteria(),
     HandleNodeEvent()
 ]
-
-
 
 

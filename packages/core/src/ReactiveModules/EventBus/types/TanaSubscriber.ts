@@ -3,11 +3,9 @@ import {InitEvent} from "./Event";
 import TanaPubSubModule, {TanaPubSubComponent} from "./TanaPubSubModule";
 import RuntimeEventStatic from "./RuntimeEventStatic";
 import RuntimeEventInstance from "./RuntimeEventInstance";
-import RuntimeEvent from "./RuntimeEvent";
 
 export default abstract class TanaSubscriber<T extends TanaPubSubModule> implements TanaPubSubComponent {
     mediator: T
-
     eventBus:EventBus
 
     constructor(mediator: T, eventBus:EventBus) {

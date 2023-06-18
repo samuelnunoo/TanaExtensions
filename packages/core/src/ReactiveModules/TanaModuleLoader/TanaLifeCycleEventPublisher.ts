@@ -17,8 +17,4 @@ export default class TanaLifeCycleEventPublisher extends TanaPublisher<TanaModul
         this.mediator.onDomRenderComplete()
     }
 
-
-
-
-
 }

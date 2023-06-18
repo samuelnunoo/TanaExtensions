@@ -8,12 +8,12 @@ import {PanelEventMessage} from "../src/ReactiveModules/TanaDomPanelEventPublish
 import {Mock} from "moq.ts";
 import {createJSDOM, toNodeList} from "./mocks/DomUtilities";
 import {panelWithAncestors, templateContainer} from "./mocks/DomMocks";
-import Sinon, {SinonSpiedInstance} from "sinon";
+import {SinonSpiedInstance,createSandbox} from "sinon";
 
 const {document} =  createJSDOM()
 
 function createMutationHandler() {
-    const sandbox = Sinon.createSandbox()
+    const sandbox = createSandbox()
     const eventBus = new EventBus()
     const spyBus = sandbox.spy(eventBus)
 
@@ -21,7 +21,6 @@ function createMutationHandler() {
     const mutationHandler = new PanelMutationHandler(publisher)
     return {spyBus,mutationHandler};
 }
-
 
 function panelHeaderChangeMutationHandler() {
     /*
@@ -62,6 +61,7 @@ function panelHeaderChangeMutationHandler() {
     test.todo("resultant panel event the insertion type on panel header added")
     test.todo("no panel event is invoked when mutation does not contain a panel or panel container")
 }
+jjjnk
 
 
 function handleDockContainerChildListMutationEvent() {
