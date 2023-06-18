@@ -5,6 +5,10 @@ import {NodeViewType} from "../../ReactiveModules/TanaNodeViewPublisher/types/co
 import {TanaNode} from "../TanaStateProvider/types/types";
 import TanaCommandExecutor from "../TanaCommandExecutor";
 import autoBind from "auto-bind";
+import { magma } from 'fp-ts';
+import RuntimeEventInstance from "../../ReactiveModules/EventBus/types/RuntimeEventInstance";
+import { ReplaceViewEventMessage } from "../../ReactiveModules/TanaNodeViewPublisher/types/events/ReplaceViewEvent";
+import { head } from "fp-ts/lib/ReadonlyNonEmptyArray";
 
 const NODE_VIEW_CONTAINER_CLASS = "node-view-container"
 const NODE_VIEW_BORDER_CLASS = "node-view-border"
@@ -21,11 +25,14 @@ class _TanaNodeViewCreator {
     }
 
     public renderNodeView(
-        nodeElement:Node,tanaNode:TanaNode,tanaDOMNode:HTMLElement,
-        config:NodeViewConfig<any>,nodeViewType:NodeViewType
+        event:RuntimeEventInstance<ReplaceViewEventMessage>,
+        config:NodeViewConfig<any>,
+        nodeView:HTMLDivElement
     ) {
-        const viewContainer = this.wrapInViewContainer(nodeElement,tanaNode,tanaDOMNode,config,nodeViewType)
-        Maybe.fromNullable(TanaDomNodeProvider.getListItemContainerFromAncestor(tanaDOMNode))
+        const {nodeElement,isHeaderNode,panel} = event.message.nodeEvent 
+        const viewContainer = this.wrapInViewContainer(event,config,nodeView)
+        const listItemAncestor = isHeaderNode ? panel :nodeElement
+        Maybe.fromNullable(TanaDomNodeProvider.getListItemContainerFromAncestor(listItemAncestor))
             .map(listItemContainer => {
                 const prependNonTemplateContent = !config.defaultConfig().insertBeforeTemplateContent &&
                     listItemContainer.childNodes.length > 1
@@ -35,14 +42,19 @@ class _TanaNodeViewCreator {
             })
     }
 
-    private wrapInViewContainer(nodeElement:Node,tanaNode:TanaNode,tanaDomNode:HTMLElement,config:NodeViewConfig<any>,nodeViewType: NodeViewType) {
+
+    private removePadding() {
+        
+    }
+    private wrapInViewContainer(event:RuntimeEventInstance<ReplaceViewEventMessage>, config:NodeViewConfig<any>,nodeView:HTMLDivElement) {
+        const {nodeViewType,tanaNode} = event.message.nodeEvent
         const viewContainer = this.createViewContainer()
-        viewContainer.appendChild(nodeElement)
+        viewContainer.appendChild(nodeView)
         this.preventEventPropagationInContainer(viewContainer)
         this.addBorder(viewContainer,config,nodeViewType)
-        this.hideHeader(viewContainer,tanaDomNode,config,nodeViewType)
-        this.configureDimension(nodeElement as HTMLElement,config,nodeViewType)
-        this.setupLock(nodeElement as HTMLElement,config,nodeViewType)
+        this.hideHeader(event,config,nodeViewType)
+        this.configureDimension(nodeView,config,nodeViewType)
+        this.setupLock(nodeView,config,nodeViewType)
         this.setupSettingsModal(viewContainer,config,nodeViewType)
         this.expandNode(tanaNode,config,nodeViewType)
         return viewContainer
@@ -80,12 +92,26 @@ class _TanaNodeViewCreator {
         })
     }
 
-    private hideHeader(viewContainer:HTMLDivElement,tanaDomNode:HTMLElement, config:NodeViewConfig<any>, nodeViewType: NodeViewType) {
+    private hideElement(element:HTMLElement) {
+        element.style.display = "none"
+       // element.style.visibility = "hidden"
+       // element.style.position = "absolute"
+    }
+
+    private hideHeader(event:RuntimeEventInstance<ReplaceViewEventMessage>,config:NodeViewConfig<any>, nodeViewType: NodeViewType) {
         const shouldHideHeader = (nodeViewType == NodeViewType.Default && config.defaultConfig().hideHeaderByDefault) ||
             (nodeViewType == NodeViewType.Expanded && config.expandedConfig().hideHeader)
         if (!shouldHideHeader) return
-        Maybe.fromNullable(TanaDomNodeProvider.getContentNodeHeaderFromAncestor(tanaDomNode))
-            .map(headerNode => { headerNode.style.display = "none" })
+        const {isHeaderNode,nodeElement,panel} = event.message.nodeEvent
+
+        if (isHeaderNode) {
+                Maybe.fromNullable(TanaDomNodeProvider.getPanelHeaderFromAncestor(panel))
+                    .map(panelHeader => this.hideElement(panelHeader))
+        }
+        else {
+            Maybe.fromNullable(TanaDomNodeProvider.getContentNodeHeaderFromAncestor(nodeElement))
+            .map(headerNode => this.hideElement(headerNode))
+        }
     }
 
     private createViewContainer() {
@@ -258,15 +284,14 @@ class _TanaNodeViewCreator {
         settingsButton.style.visibility = "hidden"
     }
 
-    private configureDimension(nodeElement: HTMLElement, config:NodeViewConfig<any>, nodeViewType:NodeViewType) {
+    private configureDimension(nodeView: HTMLElement, config:NodeViewConfig<any>, nodeViewType:NodeViewType) {
         if (nodeViewType == NodeViewType.Fullscreen) return
         const height = nodeViewType == NodeViewType.Default ? config.defaultConfig().height : config.expandedConfig().height
         const width = nodeViewType == NodeViewType.Default ? config.defaultConfig().width : config.expandedConfig().width
-        nodeElement.style.height = height
-        nodeElement.style.width = width
+        config.setDimensions(nodeView,width,height)
     }
 
-    private setupLock(nodeElement:HTMLElement,config:NodeViewConfig<any>,nodeViewType: NodeViewType) {
+    private setupLock(nodeView:HTMLElement,config:NodeViewConfig<any>,nodeViewType: NodeViewType) {
         const onLock =
             nodeViewType == NodeViewType.Default && config.defaultConfig().lockByDefault
             ? config.defaultConfig().onLock
@@ -275,7 +300,7 @@ class _TanaNodeViewCreator {
             : null
 
         if (!onLock) return
-        onLock(nodeElement)
+        onLock(nodeView)
     }
 
     private expandNode(tanaNode:TanaNode,config:NodeViewConfig<any>,nodeViewType:NodeViewType) {

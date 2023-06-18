@@ -3,6 +3,10 @@
 
 .node-view-container {
     display: block;
+    position: relative;
+    padding-right: 50px;
+    width: fit-content;
+
 }
 
 

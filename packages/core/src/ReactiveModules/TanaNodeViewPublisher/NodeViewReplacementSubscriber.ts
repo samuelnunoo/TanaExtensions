@@ -42,10 +42,9 @@ export default class NodeViewReplacementSubscriber extends TanaSubscriber<TanaVi
     }
 
     private async createNodeView(event:RuntimeEventInstance<ReplaceViewEventMessage>,config:NodeViewConfig<any>) {
-        const {nodeElement,tanaNode,nodeViewType} = event.message.nodeEvent
         const nodeView = await config.createNodeView(event.message.nodeEvent)
         TanaNodeViewCreator.renderNodeView(
-            nodeView,tanaNode,nodeElement,config,nodeViewType
+            event,config,nodeView
         )
     }
 

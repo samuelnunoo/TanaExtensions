@@ -6,8 +6,6 @@ import CreateCollectionEvent from "database-extension/types/events/CreateCollect
 import NodeViewCollection from "./types/database/NodeViewCollection";
 
 
-
-
 export default class NodeViewCollectionPublisher extends TanaPublisher<TanaNodeViewModule> {
     getInitRequirements(): InitEvent[] {
        return [

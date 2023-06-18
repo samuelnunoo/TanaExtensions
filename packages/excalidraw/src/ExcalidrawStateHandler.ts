@@ -41,11 +41,11 @@ export default class ExcalidrawStateHandler {
             elements:array(unknown)
         })
         const codec = Codec.interface({
-            message: Codec.interface({content:Codec.interface({content:state})})
+            message: Codec.interface({dbEntry:Codec.interface({content:state})})
         })
 
         const results = codec.decode(data)
-            .map(data => data.message.content.content as ExcalidrawInitialDataState)
+            .map(data => data.message.dbEntry.content as ExcalidrawInitialDataState)
             .orDefault({})
 
         return results

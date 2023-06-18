@@ -15,7 +15,17 @@ import { AppState, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/typ
 import ExcalidrawStateHandler from "./ExcalidrawStateHandler";
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
 
+
+const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"
+
 export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawExtension> {
+
+
+    setDimensions(nodeView:HTMLElement,width: string, height: string): void {
+        const excalidrawDimension = nodeView.querySelector(`.${EXCALIDRAW_DIMENSION_CLASS_NAME}`) as HTMLElement
+        excalidrawDimension.style.width = width
+        excalidrawDimension.style.height = height 
+    }
     
     async createNodeView({tanaNode}: NodeEventMessage): Promise<HTMLDivElement> {
         const stateHandler = this.getMediator().getExcalidrawStateHandler()
@@ -24,7 +34,8 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
         container.classList.add("excalidraw-container")
         const root = createRoot(container)
         stateHandler.excalidrawInstances.set(tanaNode.id,root)
-        root.render(React.createElement(this.getReactInstance(initialData,tanaNode,stateHandler)))
+        const reactInstance = this.getReactInstance(initialData,tanaNode,stateHandler)
+        root.render(React.createElement(reactInstance))
         return container
     }
 
@@ -57,9 +68,9 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
     expandedConfig(): ExpandedNodeConfig {
         return {
                 addBorder: false,
-                hideHeader: false,
-                height: "1000px",
-                width:"500px",
+                hideHeader: true,
+                height: "100vh",
+                width:"90vw",
                 lockByDefault: false,
                 addSettingsButton:true,
                 allowFullscreen:true 
@@ -93,8 +104,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
                 React.createElement(
                     "div",
                     {
-                        style: { height: "500px" },
-
+                        className: "excalidraw-dimension",
                         onWheelCapture: (e) =>  {
                             if (!hasFocus) e.stopPropagation();
                         },
