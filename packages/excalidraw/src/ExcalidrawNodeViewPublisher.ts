@@ -4,6 +4,8 @@ import {InitEvent} from "tana-extensions-core/src/ReactiveModules/EventBus/types
 import RegisterNodeViewEvent from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/events/RegisterNodeViewEvent";
 import OnDatabaseInitEvent from "database-extension/types/events/OnDatabaseInitEvent";
 import NodeRelacementPublisherInitEvent from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/events/NodeReplacementPublisherInitEvent"
+import CreateCollectionEvent from 'database-extension/types/events/CreateCollectionEvent';
+import ExcalidrawDBCollection from "./ExcalidrawDBCollection";
 
 export default class ExcalidrawNodeViewPublisher extends TanaPublisher<ExcalidrawExtension> {
     getInitRequirements(): InitEvent[] {
@@ -14,12 +16,22 @@ export default class ExcalidrawNodeViewPublisher extends TanaPublisher<Excalidra
     }
 
     onDependenciesInitComplete() {
-        const event = RegisterNodeViewEvent.createInstance({
-            templateId:"excalidraw-extension",
-            config: this.mediator.getExcalidrawNodeViewConfig()
-        })
-
-        this.dispatchRuntimeEvent(event)
+        this.registerExcalidrawAsNodeView();
+        this.createExcalidrawDBCollection();
     }
 
+
+    private createExcalidrawDBCollection() {
+        const event = CreateCollectionEvent.createInstance({ collection: ExcalidrawDBCollection });
+        this.dispatchRuntimeEvent(event);
+    }
+
+    private registerExcalidrawAsNodeView() {
+        const event = RegisterNodeViewEvent.createInstance({
+            templateId: "excalidraw-extension",
+            config: this.mediator.getExcalidrawNodeViewConfig()
+        });
+
+        this.dispatchRuntimeEvent(event);
+    }
 }

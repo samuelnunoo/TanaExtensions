@@ -9,6 +9,7 @@ import GetNodeDataEvent, {NodeGetMessage} from "../types/events/GetNodeDataEvent
 import SendNodeDataEvent from "../types/events/SendNodeDataEvent";
 import DatabaseStateHandler from "./DatabaseStateHandler";
 import DBCollectionEntry from "../types/database/DBCollectionEntry";
+import CreateCollectionEvent, { CreateCollectionMessage } from '../types/events/CreateCollectionEvent';
 
 
 export default class IndexedDBSyncSubscriber extends TanaSubscriber<TanaDatabaseExtension> {
@@ -35,14 +36,20 @@ export default class IndexedDBSyncSubscriber extends TanaSubscriber<TanaDatabase
             this.dispatchEventResponse(event,message)
     }
 
-    onDependenciesInitComplete() {
+    public handleCreateCollectionEvent(event:RuntimeEventInstance<CreateCollectionMessage>) {
+        const {collection} = event.message 
+        Maybe.fromNullable(this.mediator.getDBStateHandler())
+        .map(dbStateHandler => dbStateHandler.createCollectionIfNotExists(collection))
+    }
+
+    async onDependenciesInitComplete() {
         const dbStateHandler = new DatabaseStateHandler()
-        dbStateHandler.init().then( _ => {
-            this.mediator.setDBStateHandler(dbStateHandler)
-            this.subscribeToRuntimeEvent(UpdateNodeDataEvent,this.handleUpdateNodeDataEvent.bind(this))
-            this.subscribeToRuntimeEvent(GetNodeDataEvent,this.handleNodeGetEvent.bind(this))
-            console.log("Tana Local Database Initialized...")
-        })
+        await dbStateHandler.init()
+        this.mediator.setDBStateHandler(dbStateHandler)
+        this.subscribeToRuntimeEvent(UpdateNodeDataEvent,this.handleUpdateNodeDataEvent.bind(this))
+        this.subscribeToRuntimeEvent(GetNodeDataEvent,this.handleNodeGetEvent.bind(this))
+        this.subscribeToRuntimeEvent(CreateCollectionEvent,this.handleCreateCollectionEvent.bind(this))
+        console.log("Tana Local Database Initialized...")
     }
 
 }

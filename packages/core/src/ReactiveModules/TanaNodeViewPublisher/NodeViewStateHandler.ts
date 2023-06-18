@@ -2,9 +2,9 @@ import NodeViewConfig from "./types/configs/NodeViewConfig";
 
 export default class NodeViewStateHandler {
 
-    nodeViewRegistry: Map<string,NodeViewConfig> = new Map()
+    nodeViewRegistry: Map<string,NodeViewConfig<any>> = new Map()
 
-    addEntry(templateId:string,config:NodeViewConfig) {
+    addEntry<T>(templateId:string,config:NodeViewConfig<T>) {
         if (this.hasEntry(templateId)) return 
         this.nodeViewRegistry.set(templateId,config)
     }

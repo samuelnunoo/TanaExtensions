@@ -46,7 +46,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
                     console.log("unlocking")
                 },
                 height:"500px",
-                width: "250px",
+                width: "750px",
                 addSettingsButton:true,
                 addBorder:false,
                 allowFullscreen:true,
@@ -85,7 +85,6 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
 
         return () => {
             let hasFocus = false
-
             //@ts-ignore
             window.excalidraw = {}
             return React.createElement(

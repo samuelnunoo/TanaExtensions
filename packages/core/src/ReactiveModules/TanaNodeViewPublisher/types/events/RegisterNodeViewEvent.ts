@@ -4,7 +4,7 @@ import NodeViewConfig from "../configs/NodeViewConfig";
 
 export interface RegisterNodeViewMessage {
     templateId:string
-    config: NodeViewConfig
+    config: NodeViewConfig<any>
 }
 
 

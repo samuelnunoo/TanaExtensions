@@ -36,18 +36,20 @@ export default abstract class TanaPubSubModule {
     }
 
     private async notifyComponentsThatDependenciesHaveInitialized() {
-        for (const component of this.getPubSubComponents()) {
-            component.onDependenciesInitComplete()
+        const components = this.getPubSubComponents()
+        for (const component of components) {
+            await component.onDependenciesInitComplete()
         }
         this.eventBus.dispatchInitEvent(this.getEventModuleInvokesOnCompletion())
         console.log(`${this} has Initialized...`)
         this.isInitialized = true
     }
 
-    private async acknowledgeDependencyHasInitialized(event:InitEvent) {
+    private acknowledgeDependencyHasInitialized(event:InitEvent) {
         this.dependencies.delete(event.getIdentifier())
-        if (this.dependencies.size == 0) {
-            await this.notifyComponentsThatDependenciesHaveInitialized()
+        if (this.dependencies.size == 0 && !this.isInitialized) {
+            this.isInitialized = true 
+            this.notifyComponentsThatDependenciesHaveInitialized()
         }
     }
 

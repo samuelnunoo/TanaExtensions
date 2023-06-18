@@ -22,12 +22,12 @@ class _TanaNodeViewCreator {
 
     public renderNodeView(
         nodeElement:Node,tanaNode:TanaNode,tanaDOMNode:HTMLElement,
-        config:NodeViewConfig,nodeViewType:NodeViewType
+        config:NodeViewConfig<any>,nodeViewType:NodeViewType
     ) {
         const viewContainer = this.wrapInViewContainer(nodeElement,tanaNode,tanaDOMNode,config,nodeViewType)
         Maybe.fromNullable(TanaDomNodeProvider.getListItemContainerFromAncestor(tanaDOMNode))
             .map(listItemContainer => {
-                const prependNonTemplateContent = !config.defaultConfig.insertBeforeTemplateContent &&
+                const prependNonTemplateContent = !config.defaultConfig().insertBeforeTemplateContent &&
                     listItemContainer.childNodes.length > 1
                 const nodeToPrepend = prependNonTemplateContent ?
                     listItemContainer.childNodes[1] : listItemContainer.childNodes[0]
@@ -35,9 +35,10 @@ class _TanaNodeViewCreator {
             })
     }
 
-    private wrapInViewContainer(nodeElement:Node,tanaNode:TanaNode,tanaDomNode:HTMLElement,config:NodeViewConfig,nodeViewType: NodeViewType) {
+    private wrapInViewContainer(nodeElement:Node,tanaNode:TanaNode,tanaDomNode:HTMLElement,config:NodeViewConfig<any>,nodeViewType: NodeViewType) {
         const viewContainer = this.createViewContainer()
         viewContainer.appendChild(nodeElement)
+        this.preventEventPropagationInContainer(viewContainer)
         this.addBorder(viewContainer,config,nodeViewType)
         this.hideHeader(viewContainer,tanaDomNode,config,nodeViewType)
         this.configureDimension(nodeElement as HTMLElement,config,nodeViewType)
@@ -47,10 +48,25 @@ class _TanaNodeViewCreator {
         return viewContainer
     }
 
-    private addBorder(viewContainer:HTMLDivElement,config:NodeViewConfig,nodeViewType: NodeViewType) {
+    private preventEventPropagationInContainer(viewContainer:HTMLElement) {
+        const events = ["mousedown","click","pointerdown"]
+        events.forEach(event => {
+            viewContainer.addEventListener(event, (e) => {
+                e.stopPropagation()
+            })
+        })
+
+        viewContainer.addEventListener("focus",(e) => {
+            if (!(e.target as HTMLElement).closest(NODE_VIEW_CONTAINER_CLASS)) {
+                e.preventDefault()
+            }
+        })
+    }
+
+    private addBorder(viewContainer:HTMLDivElement,config:NodeViewConfig<any>,nodeViewType: NodeViewType) {
         const shouldAddBorder =
-            config.defaultConfig.addBorder && nodeViewType == NodeViewType.Default ||
-            config.expandedConfig.addBorder && nodeViewType == NodeViewType.Expanded
+            config.defaultConfig().addBorder && nodeViewType == NodeViewType.Default ||
+            config.expandedConfig().addBorder && nodeViewType == NodeViewType.Expanded
 
         if (!shouldAddBorder) return
         viewContainer.addEventListener("mouseover", (event) => {
@@ -64,9 +80,9 @@ class _TanaNodeViewCreator {
         })
     }
 
-    private hideHeader(viewContainer:HTMLDivElement,tanaDomNode:HTMLElement, config:NodeViewConfig, nodeViewType: NodeViewType) {
-        const shouldHideHeader = (nodeViewType == NodeViewType.Default && config.defaultConfig.hideHeaderByDefault) ||
-            (nodeViewType == NodeViewType.Expanded && config.expandedConfig.hideHeader)
+    private hideHeader(viewContainer:HTMLDivElement,tanaDomNode:HTMLElement, config:NodeViewConfig<any>, nodeViewType: NodeViewType) {
+        const shouldHideHeader = (nodeViewType == NodeViewType.Default && config.defaultConfig().hideHeaderByDefault) ||
+            (nodeViewType == NodeViewType.Expanded && config.expandedConfig().hideHeader)
         if (!shouldHideHeader) return
         Maybe.fromNullable(TanaDomNodeProvider.getContentNodeHeaderFromAncestor(tanaDomNode))
             .map(headerNode => { headerNode.style.display = "none" })
@@ -105,12 +121,12 @@ class _TanaNodeViewCreator {
 
     private showModal(modalDescendant:HTMLElement) {
         Maybe.fromNullable(this.getModal(modalDescendant))
-            .map(modal => { modal.style.display = "block" })
+            .map(modal => { modal.style.visibility = "visible" })
     }
 
     private hideModal(modalDescendant:HTMLElement) {
         Maybe.fromNullable(this.getModal(modalDescendant))
-            .map(modal => { modal.style.display = "none" })
+            .map(modal => { modal.style.visibility = "hidden" })
     }
 
     private createSettingsModal() {
@@ -123,11 +139,11 @@ class _TanaNodeViewCreator {
 
     }
 
-    private addFullscreenButton(modalContainer:HTMLElement,config:NodeViewConfig,nodeViewType:NodeViewType) {
+    private addFullscreenButton(modalContainer:HTMLElement,config:NodeViewConfig<any>,nodeViewType:NodeViewType) {
         if (nodeViewType == NodeViewType.Fullscreen) return
         const shouldAddButton =
-            nodeViewType == NodeViewType.Default && config.defaultConfig.allowFullscreen
-            || nodeViewType == NodeViewType.Expanded && config.expandedConfig.allowFullscreen
+            nodeViewType == NodeViewType.Default && config.defaultConfig().allowFullscreen
+            || nodeViewType == NodeViewType.Expanded && config.expandedConfig().allowFullscreen
 
         if (shouldAddButton) {
             this.createSettingsOptionButton("Fullscreen","green",this.invokeFullscreen)
@@ -156,18 +172,18 @@ class _TanaNodeViewCreator {
         }
     }
 
-    private addLockButton(modalContainer:HTMLDivElement,config:NodeViewConfig,nodeViewType:NodeViewType) {
+    private addLockButton(modalContainer:HTMLDivElement,config:NodeViewConfig<any>,nodeViewType:NodeViewType) {
         const settingsButton = curry(this.createSettingsOptionButton)("lock")("purple").bind(this)
-        let onLockFunction:((nodeView:HTMLElement) => unknown)|null = null
-        let onUnlockFunction:((nodeView:HTMLElement) => unknown)|null = null
+        let onLockFunction:((nodeView:HTMLElement) => unknown)| undefined
+        let onUnlockFunction:((nodeView:HTMLElement) => unknown)|undefined
         switch(nodeViewType) {
             case NodeViewType.Default:
-                onLockFunction = config.defaultConfig.onLock
-                onUnlockFunction = config.defaultConfig.onUnlock
+                onLockFunction = config.defaultConfig().onLock
+                onUnlockFunction = config.defaultConfig().onUnlock
                 break;
             case NodeViewType.Expanded:
-                onLockFunction = config.expandedConfig.onLock
-                onUnlockFunction = config.expandedConfig.onUnlock
+                onLockFunction = config.expandedConfig().onLock
+                onUnlockFunction = config.expandedConfig().onUnlock
                 break;
             default:
                 break;
@@ -180,24 +196,46 @@ class _TanaNodeViewCreator {
             })
     }
 
-    private setupSettingsModal(viewContainer:HTMLElement,config:NodeViewConfig,nodeViewType: NodeViewType) {
+    private createOptionsContainer() {
+        const container = this.doc.createElement("div")
+        container.classList.add("modal-options-container")
+        return container 
+    }
+    private setupSettingsModal(viewContainer:HTMLElement,config:NodeViewConfig<any>,nodeViewType: NodeViewType) {
         const shouldAddSettingsButton =
-            config.defaultConfig.addSettingsButton && nodeViewType == NodeViewType.Default ||
-            config.expandedConfig.addSettingsButton && nodeViewType == NodeViewType.Expanded
+            config.defaultConfig().addSettingsButton && nodeViewType == NodeViewType.Default ||
+            config.expandedConfig().addSettingsButton && nodeViewType == NodeViewType.Expanded
         if (!shouldAddSettingsButton) return
 
         const modalContainer  = this.createSettingsModal()
+        const optionsContainer = this.createOptionsContainer()
         const settingsButton = this.createSettingsButton()
-        this.addFullscreenButton(modalContainer,config,nodeViewType)
-        this.addLockButton(modalContainer,config,nodeViewType)
+
+        this.addFullscreenButton(optionsContainer,config,nodeViewType)
+        this.addLockButton(optionsContainer,config,nodeViewType)
+
+        modalContainer.appendChild(optionsContainer)
         modalContainer.appendChild(settingsButton)
         viewContainer.appendChild(modalContainer)
+
+        modalContainer.addEventListener("mouseleave",(event) => {
+            const container = event.target as HTMLElement
+            container.style.visibility = "hidden"
+        })
+
+        viewContainer.addEventListener("mouseover",(event) => {
+            this.showSettingsButton(viewContainer)
+        })
+
+        viewContainer.addEventListener("mouseleave", (event) => {
+            this.hideSettingsButton(viewContainer)
+        })
     }
 
-    private addSettingsButton(viewContainer:HTMLDivElement,config:NodeViewConfig,nodeViewType:NodeViewType) {
+    private addSettingsButton(viewContainer:HTMLDivElement,config:NodeViewConfig<any>,nodeViewType:NodeViewType) {
         const shouldAddSettingsButton =
-            config.defaultConfig.addSettingsButton && nodeViewType == NodeViewType.Default ||
-            config.expandedConfig.addSettingsButton && nodeViewType == NodeViewType.Expanded
+            config.defaultConfig().addSettingsButton && nodeViewType == NodeViewType.Default ||
+            config.expandedConfig().addSettingsButton && nodeViewType == NodeViewType.Expanded
         if (!shouldAddSettingsButton) return
         const settingsButton = this.createSettingsButton()
         settingsButton.addEventListener("mouseover",(event) => {
@@ -207,28 +245,41 @@ class _TanaNodeViewCreator {
         viewContainer.appendChild(settingsButton)
     }
 
-    private configureDimension(nodeElement: HTMLElement, config:NodeViewConfig, nodeViewType:NodeViewType) {
+    private getSettingButtonFromAncestor(ancestor:HTMLElement) {
+        return ancestor.querySelector(".node-view-settings-button") as HTMLElement
+    }
+    private showSettingsButton(viewContainer:HTMLElement) {
+        const settingsButton =  this.getSettingButtonFromAncestor(viewContainer)
+        settingsButton.style.visibility = "visible"
+    }
+
+    private hideSettingsButton(viewContainer:HTMLElement) {
+        const settingsButton = this.getSettingButtonFromAncestor(viewContainer)
+        settingsButton.style.visibility = "hidden"
+    }
+
+    private configureDimension(nodeElement: HTMLElement, config:NodeViewConfig<any>, nodeViewType:NodeViewType) {
         if (nodeViewType == NodeViewType.Fullscreen) return
-        const height = nodeViewType == NodeViewType.Default ? config.defaultConfig.height : config.expandedConfig.height
-        const width = nodeViewType == NodeViewType.Default ? config.defaultConfig.width : config.expandedConfig.width
+        const height = nodeViewType == NodeViewType.Default ? config.defaultConfig().height : config.expandedConfig().height
+        const width = nodeViewType == NodeViewType.Default ? config.defaultConfig().width : config.expandedConfig().width
         nodeElement.style.height = height
         nodeElement.style.width = width
     }
 
-    private setupLock(nodeElement:HTMLElement,config:NodeViewConfig,nodeViewType: NodeViewType) {
+    private setupLock(nodeElement:HTMLElement,config:NodeViewConfig<any>,nodeViewType: NodeViewType) {
         const onLock =
-            nodeViewType == NodeViewType.Default && config.defaultConfig.lockByDefault
-            ? config.defaultConfig.onLock
-            : nodeViewType == NodeViewType.Expanded && config.expandedConfig.lockByDefault
-            ? config.expandedConfig.onLock
+            nodeViewType == NodeViewType.Default && config.defaultConfig().lockByDefault
+            ? config.defaultConfig().onLock
+            : nodeViewType == NodeViewType.Expanded && config.expandedConfig().lockByDefault
+            ? config.expandedConfig().onLock
             : null
 
         if (!onLock) return
         onLock(nodeElement)
     }
 
-    private expandNode(tanaNode:TanaNode,config:NodeViewConfig,nodeViewType:NodeViewType) {
-        const shouldExpand = nodeViewType == NodeViewType.Default && config.defaultConfig.expandByDefault
+    private expandNode(tanaNode:TanaNode,config:NodeViewConfig<any>,nodeViewType:NodeViewType) {
+        const shouldExpand = nodeViewType == NodeViewType.Default && config.defaultConfig().expandByDefault
         if (!shouldExpand) return
         TanaCommandExecutor.expandTanaNode(tanaNode)
     }

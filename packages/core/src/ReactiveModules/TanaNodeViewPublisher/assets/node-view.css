@@ -2,24 +2,41 @@
 
 
 .node-view-container {
-    display: flex;
-    gap: 10px;
+    display: block;
 }
 
 
+.modal-options-container {
+    position: relative;
+    display: flex;
+}
 
 .modal-button {
-
+    width: fit-content;
+    height: fit-content;
+    border-radius: 4px;
+    color: white;
+    padding: 2px 10px;
+    background: black;
+    border-radius: 4px;
 }
 
 .node-view-settings-modal {
-
+    z-index:4;
+    height: fit-content;
+    width: fit-content;
+    position: absolute;
+    top: 0px;
+    right:0px;
+    padding: 20px;
+    display: flex;
+    visibility: hidden;
 }
 
 .node-view-settings-button {
     width: 20px;
     height: 20px;
-    background: white;
-    display: none;
+    background: black;
     border-radius: 10px;
+    margin-left: 20px;
 }

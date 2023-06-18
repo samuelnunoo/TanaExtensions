@@ -34,6 +34,6 @@ export default {
             }
         }),
         emptyDir(),
-        scss({ fileName: 'assets/bundle.assets'}),
+        scss({ fileName: 'assets/bundle.css'}),
     ]
 }

@@ -8,6 +8,7 @@ export enum ReplaceViewEnum {
 }
 export interface ReplaceViewEventMessage {
     type: ReplaceViewEnum
+    templateId:string 
     nodeEvent: NodeEventMessage
 }
 

@@ -54,7 +54,7 @@ export default class DatabaseStateHandler {
     public createCollectionIfNotExists<T>(collection:DBCollection<T>) {
         Maybe.fromNullable(this.database)
             .map(database => {
-                if (database.getCollection(collection.getCollectionName())) return
+                if (!!database.getCollection(collection.getCollectionName())) return
                 database.addCollection(collection.getCollectionName())
             })
     }
@@ -75,8 +75,14 @@ export default class DatabaseStateHandler {
 
     private getLokiNode<T>(dbCollection:DBCollection<T>,nodeId:string) {
        return Maybe.fromNullable(this.database)
-            .map(database => database.getCollection<DBNode<T>>(dbCollection.getCollectionName()))
-            .map(collection => collection.findOne({'nodeId': {"$eq": nodeId}}))
+            .map(database => {
+                const collection = database.getCollection<DBNode<T>>(dbCollection.getCollectionName())
+                return collection 
+            }
+                )
+            .map(collection => {
+               return  collection.findOne({'nodeId': {"$eq": nodeId}})
+            })
             .extractNullable()
     }
 

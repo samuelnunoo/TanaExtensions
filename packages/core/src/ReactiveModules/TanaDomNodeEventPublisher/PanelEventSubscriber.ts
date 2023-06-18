@@ -14,6 +14,7 @@ import {NodeViewType} from "../TanaNodeViewPublisher/types/configs/NodeViewType"
 import {TanaNode} from "../../StaticModules/TanaStateProvider/types/types";
 
 export default class PanelEventSubscriber extends TanaSubscriber<TanaDomNodeEventModule> {
+   
     getInitRequirements(): InitEvent[] {
         return [
             OnDomRenderCompleteEvent

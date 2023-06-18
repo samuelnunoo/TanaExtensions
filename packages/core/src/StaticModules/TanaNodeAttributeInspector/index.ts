@@ -70,6 +70,17 @@ export default new class TanaNodeAttributeInspector extends TanaConstants {
         return false
     }
 
+    public getFirstTemplateWithSuperTag(tanaNode:TanaNode, superTagName:string):TanaNode|null {
+        if (!tanaNode || !tanaNode.templates) return null 
+        for (const template of tanaNode.templates) {
+                if (!template.templates) continue 
+                for (const supertag of template.templates) {
+                    if (supertag.name == superTagName) return template 
+                }
+        }
+        return null 
+    }
+
     public hasDescendantWithTemplateName(tanaNode:TanaNode,templateName:string) {
         if (!tanaNode || !tanaNode.templates) return false 
         for (const template of tanaNode.templates) {

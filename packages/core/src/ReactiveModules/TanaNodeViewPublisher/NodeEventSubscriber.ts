@@ -17,7 +17,7 @@ export default class NodeEventSubscriber extends TanaSubscriber<TanaNodeViewModu
         const {nodeEventType,nodeId,tanaNode} = event.message
         if (!(nodeEventType == NodeEventTypeEnum.Deletion || nodeEventType == NodeEventTypeEnum.BulletCollapse)) return false 
         if (!this.mediator.replacedNodeIds.has(nodeId)) return false 
-        if (!TanaNodeAttributeInspector.hasDescendantWithTemplateName(tanaNode,'view-extension')) return false 
+        if (!TanaNodeAttributeInspector.getFirstTemplateWithSuperTag(tanaNode,'view-extension')) return false 
         return true 
     }
 
@@ -26,7 +26,7 @@ export default class NodeEventSubscriber extends TanaSubscriber<TanaNodeViewModu
         if (!(nodeEventType == NodeEventTypeEnum.Insertion || nodeEventType == NodeEventTypeEnum.BulletExpand)) return false 
         if (this.mediator.replacedNodeIds.has(nodeId)) return false 
         if (!isHeaderNode && !TanaNodeAttributeInspector.isExpandedNode(nodeElement)) return false
-        if (!TanaNodeAttributeInspector.hasDescendantWithTemplateName(tanaNode,'view-extension')) return false 
+        if (!TanaNodeAttributeInspector.getFirstTemplateWithSuperTag(tanaNode,'view-extension')) return false 
         return true
     }
 
