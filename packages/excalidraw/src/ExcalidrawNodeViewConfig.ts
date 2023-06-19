@@ -15,12 +15,20 @@ import { AppState, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/typ
 import ExcalidrawStateHandler from "./ExcalidrawStateHandler";
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
 import { DropEventContent } from "tana-extensions-core/src/ReactiveModules/TanaDragEventPublisher/types/OnDragEvent";
+import TanaNodePortalRenderer from '../../core/src/StaticModules/TanaNodePortalRenderer/index';
+import TanaStateProvider from "tana-extensions-core/src/StaticModules/TanaStateProvider";
+
 
 
 const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"
 
 export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawExtension> {
     OnDropEvent(viewContainer: HTMLElement, dropEvent: CustomEvent<DropEventContent>,tanaNodeId:string): void {
+     
+        const nodeViewTanaNode = TanaStateProvider.getNodeWithId(tanaNodeId).extractNullable()
+        if (!nodeViewTanaNode) return 
+
+        TanaNodePortalRenderer.addNodeReferenceToPortal(nodeViewTanaNode,dropEvent.detail.tanaNodeId)
         console.log(viewContainer,dropEvent,tanaNodeId)
 
     }

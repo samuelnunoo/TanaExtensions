@@ -8,11 +8,10 @@ import TanaNodeAttributeInspector from "../TanaNodeAttributeInspector";
 const NODE_PORTAL_TEMPLATE_NAME = "node-portal-component"
 
 export default class TanaNodePortalRenderer {
-    public static addNodeReferenceToPortal(node:TanaNode,nodeRefId:string) {
+    public static addNodeReferenceToPortal(portalParentNode:TanaNode,nodeRefId:string) {
         const nodeRef = TanaStateProvider.getNodeWithId(nodeRefId).extractNullable()
         if (!nodeRef) return null
-        const portalContainer = this.getOrInsertPortalContainer(node)
-        if (this.portalHasNode(portalContainer,nodeRefId)) return null
+        const portalContainer = this.getOrInsertPortalContainer(portalParentNode)
         return Maybe.fromNullable(TanaStateProvider.getNodeWithId(nodeRefId).extractNullable())
                 .map(nodeRef => {
                 portalContainer.addChild(nodeRef)
@@ -39,7 +38,7 @@ export default class TanaNodePortalRenderer {
 
     private static getPortalContainer(node:TanaNode) {
         for (const child of node.children){
-            if (TanaNodeAttributeInspector.hasTemplateWithName(node,NODE_PORTAL_TEMPLATE_NAME)) return child
+            if (TanaNodeAttributeInspector.hasTemplateWithName(child,NODE_PORTAL_TEMPLATE_NAME)) return child
         }
         return null
     }

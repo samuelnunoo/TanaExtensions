@@ -78,7 +78,7 @@ export interface TanaNode {
     docType?: string 
     insertTuple: (node:TanaNode,type:string) => void
     addTemplate: (template:TanaNode) => void
-    runInitializations: () => void
+    runInitialisations: () => void
     name:string
     tupleValue:TanaNode
     isCodeBlock:boolean

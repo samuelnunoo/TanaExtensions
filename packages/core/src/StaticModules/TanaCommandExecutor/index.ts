@@ -7,7 +7,7 @@ export default class TanaCommandExecutor {
 
     public static addTemplateToNode(node:TanaNode,templateNode:TanaNode) {
         node.addTemplate(templateNode)
-        node.runInitializations()
+        node.runInitialisations()
     }
 
     public static turnNodeIntoCodeBlock(node:TanaNode) {
