@@ -7,8 +7,8 @@ import _ from "lodash";
 import { Excalidraw } from "@excalidraw/excalidraw";
 import { ClipboardData } from "@excalidraw/excalidraw/types/clipboard";
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
-import React from "react";
-import { createRoot } from "react-dom/client";
+import React, { useEffect } from "react";
+import { createRoot,  } from "react-dom/client";
 import TanaDomNodeProvider from "tana-extensions-core/src/StaticModules/TanaDomNodeProvider";
 import ExcalidrawExtension from ".";
 import { AppState, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types/types";
@@ -27,16 +27,18 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
         excalidrawDimension.style.height = height 
     }
     
-    async createNodeView({tanaNode}: NodeEventMessage): Promise<HTMLDivElement> {
-        const stateHandler = this.getMediator().getExcalidrawStateHandler()
-        const initialData = await stateHandler.getData(tanaNode)
-        const container = document.createElement("div")
-        container.classList.add("excalidraw-container")
-        const root = createRoot(container)
-        stateHandler.excalidrawInstances.set(tanaNode.id,root)
-        const reactInstance = this.getReactInstance(initialData,tanaNode,stateHandler)
-        root.render(React.createElement(reactInstance))
-        return container
+    createNodeView({tanaNode}: NodeEventMessage): Promise<HTMLDivElement> {
+        return new Promise(async (resolve,reject) => {
+            const stateHandler = this.getMediator().getExcalidrawStateHandler()
+            const initialData = await stateHandler.getData(tanaNode)
+            const container = document.createElement("div")
+            const reactInstance = React.createElement(this.getReactInstance(container,initialData,tanaNode,stateHandler,resolve))
+            const root = createRoot(container)
+            root.render(reactInstance)
+            stateHandler.excalidrawInstances.set(tanaNode.id,root)
+            return container
+        })
+ 
     }
 
     async destroyNodeView({nodeId}: NodeEventMessage): Promise<void> {
@@ -56,8 +58,8 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
                 onUnlock(nodeView) {
                     console.log("unlocking")
                 },
-                height:"500px",
-                width: "750px",
+                height:"250px",
+                width: "500px",
                 addSettingsButton:true,
                 addBorder:false,
                 allowFullscreen:true,
@@ -69,7 +71,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
         return {
                 addBorder: false,
                 hideHeader: true,
-                height: "100vh",
+                height: "90vh",
                 width:"90vw",
                 lockByDefault: false,
                 addSettingsButton:true,
@@ -82,7 +84,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
         return {}
     }
 
-    private getReactInstance(initialData:ExcalidrawInitialDataState,tanaNode:TanaNode,stateHandler:ExcalidrawStateHandler) {
+    private getReactInstance(container:HTMLElement,initialData:ExcalidrawInitialDataState,tanaNode:TanaNode,stateHandler:ExcalidrawStateHandler,resolve:any) {
         let prevElements = 'elements' in initialData ? initialData.elements : []
         const hasChanged = (elements: readonly any[]) => {
             if (elements.length !== prevElements!.length) return true
@@ -98,6 +100,12 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
             let hasFocus = false
             //@ts-ignore
             window.excalidraw = {}
+
+            useEffect(() => {
+                resolve(container)
+                console.log('This will run once after the initial render, similar to componentDidMount');
+              }, []);  
+              
             return React.createElement(
                 React.Fragment,
                 null,

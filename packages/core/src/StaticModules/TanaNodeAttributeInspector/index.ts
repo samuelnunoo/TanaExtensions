@@ -5,6 +5,10 @@ import TanaDomNodeProvider from "../TanaDomNodeProvider";
 
 export default new class TanaNodeAttributeInspector extends TanaConstants {
 
+    public getTanaNodeIdFromDomNode(contentNode:HTMLElement) {
+        
+    }
+
     public isPanelHeader(node:TanaNode,panel:HTMLElement) {
         const panelHeader = TanaDomNodeProvider.getPanelHeaderFromAncestor(panel)!
         const wrapper = TanaDomNodeProvider.getWrapperNodeFromAncestor(panelHeader!)!
