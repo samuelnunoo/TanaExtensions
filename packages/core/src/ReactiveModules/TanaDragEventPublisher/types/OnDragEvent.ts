@@ -3,14 +3,14 @@ import RuntimeEventStatic from "../../EventBus/types/RuntimeEventStatic";
 
 
 
-export interface DragEventMessage {
+export interface DropEventContent {
     tanaNodeId:string 
     targetElement:HTMLElement
-    event:MouseEvent
+    mouseEvent:MouseEvent
 }
 
 
 
 
 
-export default new RuntimeEventStatic<DragEventMessage>("OnDragEvent")
+export const ON_DROP_EVENT = "onDropEvent"

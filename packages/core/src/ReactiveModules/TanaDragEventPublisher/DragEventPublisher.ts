@@ -4,8 +4,8 @@ import TanaDomNodeProvider from "../../StaticModules/TanaDomNodeProvider";
 import { InitEvent } from "../EventBus/types/Event";
 import TanaPublisher from "../EventBus/types/TanaPublisher";
 import OnDomRenderCompleteEvent from "../TanaModuleLoader/types/OnDomRenderCompleteEvent";
-import OnDragEvent from "./types/OnDragEvent";
 import EventBus from "../EventBus";
+import { DropEventContent, ON_DROP_EVENT } from "./types/OnDragEvent";
 
 const MOVE_COUNT_THRESHOLD = 15 
 
@@ -34,9 +34,17 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragEventPubli
         this.initMouseOverEvent()
     }
 
-    private invokeDropEvent(tanaNodeId:string,event:MouseEvent,targetElement:HTMLElement) {
-        const dropEvent = OnDragEvent.createInstance({tanaNodeId,event,targetElement})
-        this.dispatchRuntimeEvent(dropEvent)
+    private invokeDropEvent(tanaNodeId:string,mouseEvent:MouseEvent,targetElement:HTMLElement) {
+         const dropEvent = new CustomEvent(ON_DROP_EVENT,{
+            bubbles:true,
+            detail: {
+                tanaNodeId,
+                mouseEvent,
+                targetElement
+            } as DropEventContent
+        })
+
+        targetElement.dispatchEvent(dropEvent) 
     }
 
     private initMouseDownEvent() {
@@ -60,7 +68,7 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragEventPubli
         })
     }
 
-    private isDragHand(event:MouseEvent) {
+    private isDragHand(event:Event) {
         return event.target && (event.target as HTMLElement).classList.contains("dragHand")
     }
 
@@ -80,8 +88,6 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragEventPubli
             if (moveCount < MOVE_COUNT_THRESHOLD) return 
             if (!tanaNodeId) return 
             if (!hoverElement) return 
-
-            console.log("invoke drop event",tanaNodeId,event,hoverElement)
             this.invokeDropEvent(tanaNodeId,event,hoverElement)
         })
     }

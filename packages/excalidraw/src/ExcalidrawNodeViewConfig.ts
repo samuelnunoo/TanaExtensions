@@ -14,12 +14,16 @@ import ExcalidrawExtension from ".";
 import { AppState, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types/types";
 import ExcalidrawStateHandler from "./ExcalidrawStateHandler";
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
+import { DropEventContent } from "tana-extensions-core/src/ReactiveModules/TanaDragEventPublisher/types/OnDragEvent";
 
 
 const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"
 
 export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawExtension> {
+    OnDropEvent(viewContainer: HTMLElement, dropEvent: CustomEvent<DropEventContent>,tanaNodeId:string): void {
+        console.log(viewContainer,dropEvent,tanaNodeId)
 
+    }
 
     setDimensions(nodeView:HTMLElement,width: string, height: string): void {
         const excalidrawDimension = nodeView.querySelector(`.${EXCALIDRAW_DIMENSION_CLASS_NAME}`) as HTMLElement

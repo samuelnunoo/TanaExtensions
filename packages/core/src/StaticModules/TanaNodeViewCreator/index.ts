@@ -5,10 +5,10 @@ import {NodeViewType} from "../../ReactiveModules/TanaNodeViewPublisher/types/co
 import {TanaNode} from "../TanaStateProvider/types/types";
 import TanaCommandExecutor from "../TanaCommandExecutor";
 import autoBind from "auto-bind";
-import { magma } from 'fp-ts';
 import RuntimeEventInstance from "../../ReactiveModules/EventBus/types/RuntimeEventInstance";
 import { ReplaceViewEventMessage } from "../../ReactiveModules/TanaNodeViewPublisher/types/events/ReplaceViewEvent";
-import { head } from "fp-ts/lib/ReadonlyNonEmptyArray";
+import { DropEventContent, ON_DROP_EVENT } from "../../ReactiveModules/TanaDragEventPublisher/types/OnDragEvent";
+import { Just } from "purify-ts/esm/Maybe";
 
 const NODE_VIEW_CONTAINER_CLASS = "node-view-container"
 const NODE_VIEW_BORDER_CLASS = "node-view-border"
@@ -43,9 +43,7 @@ class _TanaNodeViewCreator {
     }
 
 
-    private removePadding() {
-        
-    }
+
     private wrapInViewContainer(event:RuntimeEventInstance<ReplaceViewEventMessage>, config:NodeViewConfig<any>,nodeView:HTMLDivElement) {
         const {nodeViewType,tanaNode} = event.message.nodeEvent
         const viewContainer = this.createViewContainer()
@@ -57,7 +55,29 @@ class _TanaNodeViewCreator {
         this.setupLock(nodeView,config,nodeViewType)
         this.setupSettingsModal(viewContainer,config,nodeViewType)
         this.expandNode(tanaNode,config,nodeViewType)
+        this.listenToOnDropEvent(viewContainer,config)
         return viewContainer
+    }
+
+
+    private listenToOnDropEvent(viewContainer:HTMLElement,nodeViewConfig:NodeViewConfig<any>) {
+        viewContainer.addEventListener(ON_DROP_EVENT,(event) => {
+            Maybe.fromNullable(this.getNodeIdFromViewContainer(viewContainer))
+                .map(tanaNodeId => nodeViewConfig.OnDropEvent(viewContainer,event as CustomEvent<DropEventContent>,tanaNodeId))         
+        })
+    }
+
+    private getNodeIdFromViewContainer(viewContainer:HTMLElement) {
+        const contentHtmlNode = TanaDomNodeProvider.getContentNodeFromDescendant(viewContainer) as HTMLElement
+        if (contentHtmlNode) {
+            return TanaDomNodeProvider.getIdFromElement(contentHtmlNode)
+        }
+        
+        return Maybe.fromNullable(TanaDomNodeProvider.getPanelFromDescendant(viewContainer) as HTMLElement)
+            .chainNullable(panel => TanaDomNodeProvider.getPanelHeaderFromAncestor(panel))
+            .chainNullable(panelHeader => TanaDomNodeProvider.getWrapperNodeFromAncestor(panelHeader) as HTMLElement)
+            .chainNullable(wrapperElement =>TanaDomNodeProvider.getIdFromElement(wrapperElement))
+            .extractNullable()
     }
 
     private preventEventPropagationInContainer(viewContainer:HTMLElement) {
