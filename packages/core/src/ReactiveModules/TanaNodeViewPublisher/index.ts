@@ -11,17 +11,36 @@ import NodeViewCollectionPublisher from "./NodeViewCollectionPublisher";
 import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector";
 import { Maybe } from 'purify-ts';
 import "./assets/node-view.css"
+import NodePortalStateHandler from "./NodePortalStateHandler";
+import DropEventSubscriber from "./DropEventSubscriber";
 
 export default class TanaNodeViewModule extends TanaPubSubModule {
-    private nodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
     private nodeViewStateHandler = new NodeViewStateHandler()
+    private nodePortalStateHandler = new NodePortalStateHandler()
+
+    private nodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
     private nodeViewPublisher: NodeViewReplacementSubscriber = new NodeViewReplacementSubscriber(this,this.eventBus)
     private nodeViewCollectionPublisher:NodeViewCollectionPublisher = new NodeViewCollectionPublisher(this,this.eventBus)
+    private dropEventSubscriber:DropEventSubscriber = new DropEventSubscriber(this,this.eventBus)
+
     replacedNodeIds: Set<string> = new Set() 
     deletedNodeIds: Set<string> = new Set()
 
+    getPubSubComponents(): TanaPubSubComponent[] {
+        return [
+            this.nodeEventSubscriber,
+            this.nodeViewPublisher,
+            this.nodeViewCollectionPublisher,
+            this.dropEventSubscriber
+        ];
+    }
+
     getNodeViewReplacementSubscriber() {
         return this.nodeViewPublisher
+    }
+
+    getNodePortalStateHandler() {
+        return this.nodePortalStateHandler
     }
 
     getEventModuleInvokesOnCompletion(): InitEvent {
@@ -30,14 +49,6 @@ export default class TanaNodeViewModule extends TanaPubSubModule {
 
     getNodeEventSubscriber() {
         return this.nodeEventSubscriber
-    }
-
-    getPubSubComponents(): TanaPubSubComponent[] {
-        return [
-            this.nodeEventSubscriber,
-            this.nodeViewPublisher,
-            this.nodeViewCollectionPublisher
-        ];
     }
 
     getNodeViewStateHandler() {

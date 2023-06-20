@@ -2,9 +2,19 @@
 export default abstract class TanaConstants {
 
     protected getContentNodeHeaderPrefix() { return "Content-module_contentAndRefCount"}
+    
     protected getListItemCssClass() { return "listItems"}
+
     protected getTanaWrapperCssClass() {
         return "wrapEditableAndMenu"
+    }
+
+    protected getNodeViewCssClass() {
+        return "node-view-container"
+    }
+
+    protected getContentNodeAttribute() {
+        return "data-id"
     }
 
     protected getViewPanelContainerCssClass() {
@@ -66,7 +76,6 @@ export default abstract class TanaConstants {
     protected getTanaDockAttribute() {
         return "data-dock"
     }
-
 
     protected getContentNodeCssClass() {
         return "bulletAndContent"

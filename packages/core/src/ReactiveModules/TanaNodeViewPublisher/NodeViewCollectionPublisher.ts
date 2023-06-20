@@ -7,11 +7,13 @@ import NodeViewCollection from "./types/database/NodeViewCollection";
 
 
 export default class NodeViewCollectionPublisher extends TanaPublisher<TanaNodeViewModule> {
+
     getInitRequirements(): InitEvent[] {
        return [
         OnDatabaseInitEvent
        ]
     }
+    
     onDependenciesInitComplete() {
         const event = CreateCollectionEvent.createInstance({collection:NodeViewCollection})
        this.dispatchRuntimeEvent(event)

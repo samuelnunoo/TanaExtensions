@@ -39,6 +39,7 @@ export default new class MutationRecordAttributeInspector extends TanaConstants 
             })
             .orDefault(false)
     }
+    
     public  nodeHasClassPrefix(node:HTMLElement,classPrefix:string):boolean {
         if (!node.hasOwnProperty('classList')) return false
         for (const classItem of Array.from(node.classList)) {

@@ -1,7 +1,15 @@
 export interface AppState {
     nodeSpace:NodeSpace
     transactionStore: TransactionStore
-     getAllSystemNodes: () => Iterator<TanaNode>
+    getAllSystemNodes: () => Iterator<TanaNode>
+    getPanelUIStateForPath:(nodePath:TanaNode[]) => PanelUIState | null 
+}
+
+export interface PanelUIState {
+    expand(nodePath:TanaNode[]): void 
+    collapse(nodePath:TanaNode[]): void 
+    //@todo look into what exactly this bool does outside of preventing the expand of referenced items 
+    expandAll(nodePath:TanaNode[],unknownBool:boolean):void
 }
 
 export interface Iterator<T> {
@@ -75,6 +83,7 @@ export interface MetaNode {
 
 export interface TanaNode {
     id:string 
+    firstChild:TanaNode
     docType?: string 
     insertTuple: (node:TanaNode,type:string) => void
     addTemplate: (template:TanaNode) => void
@@ -92,6 +101,7 @@ export interface TanaNode {
     children: TanaNode[]
     isTemplate: boolean
     insertNewNodeAtEnd: () => TanaNode
+    lock:() => void 
 }
 
 export interface TanaWindow extends Window {

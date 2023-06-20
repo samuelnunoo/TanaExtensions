@@ -7,7 +7,7 @@ import TanaCommandExecutor from "../TanaCommandExecutor";
 import autoBind from "auto-bind";
 import RuntimeEventInstance from "../../ReactiveModules/EventBus/types/RuntimeEventInstance";
 import { ReplaceViewEventMessage } from "../../ReactiveModules/TanaNodeViewPublisher/types/events/ReplaceViewEvent";
-import { DropEventContent, ON_DROP_EVENT } from "../../ReactiveModules/TanaDragEventPublisher/types/OnDragEvent";
+import { DropEventContent} from "../../ReactiveModules/TanaDragEventPublisher/types/OnDropEvent";
 import { Just } from "purify-ts/esm/Maybe";
 
 const NODE_VIEW_CONTAINER_CLASS = "node-view-container"
@@ -30,21 +30,22 @@ class _TanaNodeViewCreator {
         nodeView:HTMLDivElement
     ) {
         const {nodeElement,isHeaderNode,panel} = event.message.nodeEvent 
-        const viewContainer = this.wrapInViewContainer(event,config,nodeView)
+        const viewContainer = this.wrapInViewContainer(event,config,nodeView,nodeElement)
         const listItemAncestor = isHeaderNode ? panel :nodeElement
-        Maybe.fromNullable(TanaDomNodeProvider.getListItemContainerFromAncestor(listItemAncestor))
+        return Maybe.fromNullable(TanaDomNodeProvider.getListItemContainerFromAncestor(listItemAncestor))
             .map(listItemContainer => {
                 const prependNonTemplateContent = !config.defaultConfig().insertBeforeTemplateContent &&
                     listItemContainer.childNodes.length > 1
                 const nodeToPrepend = prependNonTemplateContent ?
                     listItemContainer.childNodes[1] : listItemContainer.childNodes[0]
                 listItemContainer.insertBefore(viewContainer,nodeToPrepend!)
-            })
+                return viewContainer
+            }).extractNullable()
     }
 
 
 
-    private wrapInViewContainer(event:RuntimeEventInstance<ReplaceViewEventMessage>, config:NodeViewConfig<any>,nodeView:HTMLDivElement) {
+    private wrapInViewContainer(event:RuntimeEventInstance<ReplaceViewEventMessage>, config:NodeViewConfig<any>,nodeView:HTMLDivElement,nodeElement:HTMLElement) {
         const {nodeViewType,tanaNode} = event.message.nodeEvent
         const viewContainer = this.createViewContainer()
         viewContainer.appendChild(nodeView)
@@ -54,18 +55,11 @@ class _TanaNodeViewCreator {
         this.configureDimension(nodeView,config,nodeViewType)
         this.setupLock(nodeView,config,nodeViewType)
         this.setupSettingsModal(viewContainer,config,nodeViewType)
-        this.expandNode(tanaNode,config,nodeViewType)
-        this.listenToOnDropEvent(viewContainer,config)
+        this.expandNode(nodeElement,config,nodeViewType)
         return viewContainer
     }
 
 
-    private listenToOnDropEvent(viewContainer:HTMLElement,nodeViewConfig:NodeViewConfig<any>) {
-        viewContainer.addEventListener(ON_DROP_EVENT,(event) => {
-            Maybe.fromNullable(this.getNodeIdFromViewContainer(viewContainer))
-                .map(tanaNodeId => nodeViewConfig.OnDropEvent(viewContainer,event as CustomEvent<DropEventContent>,tanaNodeId))         
-        })
-    }
 
     private getNodeIdFromViewContainer(viewContainer:HTMLElement) {
         const contentHtmlNode = TanaDomNodeProvider.getContentNodeFromDescendant(viewContainer) as HTMLElement
@@ -323,10 +317,10 @@ class _TanaNodeViewCreator {
         onLock(nodeView)
     }
 
-    private expandNode(tanaNode:TanaNode,config:NodeViewConfig<any>,nodeViewType:NodeViewType) {
+    private expandNode(nodeElement:HTMLElement,config:NodeViewConfig<any>,nodeViewType:NodeViewType) {
         const shouldExpand = nodeViewType == NodeViewType.Default && config.defaultConfig().expandByDefault
         if (!shouldExpand) return
-        TanaCommandExecutor.expandTanaNode(tanaNode)
+        TanaCommandExecutor.expandTanaNodeFromContentNode(nodeElement)
     }
 
 }

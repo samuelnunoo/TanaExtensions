@@ -4,27 +4,100 @@ import {Maybe} from "purify-ts";
 import TanaCommandExecutor from "../TanaCommandExecutor";
 import TanaNodeFinder from "../TanaNodeFinder";
 import TanaNodeAttributeInspector from "../TanaNodeAttributeInspector";
+import TanaDomNodeProvider from "../TanaDomNodeProvider";
 
 const NODE_PORTAL_TEMPLATE_NAME = "node-portal-component"
 
 export default class TanaNodePortalRenderer {
-    public static addNodeReferenceToPortal(portalParentNode:TanaNode,nodeRefId:string) {
-        const nodeRef = TanaStateProvider.getNodeWithId(nodeRefId).extractNullable()
-        if (!nodeRef) return null
+
+    public static addNodeReferenceToPortal(portalParentNode:TanaNode,contentNode:HTMLElement) {
+        const contentNodeId = TanaDomNodeProvider.getIdFromElement(contentNode)
+        if (!contentNodeId) return null 
         const portalContainer = this.getOrInsertPortalContainer(portalParentNode)
-        return Maybe.fromNullable(TanaStateProvider.getNodeWithId(nodeRefId).extractNullable())
+        portalContainer.lock()
+        const portalNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
+        if (!portalNodePath) return null
+       this.hideNodePortal(portalNodePath)
+        return Maybe.fromNullable(TanaStateProvider.getNodeWithId(contentNodeId).extractNullable())
                 .map(nodeRef => {
-                portalContainer.addChild(nodeRef)
-                TanaCommandExecutor.expandTanaNode(nodeRef)
-                return nodeRef
+                const fileNodePath = this.insertNodeToPortal(portalContainer,nodeRef)
+                const refNodePath = [...portalNodePath,...fileNodePath]
+                TanaCommandExecutor.expandTanaNodeFromNodePath(refNodePath)
+                return refNodePath
             }).extractNullable()
     }
 
-    private static portalHasNode(portal:TanaNode,nodeRefId:string) {
-        for (const child of portal.children) {
-            if (child.id == nodeRefId) return true
+    public static hidePortalAndExpandDescendants(portalParentNode:TanaNode) {
+        const portalContainer = this.getOrInsertPortalContainer(portalParentNode)
+        const portalNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
+        if (!portalNodePath) return 
+        this.hideNodePortal(portalNodePath)
+        TanaCommandExecutor.expandAllOwnedChildren(portalNodePath)
+    }
+
+    public static getPortalDomNodes(portalParentNode:TanaNode) {
+        const portalContainer = this.getOrInsertPortalContainer(portalParentNode)
+        const portalNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
+        if (!portalNodePath) return null 
+        const portalNodePathString = portalNodePath.map(n => n.id).join("|")
+        const portalDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalNodePathString)
+        if (!portalDomNode) return null
+
+        const portalDomNodeMap:Map<string,HTMLElement> = new Map() 
+        const portalFolders = portalContainer.children 
+
+        for (const folder of portalFolders) {
+            const portalFiles = folder.children 
+            for (const file of portalFiles) {
+                const contentNodePathString = [ ...portalNodePath,folder,file,file.firstChild].map(node => node.id).join("|")
+                const contentNode = TanaDomNodeProvider.getContentNodeFromNodePath(contentNodePathString)
+                portalDomNodeMap.set(contentNodePathString,contentNode)
+            }
         }
-        return false
+
+        return portalDomNodeMap
+    }
+
+    private static hideNodePortal(portalNodePath:TanaNode[]) {
+        const portalNodePathString = portalNodePath.map(n => n.id).join("|")
+        const portalDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalNodePathString)
+        if (!portalDomNode) return 
+        portalDomNode.style.visibility = "hidden"
+        portalDomNode.style.position = "absolute"
+    }
+    
+    private static insertNodeToPortal(portalContainer:TanaNode,node:TanaNode) {
+        const folder = this.getOrCreateFolder(portalContainer,node)
+        const file = this.addInstanceToFolder(folder,node)
+        folder.lock()
+        file.lock()
+        return [folder,file,node]
+    }
+
+    private static addInstanceToFolder(folder:TanaNode,node:TanaNode) {
+        const file = folder.insertNewNodeAtEnd()
+        file.name = `${folder.children.length}`
+        file.addChild(node)
+        return file 
+    }
+
+    private static getOrCreateFolder(portalContainer:TanaNode,node:TanaNode) {
+        const folder = this.getNodeFolder(portalContainer,node)
+        if (folder) return folder 
+        return this.createNodeFolder(portalContainer,node)
+    }
+
+    private static getNodeFolder(portalContainer:TanaNode,node:TanaNode) {
+        for (const child of portalContainer.children) {
+            if (child.name == node.id) return child 
+        }
+        return null 
+    }
+
+    private static createNodeFolder(portalContainer:TanaNode,node:TanaNode) {
+        const folder = portalContainer.insertNewNodeAtEnd()
+        folder.name = node.id 
+        return folder 
     }
 
     private static getOrInsertPortalContainer(tanaNode:TanaNode) {

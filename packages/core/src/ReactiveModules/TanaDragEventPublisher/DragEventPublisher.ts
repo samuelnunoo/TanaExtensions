@@ -5,7 +5,10 @@ import { InitEvent } from "../EventBus/types/Event";
 import TanaPublisher from "../EventBus/types/TanaPublisher";
 import OnDomRenderCompleteEvent from "../TanaModuleLoader/types/OnDomRenderCompleteEvent";
 import EventBus from "../EventBus";
-import { DropEventContent, ON_DROP_EVENT } from "./types/OnDragEvent";
+import OnDropEvent, { DropEventContent} from "./types/OnDropEvent";
+import { TanaNode } from "../../StaticModules/TanaStateProvider/types/types";
+import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector";
+import { VIEW_EXTENSION_TEMPLATE } from "../TanaNodeViewPublisher/types/constants";
 
 const MOVE_COUNT_THRESHOLD = 15 
 
@@ -34,17 +37,22 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragEventPubli
         this.initMouseOverEvent()
     }
 
-    private invokeDropEvent(tanaNodeId:string,mouseEvent:MouseEvent,targetElement:HTMLElement) {
-         const dropEvent = new CustomEvent(ON_DROP_EVENT,{
-            bubbles:true,
-            detail: {
-                tanaNodeId,
-                mouseEvent,
-                targetElement
-            } as DropEventContent
-        })
+    private invokeDropEvent(
+        draggedTanaNodeId:string,mouseEvent:MouseEvent,draggedContentNode:HTMLElement,
+        dropTarget:HTMLElement,targetNodeViewContainer:HTMLElement,targetTanaNode:TanaNode,nodeViewTemplateId:string
+        ) {
+        const content =  {
+            draggedTanaNodeId,
+            mouseEvent,
+            targetNodeViewContainer,
+            draggedContentNode,
+            targetTanaNode,
+            dropTarget,
+            nodeViewTemplateId
+        } as DropEventContent
 
-        targetElement.dispatchEvent(dropEvent) 
+        const dropEvent = OnDropEvent.createInstance(content)
+        this.dispatchRuntimeEvent(dropEvent)
     }
 
     private initMouseDownEvent() {
@@ -52,11 +60,13 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragEventPubli
             this.mediator.getDragStateHandler().resetMoveCount()
             this.mediator.getDragStateHandler().clearTanaNodeId()
             this.mediator.getDragStateHandler().resetHoverElement()
+            this.mediator.getDragStateHandler().clearContentNode()
             Maybe.fromNullable(TanaDomNodeProvider.getContentNodeFromDescendant(event.target as HTMLElement) as HTMLElement)
                 .map(contentNode => {
                     const tanaNodeId = TanaDomNodeProvider.getIdFromElement(contentNode)
                     if (!tanaNodeId) return 
                     this.mediator.getDragStateHandler().setTanaNodeId(tanaNodeId)
+                    this.mediator.getDragStateHandler().setContentNode(contentNode)
                     console.log("mousedown")
                 })
         })
@@ -84,11 +94,19 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragEventPubli
             const moveCount = this.mediator.getDragStateHandler().getMoveCount()
             const tanaNodeId = this.mediator.getDragStateHandler().getTanaNodeId()
             const hoverElement = this.mediator.getDragStateHandler().getHoverElement()
-
+            const contentNode = this.mediator.getDragStateHandler().getContentNode()
+          
             if (moveCount < MOVE_COUNT_THRESHOLD) return 
             if (!tanaNodeId) return 
             if (!hoverElement) return 
-            this.invokeDropEvent(tanaNodeId,event,hoverElement)
+            if (!contentNode) return 
+            const nodeView = TanaDomNodeProvider.getNodeViewFromDescendant(hoverElement)
+            if (!nodeView) return
+            const targetTanaNode = TanaDomNodeProvider.getTanaNodeFromContentDomNodeDescendant(hoverElement)
+            if (!targetTanaNode) return 
+            const templateId = TanaNodeAttributeInspector.getFirstTemplateWithSuperTag(targetTanaNode,VIEW_EXTENSION_TEMPLATE)
+            if (!templateId) return 
+            this.invokeDropEvent(tanaNodeId,event,contentNode,hoverElement,nodeView,targetTanaNode,templateId.name)
         })
     }
 

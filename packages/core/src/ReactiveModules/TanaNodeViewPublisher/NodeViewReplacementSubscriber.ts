@@ -11,14 +11,17 @@ import {Maybe} from "purify-ts";
 import NodeViewConfig from "./types/configs/NodeViewConfig";
 import GetNodeDataEvent from 'database-extension/types/events/GetNodeDataEvent';
 import { NodeEventTypeEnum } from "../TanaDomNodeEventPublisher/types/types";
+import TanaNodePortalState from "../../StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
 
 
 export default class NodeViewReplacementSubscriber extends TanaSubscriber<TanaViewReplacementPublisher> {
+
     getInitRequirements(): InitEvent[] {
         return [
             OnDatabaseInitEvent
         ]
     }
+
     onDependenciesInitComplete() {
         this.subscribeToRuntimeEvent(ReplaceViewEvent,this.onReplaceNodeView.bind(this))
         this.subscribeToRuntimeEvent(RegisterNodeViewEvent,this.onRegisterNodeView.bind(this))
@@ -42,12 +45,13 @@ export default class NodeViewReplacementSubscriber extends TanaSubscriber<TanaVi
     }
 
     private async createNodeView(event:RuntimeEventInstance<ReplaceViewEventMessage>,config:NodeViewConfig<any>) {
-        const nodeView = await config.createNodeView(event.message.nodeEvent)
-        TanaNodeViewCreator.renderNodeView(
-            event,config,nodeView
-        )
+        //Setup the portal here !!! 
+        const nodePortalState =  new TanaNodePortalState(event.message.nodeEvent.tanaNode)
+        const nodeView = await config.createNodeView(event.message.nodeEvent,nodePortalState)
+        const viewContainer = TanaNodeViewCreator.renderNodeView(event,config,nodeView)
+        if (!viewContainer) return 
+        this.mediator.getNodePortalStateHandler().addNodePortalState(viewContainer,nodePortalState)
     }
-
 
     async onRegisterNodeView({message}:RuntimeEventInstance<RegisterNodeViewMessage>) {
         const {templateId,config} = message

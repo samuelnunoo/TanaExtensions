@@ -1,7 +1,7 @@
 import {TanaNode} from "../TanaStateProvider/types/types";
 import TanaStateProvider from "../TanaStateProvider";
 import {Maybe} from "purify-ts";
-
+import TanaDomNodeProvider from "../TanaDomNodeProvider";
 
 export default class TanaCommandExecutor {
 
@@ -27,9 +27,27 @@ export default class TanaCommandExecutor {
             return template
     }
 
-    public static expandTanaNode(tanaNode:TanaNode) {
+    public static expandTanaNodeFromContentNode(contentNode:HTMLElement) {
+        const nodePath = TanaDomNodeProvider.getNodePathFromContentNode(contentNode)
+        if (!nodePath) return 
 
+        TanaStateProvider.getAppState()
+            .chainNullable(appState => appState.getPanelUIStateForPath(nodePath))
+            .chainNullable(panelUIState => panelUIState.expand(nodePath))
     }
+
+    public static expandTanaNodeFromNodePath(nodePath:TanaNode[]) {
+        TanaStateProvider.getAppState()
+            .chainNullable(appState => appState.getPanelUIStateForPath(nodePath))
+            .chainNullable(panelUIState => panelUIState.expand(nodePath))
+    }
+
+    public static expandAllOwnedChildren(nodePath:TanaNode[]) {
+        TanaStateProvider.getAppState()
+            .chainNullable(appState => appState.getPanelUIStateForPath(nodePath))
+            .chainNullable(panelUIState => panelUIState.expandAll(nodePath,false))
+    }
+
     public static insertNodeToTarget(targetNode:TanaNode,nodeToInsert:TanaNode) {
         
     }

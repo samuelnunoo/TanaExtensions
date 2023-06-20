@@ -1,3 +1,4 @@
+import TanaStateProvider from "../TanaStateProvider";
 import TanaConstants from "./TanaConstants";
 import {Maybe} from "purify-ts";
 
@@ -8,12 +9,46 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
             .map(contentSide => contentSide.firstChild as HTMLElement)
             .extractNullable()
     }
+
+    public getContentNodeFromNodePath(nodePath:string) {
+        return document.querySelector(`[${this.getContentNodeAttribute()}='${nodePath}']`) as HTMLElement
+    }
+
+    public getNodeViewFromDescendant(descendant:HTMLElement) {
+        return descendant.closest(this.classSelector(this.getNodeViewCssClass())) as HTMLElement
+    }
+
     public getListItemContainerFromAncestor(ancestor:HTMLElement) {
         return ancestor.querySelector(this.classSelector(this.getListItemCssClass()))
     }
+
+    public getNodePathFromNodeId(nodeId:string,document:Document) {
+        return Maybe.fromNullable(this.getContentDomNodeFromNodeId(document,nodeId))
+            .chainNullable(tanaDomNode => tanaDomNode.getAttribute(this.getContentNodeAttribute()))
+            .chainNullable(nodePathString => this.getTanaNodeArrayFromNodePath(nodePathString))
+            .extractNullable()
+    }
+
+    public getNodePathFromContentNode(contentNode:HTMLElement) {
+        return Maybe.fromNullable(contentNode.getAttribute(this.getContentNodeAttribute()))
+            .map(nodePathString => this.getTanaNodeArrayFromNodePath(nodePathString))
+            .extractNullable()
+    }
+
+    public getTanaNodeArrayFromNodePath(nodePath:string) {
+        return Maybe.fromNullable(nodePath.split("|").map(nodeId => TanaStateProvider.getNodeWithId(nodeId)))
+                    .chain(nodePath => Maybe.sequence(nodePath))
+                    .extractNullable()
+    }
+
+    public getContentDomNodeFromNodeId(doc:Document,nodeId:string) {
+        return doc.querySelector(`[${this.getContentNodeAttribute()}$=${nodeId}]`) as HTMLElement
+    }
+
     public getNonTemplateNodeFromAncestor(ancestor:HTMLElement) {
         return ancestor.querySelector(this.classSelector(this.getNonTemplateCssClass()))
     }
+
     public getDockContainer(doc:Document) {
         return doc.querySelector(this.getDockContainerAttributeSelector())
     }
@@ -117,7 +152,17 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
        return dataId!.split("|").pop()
     }
 
-  
+    public getIdFromContentNodeDescendant(descendant:HTMLElement) {
+       return Maybe.fromNullable(this.getContentNodeFromDescendant(descendant) as HTMLElement)
+        .chainNullable(contentNode => this.getIdFromElement(contentNode))
+        .extractNullable()
+    }
+
+    public getTanaNodeFromContentDomNodeDescendant(descendant:HTMLElement) {
+        return Maybe.fromNullable(this.getIdFromContentNodeDescendant(descendant))
+            .chainNullable(nodeId => TanaStateProvider.getNodeWithId(nodeId).extractNullable())
+            .extractNullable()
+    }
 
     public getNodeWithClassPrefixFromArray(elementArray:HTMLElement[],classPrefix:string) {
         for (const element of elementArray) {

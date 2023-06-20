@@ -2,7 +2,6 @@ import { NodeEventMessage } from "tana-extensions-core/src/ReactiveModules/TanaD
 import DefaultNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/DefaultNodeConfig";
 import ExpandedNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/ExpandedNodeConfig";
 import FullscreenNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/FullscreenNodeConfig";
-import NodeViewConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/NodeViewConfig"
 import _ from "lodash";
 import { Excalidraw } from "@excalidraw/excalidraw";
 import { ClipboardData } from "@excalidraw/excalidraw/types/clipboard";
@@ -14,23 +13,17 @@ import ExcalidrawExtension from ".";
 import { AppState, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types/types";
 import ExcalidrawStateHandler from "./ExcalidrawStateHandler";
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
-import { DropEventContent } from "tana-extensions-core/src/ReactiveModules/TanaDragEventPublisher/types/OnDragEvent";
-import TanaNodePortalRenderer from '../../core/src/StaticModules/TanaNodePortalRenderer/index';
-import TanaStateProvider from "tana-extensions-core/src/StaticModules/TanaStateProvider";
-
-
+import NodeViewConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/NodeViewConfig";
+import TanaNodePortalState from "tana-extensions-core/src/StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
+import RuntimeEventInstance from "tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventInstance";
+import { DropEventContent } from "tana-extensions-core/src/ReactiveModules/TanaDragEventPublisher/types/OnDropEvent";
 
 const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"
 
 export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawExtension> {
-    OnDropEvent(viewContainer: HTMLElement, dropEvent: CustomEvent<DropEventContent>,tanaNodeId:string): void {
-     
-        const nodeViewTanaNode = TanaStateProvider.getNodeWithId(tanaNodeId).extractNullable()
-        if (!nodeViewTanaNode) return 
 
-        TanaNodePortalRenderer.addNodeReferenceToPortal(nodeViewTanaNode,dropEvent.detail.tanaNodeId)
-        console.log(viewContainer,dropEvent,tanaNodeId)
-
+    OnDropEvent(dropEvent: RuntimeEventInstance<DropEventContent>,nodePortalState:TanaNodePortalState,addedContentNode:HTMLElement): void {
+        console.log(dropEvent,nodePortalState,addedContentNode)
     }
 
     setDimensions(nodeView:HTMLElement,width: string, height: string): void {
@@ -39,8 +32,9 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
         excalidrawDimension.style.height = height 
     }
     
-    createNodeView({tanaNode}: NodeEventMessage): Promise<HTMLDivElement> {
-        return new Promise(async (resolve,reject) => {
+    createNodeView({tanaNode}: NodeEventMessage,nodePortalState:TanaNodePortalState): Promise<HTMLDivElement> {
+        console.log(nodePortalState)
+        return new Promise(async (resolve) => {
             const stateHandler = this.getMediator().getExcalidrawStateHandler()
             const initialData = await stateHandler.getData(tanaNode)
             const container = document.createElement("div")
@@ -50,7 +44,6 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
             stateHandler.excalidrawInstances.set(tanaNode.id,root)
             return container
         })
- 
     }
 
     async destroyNodeView({nodeId}: NodeEventMessage): Promise<void> {
@@ -115,7 +108,6 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
 
             useEffect(() => {
                 resolve(container)
-                console.log('This will run once after the initial render, similar to componentDidMount');
               }, []);  
               
             return React.createElement(
