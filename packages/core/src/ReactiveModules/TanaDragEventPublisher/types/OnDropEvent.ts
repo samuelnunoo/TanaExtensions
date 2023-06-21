@@ -11,4 +11,7 @@ export interface DropEventContent {
     mouseEvent:MouseEvent
 }
 
+export const ON_DROP_DOM_EVENT = "onDropEvent"
+
+
 export default new RuntimeEventStatic<DropEventContent>("OnDropEvent")

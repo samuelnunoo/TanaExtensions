@@ -10,6 +10,17 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
             .extractNullable()
     }
 
+    public getTanaNodeForNodeView(nodeView:HTMLElement) {
+        const contentNodeId = this.getIdFromContentNodeDescendant(nodeView)
+        if (contentNodeId) return TanaStateProvider.getNodeWithId(contentNodeId).extractNullable()
+        
+        return Maybe.fromNullable(this.getPanelFromDescendant(nodeView) as HTMLElement)
+            .chainNullable(panel => this.getPanelHeaderFromAncestor(panel))
+            .chainNullable(panelHeader => this.getWrapperNodeFromAncestor(panelHeader))
+            .chainNullable(wrapperNode => TanaStateProvider.getNodeWithId(wrapperNode.id).extractNullable())
+            .extractNullable()
+    }
+
     public getContentNodeFromNodePath(nodePath:string) {
         return document.querySelector(`[${this.getContentNodeAttribute()}='${nodePath}']`) as HTMLElement
     }

@@ -64,12 +64,18 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragEventPubli
             Maybe.fromNullable(TanaDomNodeProvider.getContentNodeFromDescendant(event.target as HTMLElement) as HTMLElement)
                 .map(contentNode => {
                     const tanaNodeId = TanaDomNodeProvider.getIdFromElement(contentNode)
-                    if (!tanaNodeId) return 
+                    if (!tanaNodeId) return
+                    if (this.isNodeView(contentNode)) return 
                     this.mediator.getDragStateHandler().setTanaNodeId(tanaNodeId)
                     this.mediator.getDragStateHandler().setContentNode(contentNode)
                     console.log("mousedown")
                 })
         })
+    }
+
+
+    private isNodeView(contentNode:HTMLElement) {
+       return !!TanaDomNodeProvider.getNodeViewFromDescendant(contentNode)
     }
 
     private initMouseMoveEvent() {
@@ -102,7 +108,7 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragEventPubli
             if (!contentNode) return 
             const nodeView = TanaDomNodeProvider.getNodeViewFromDescendant(hoverElement)
             if (!nodeView) return
-            const targetTanaNode = TanaDomNodeProvider.getTanaNodeFromContentDomNodeDescendant(hoverElement)
+            const targetTanaNode = TanaDomNodeProvider.getTanaNodeForNodeView(nodeView)
             if (!targetTanaNode) return 
             const templateId = TanaNodeAttributeInspector.getFirstTemplateWithSuperTag(targetTanaNode,VIEW_EXTENSION_TEMPLATE)
             if (!templateId) return 

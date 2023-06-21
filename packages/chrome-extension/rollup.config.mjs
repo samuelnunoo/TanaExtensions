@@ -16,12 +16,8 @@ export default {
         chunkFileNames: path.join('chunks','[name]-[hash].js'),
     },
     plugins: [
-        chromeExtension({
-            wrapContentScripts:false,
-        }),
-        replace({
-            'process.env.NODE_ENV': JSON.stringify( 'development' )
-        }),
+        chromeExtension({ wrapContentScripts:false }),
+        replace({ 'process.env.NODE_ENV': JSON.stringify( 'development' ) }),
         resolve(),
         commonjs(),
         typescript({

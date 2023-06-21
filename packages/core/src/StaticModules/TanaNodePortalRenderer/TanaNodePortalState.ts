@@ -16,6 +16,7 @@ export default class TanaNodePortalState {
     addContentNodeToPortal(contentNode:HTMLElement) {
         const nodePath = TanaNodePortalRenderer.addNodeReferenceToPortal(this.portalParentNode,contentNode)
         if (!nodePath) throw Error("Failed to add contentNode to NodePortal")
+        
         const nodePathString = this.nodePathToString(nodePath)
         const contentDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(nodePathString)
         this.portalMap.set(nodePathString,contentDomNode)

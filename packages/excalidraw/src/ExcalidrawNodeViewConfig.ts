@@ -34,6 +34,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
     
     createNodeView({tanaNode}: NodeEventMessage,nodePortalState:TanaNodePortalState): Promise<HTMLDivElement> {
         console.log(nodePortalState)
+
         return new Promise(async (resolve) => {
             const stateHandler = this.getMediator().getExcalidrawStateHandler()
             const initialData = await stateHandler.getData(tanaNode)
@@ -128,6 +129,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
                         }
                     },
                     React.createElement(Excalidraw,{
+                        
                         autoFocus: false,
                         initialData,
                         onChange:  (
@@ -142,13 +144,6 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
                                 prevElements = elements
                                 stateHandler.saveData(tanaNode.id,elements)
                             }
-                        },
-                        onPaste: (
-                            data: ClipboardData,
-                            event: ClipboardEvent | null,
-                        ) => {
-                            console.log("paste",data,event)
-                            return true
                         }
                     },  )
             ))

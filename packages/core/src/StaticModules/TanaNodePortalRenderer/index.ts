@@ -17,10 +17,11 @@ export default class TanaNodePortalRenderer {
         portalContainer.lock()
         const portalNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
         if (!portalNodePath) return null
-       this.hideNodePortal(portalNodePath)
-        return Maybe.fromNullable(TanaStateProvider.getNodeWithId(contentNodeId).extractNullable())
+       
+       return Maybe.fromNullable(TanaStateProvider.getNodeWithId(contentNodeId).extractNullable())
                 .map(nodeRef => {
                 const fileNodePath = this.insertNodeToPortal(portalContainer,nodeRef)
+                TanaCommandExecutor.expandAllOwnedChildren(portalNodePath)
                 const refNodePath = [...portalNodePath,...fileNodePath]
                 TanaCommandExecutor.expandTanaNodeFromNodePath(refNodePath)
                 return refNodePath
@@ -64,6 +65,7 @@ export default class TanaNodePortalRenderer {
         if (!portalDomNode) return 
         portalDomNode.style.visibility = "hidden"
         portalDomNode.style.position = "absolute"
+        portalDomNode.style.top = "-5000px"
     }
     
     private static insertNodeToPortal(portalContainer:TanaNode,node:TanaNode) {
