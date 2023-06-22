@@ -8,6 +8,8 @@
     "database-extension": "*",
     "extension-code-block": "*",
     "extension-excalidraw": "*",
+    "rollup-plugin-external-globals": "^0.8.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-scss": "^4.0.0",
     "save-dev": "^0.0.1-security",
     "tana-extensions-core": "*"
@@ -24,6 +26,7 @@
     "rollup-plugin-chrome-extension": "^3.6.12",
     "rollup-plugin-css-bundle": "^1.0.4",
     "rollup-plugin-empty-dir": "^1.0.5",
+    "rollup-plugin-external-globals": "^0.8.0",
     "sass": "^1.62.1"
   }
 }

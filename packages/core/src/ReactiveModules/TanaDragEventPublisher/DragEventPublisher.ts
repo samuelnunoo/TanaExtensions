@@ -5,7 +5,7 @@ import { InitEvent } from "../EventBus/types/Event";
 import TanaPublisher from "../EventBus/types/TanaPublisher";
 import OnDomRenderCompleteEvent from "../TanaModuleLoader/types/OnDomRenderCompleteEvent";
 import EventBus from "../EventBus";
-import OnDropEvent, { DropEventContent} from "./types/OnDropEvent";
+import OnDropEvent, { DropEventContent, ON_DROP_DOM_EVENT} from "./types/OnDropEvent";
 import { TanaNode } from "../../StaticModules/TanaStateProvider/types/types";
 import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector";
 import { VIEW_EXTENSION_TEMPLATE } from "../TanaNodeViewPublisher/types/constants";
@@ -50,6 +50,7 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragEventPubli
             dropTarget,
             nodeViewTemplateId
         } as DropEventContent
+
 
         const dropEvent = OnDropEvent.createInstance(content)
         this.dispatchRuntimeEvent(dropEvent)

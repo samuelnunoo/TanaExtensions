@@ -3,27 +3,23 @@ import DefaultNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNode
 import ExpandedNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/ExpandedNodeConfig";
 import FullscreenNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/FullscreenNodeConfig";
 import _ from "lodash";
-import { Excalidraw } from "@excalidraw/excalidraw";
-import { ClipboardData } from "@excalidraw/excalidraw/types/clipboard";
-import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
-import React, { useEffect } from "react";
-import { createRoot,  } from "react-dom/client";
-import TanaDomNodeProvider from "tana-extensions-core/src/StaticModules/TanaDomNodeProvider";
+import reactDOM from "react-dom"
 import ExcalidrawExtension from ".";
-import { AppState, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types/types";
-import ExcalidrawStateHandler from "./ExcalidrawStateHandler";
-import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
 import NodeViewConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/NodeViewConfig";
 import TanaNodePortalState from "tana-extensions-core/src/StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
 import RuntimeEventInstance from "tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventInstance";
 import { DropEventContent } from "tana-extensions-core/src/ReactiveModules/TanaDragEventPublisher/types/OnDropEvent";
+import TanaExcalidraw from "./dom/Excalidraw";
+import React from "react";
 
 const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"
 
 export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawExtension> {
 
-    OnDropEvent(dropEvent: RuntimeEventInstance<DropEventContent>,nodePortalState:TanaNodePortalState,addedContentNode:HTMLElement): void {
-        console.log(dropEvent,nodePortalState,addedContentNode)
+    OnDropEvent(dropEvent: RuntimeEventInstance<DropEventContent>,nodePortalState:TanaNodePortalState,
+        addedContentNode:HTMLElement,dispatchDropDomEvent:() => void): void {
+            dispatchDropDomEvent()
+            console.log(dropEvent,nodePortalState,addedContentNode)
     }
 
     setDimensions(nodeView:HTMLElement,width: string, height: string): void {
@@ -34,22 +30,28 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
     
     createNodeView({tanaNode}: NodeEventMessage,nodePortalState:TanaNodePortalState): Promise<HTMLDivElement> {
         console.log(nodePortalState)
-
         return new Promise(async (resolve) => {
             const stateHandler = this.getMediator().getExcalidrawStateHandler()
             const initialData = await stateHandler.getData(tanaNode)
-            const container = document.createElement("div")
-            const reactInstance = React.createElement(this.getReactInstance(container,initialData,tanaNode,stateHandler,resolve))
-            const root = createRoot(container)
-            root.render(reactInstance)
-            stateHandler.excalidrawInstances.set(tanaNode.id,root)
+            const container = document.createElement("div") as HTMLDivElement
+    
+            reactDOM.render(React.createElement(TanaExcalidraw,{
+                initialData,
+                stateHandler,
+                tanaNode,
+                resolve,
+                container 
+            },null),container)
+            
+            stateHandler.excalidrawInstances.set(tanaNode.id,container)
             return container
         })
     }
 
     async destroyNodeView({nodeId}: NodeEventMessage): Promise<void> {
         const stateHandler = this.getMediator().getExcalidrawStateHandler()
-        stateHandler.excalidrawInstances.get(nodeId)?.unmount()
+        const container = stateHandler.excalidrawInstances.get(nodeId)
+        reactDOM.unmountComponentAtNode(container as Element)
         stateHandler.excalidrawInstances.delete(nodeId)
     }
 
@@ -89,67 +91,5 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
     fullScreenConfig(): FullscreenNodeConfig {
         return {}
     }
-
-    private getReactInstance(container:HTMLElement,initialData:ExcalidrawInitialDataState,tanaNode:TanaNode,stateHandler:ExcalidrawStateHandler,resolve:any) {
-        let prevElements = 'elements' in initialData ? initialData.elements : []
-        const hasChanged = (elements: readonly any[]) => {
-            if (elements.length !== prevElements!.length) return true
-            for (let i = 0; i < elements.length; i++) {
-                const curr = elements[i]
-                const prev = prevElements![i]
-                if (!_.isEqual(curr,prev)) return true
-            }
-            return false
-        }
-
-        return () => {
-            let hasFocus = false
-            //@ts-ignore
-            window.excalidraw = {}
-
-            useEffect(() => {
-                resolve(container)
-              }, []);  
-              
-            return React.createElement(
-                React.Fragment,
-                null,
-                React.createElement(
-                    "div",
-                    {
-                        className: "excalidraw-dimension",
-                        onWheelCapture: (e) =>  {
-                            if (!hasFocus) e.stopPropagation();
-                        },
-                        onClick: (_) => hasFocus = true,
-                        onBlur: ({relatedTarget}) => {
-                            if (!relatedTarget || TanaDomNodeProvider.getViewPanelContainerFromDescendant(relatedTarget)) {
-                                hasFocus = false
-                            }
-                        }
-                    },
-                    React.createElement(Excalidraw,{
-                        
-                        autoFocus: false,
-                        initialData,
-                        onChange:  (
-                            elements: readonly ExcalidrawElement[],
-                            AppState: AppState
-                        ) => {
-                            //@ts-ignore
-                            window.excalidraw.elements = elements 
-                            //@ts-ignore 
-                            window.excalidraw.appState = AppState
-                            if (hasChanged(elements)) {
-                                prevElements = elements
-                                stateHandler.saveData(tanaNode.id,elements)
-                            }
-                        }
-                    },  )
-            ))
-        };
-
-    }
-    
 
 }

@@ -8,7 +8,7 @@ import TanaNodePortalState from "../../../../StaticModules/TanaNodePortalRendere
 import RuntimeEventInstance from 'tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventInstance';
 
 export default abstract class NodeViewConfig<T> extends TanaModuleComponent<T> {
-    abstract OnDropEvent(dropEvent:RuntimeEventInstance<DropEventContent>,nodePortalState:TanaNodePortalState,addedDomContentNode:HTMLElement):void
+    abstract OnDropEvent(dropEvent:RuntimeEventInstance<DropEventContent>,nodePortalState:TanaNodePortalState,addedDomContentNode:HTMLElement,dispatchDropDomEvent:() => void):void
     abstract createNodeView(nodeEvent:NodeEventMessage,nodePortalState:TanaNodePortalState): Promise<HTMLDivElement>
     abstract destroyNodeView(nodeEvent:NodeEventMessage): Promise<void>
     abstract setDimensions(nodeView:HTMLElement,width:string,height:string): void 

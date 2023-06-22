@@ -3,7 +3,6 @@ import { ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types/types"
 import GetNodeDataEvent from "database-extension/types/events/GetNodeDataEvent"
 import UpdateNodeDataEvent, { UpdateNodeDataEventMessage } from "database-extension/types/events/UpdateNodeDataEvent"
 import { Codec, array, unknown } from "purify-ts"
-import { Root } from "react-dom/client"
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types"
 import ExcalidrawDBCollection, { ExcalidrawContent } from "./ExcalidrawDBCollection"
 import EventBus from "tana-extensions-core/src/ReactiveModules/EventBus"
@@ -11,7 +10,7 @@ import EventBus from "tana-extensions-core/src/ReactiveModules/EventBus"
 
 export default class ExcalidrawStateHandler {
     eventBus:EventBus
-    excalidrawInstances: Map<string,Root> = new Map()
+    excalidrawInstances: Map<string,HTMLDivElement> = new Map()
 
     constructor(eventBus:EventBus) {
         this.eventBus = eventBus

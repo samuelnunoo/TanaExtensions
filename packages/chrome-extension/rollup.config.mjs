@@ -6,9 +6,11 @@ import {emptyDir} from "rollup-plugin-empty-dir";
 import commonjs from "@rollup/plugin-commonjs";
 import scss from "rollup-plugin-scss";
 import replace from "@rollup/plugin-replace";
+import externalGlobals from "rollup-plugin-external-globals";
 
 export default {
     input: 'src/manifest.json',
+    external:["react","react-dom"],
     output: {
         dir: 'dist',
         sourcemap:"inline",
@@ -16,8 +18,8 @@ export default {
         chunkFileNames: path.join('chunks','[name]-[hash].js'),
     },
     plugins: [
-        chromeExtension({ wrapContentScripts:false }),
         replace({ 'process.env.NODE_ENV': JSON.stringify( 'development' ) }),
+        chromeExtension({ wrapContentScripts:false }),
         resolve(),
         commonjs(),
         typescript({
@@ -31,5 +33,9 @@ export default {
         }),
         emptyDir(),
         scss({ fileName: 'assets/bundle.css'}),
+        externalGlobals({
+            react:"React",
+            "react-dom":"ReactDOM"
+        })
     ]
 }

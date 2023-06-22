@@ -6,12 +6,11 @@ import OnDatabaseInitEvent from "database-extension/types/events/OnDatabaseInitE
 import NodeRelacementPublisherInitEvent from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/events/NodeReplacementPublisherInitEvent"
 import CreateCollectionEvent from 'database-extension/types/events/CreateCollectionEvent';
 import ExcalidrawDBCollection from "./ExcalidrawDBCollection";
-
 export default class ExcalidrawNodeViewPublisher extends TanaPublisher<ExcalidrawExtension> {
     getInitRequirements(): InitEvent[] {
         return [
             OnDatabaseInitEvent,
-            NodeRelacementPublisherInitEvent
+            NodeRelacementPublisherInitEvent,
         ]
     }
 

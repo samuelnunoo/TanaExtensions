@@ -1,5 +1,4 @@
 import { Excalidraw } from "@excalidraw/excalidraw";
-import React, { useRef, useState } from "react";
 import ExcalidrawContainer from "./ExcalidrawContainer";
 import { AppState, ExcalidrawAPIRefValue, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types/types';
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
@@ -8,17 +7,21 @@ import _ from "lodash";
 import ExcalidrawStateHandler from "../ExcalidrawStateHandler";
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
 import { Maybe } from "purify-ts/Maybe";
-
+import {useEffect, useRef, useState }from "react"
+import React from "react";
 export interface ExcalidrawProps {
     initialData:ExcalidrawInitialDataState
+    container:HTMLDivElement
     stateHandler:ExcalidrawStateHandler
     tanaNode:TanaNode
+    resolve:any
 }
 
-export default function App({initialData,stateHandler,tanaNode}:ExcalidrawProps) {
-    const excalidrawRef = useRef<HTMLDivElement>(null)
-    const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawAPIRefValue|null>(null);
-    const [prevElements, setPrevElements] = useState<readonly any[]>(Maybe.fromNullable(initialData.elements).orDefault([]))
+export default function TanaExcalidraw({initialData,stateHandler,tanaNode,resolve,container}:ExcalidrawProps) {
+
+    const excalidrawRef = useRef<HTMLDivElement>(null)// useRef<HTMLDivElement>(null)
+    const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawAPIRefValue|null>(null)//useState<ExcalidrawAPIRefValue|null>(null);
+    const [prevElements, setPrevElements] = useState<readonly any[]>(Maybe.fromNullable(initialData.elements).orDefault([])) //useState<readonly any[]>(Maybe.fromNullable(initialData.elements).orDefault([]))
     
     const hasChanged = (elements: readonly any[]) => {
         if (elements.length !== prevElements!.length) return true
@@ -37,6 +40,11 @@ export default function App({initialData,stateHandler,tanaNode}:ExcalidrawProps)
         }
     }
 
+    useEffect(() => {
+        resolve(container)
+      }, []);  
+
+      
     useDropEffect(excalidrawRef.current,excalidrawAPI)
 
     return (

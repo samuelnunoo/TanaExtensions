@@ -26,7 +26,7 @@ export default class TanaMain {
             new TanaDomNodeEventModule(this.eventBus) as TanaPubSubModule,
             new TanaDomPanelEventPublisher(this.eventBus) as TanaPubSubModule,
             new TanaNodeViewModule(this.eventBus) as TanaPubSubModule,
-            new TanaDragEventPublisher(this.eventBus) as TanaPubSubModule
+            new TanaDragEventPublisher(this.eventBus) as TanaPubSubModule,
         ]
         this.moduleExtensions = tanaExtensionWrapper(this.eventBus)
         this.init()
