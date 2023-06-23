@@ -9,7 +9,7 @@ import NodeViewConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeVie
 import TanaNodePortalState from "tana-extensions-core/src/StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
 import RuntimeEventInstance from "tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventInstance";
 import { DropEventContent } from "tana-extensions-core/src/ReactiveModules/TanaDragEventPublisher/types/OnDropEvent";
-import TanaExcalidraw from "./dom/Excalidraw";
+import TanaExcalidraw from "./dom/TanaExcalidraw";
 import React from "react";
 
 const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"

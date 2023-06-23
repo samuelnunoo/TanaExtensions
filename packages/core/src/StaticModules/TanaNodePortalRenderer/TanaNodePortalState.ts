@@ -30,6 +30,10 @@ export default class TanaNodePortalState {
         return this.portalMap.get(nodePath)
     }
 
+    runCommandOnPortals(commandToExecute:(portal:HTMLElement,nodePath:string) => void) {
+        this.portalMap.forEach(commandToExecute)
+    }
+
     private nodePathToString(nodePath:TanaNode[]) {
         return nodePath.map(node => node.id).join("|")
     }

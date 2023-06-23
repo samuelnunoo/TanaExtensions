@@ -1,6 +1,6 @@
 import { Excalidraw } from "@excalidraw/excalidraw";
 import ExcalidrawContainer from "./ExcalidrawContainer";
-import { AppState, ExcalidrawAPIRefValue, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types/types';
+import { AppState, ExcalidrawAPIRefValue, ExcalidrawImperativeAPI, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types/types';
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import useDropEffect from "./useDropEffect";
 import _ from "lodash";
@@ -9,19 +9,21 @@ import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvid
 import { Maybe } from "purify-ts/Maybe";
 import {useEffect, useRef, useState }from "react"
 import React from "react";
+import TanaNodePortalState from "tana-extensions-core/src/StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
 export interface ExcalidrawProps {
     initialData:ExcalidrawInitialDataState
     container:HTMLDivElement
+    nodePortalState:TanaNodePortalState
     stateHandler:ExcalidrawStateHandler
     tanaNode:TanaNode
     resolve:any
 }
 
-export default function TanaExcalidraw({initialData,stateHandler,tanaNode,resolve,container}:ExcalidrawProps) {
+export default function TanaExcalidraw({nodePortalState,initialData,stateHandler,tanaNode,resolve,container}:ExcalidrawProps) {
 
-    const excalidrawRef = useRef<HTMLDivElement>(null)// useRef<HTMLDivElement>(null)
-    const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawAPIRefValue|null>(null)//useState<ExcalidrawAPIRefValue|null>(null);
-    const [prevElements, setPrevElements] = useState<readonly any[]>(Maybe.fromNullable(initialData.elements).orDefault([])) //useState<readonly any[]>(Maybe.fromNullable(initialData.elements).orDefault([]))
+    const excalidrawRef = useRef<HTMLDivElement>(null)
+    const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI|null>(null)
+    const [prevElements, setPrevElements] = useState<readonly any[]>(Maybe.fromNullable(initialData.elements).orDefault([]))
     
     const hasChanged = (elements: readonly any[]) => {
         if (elements.length !== prevElements!.length) return true
@@ -37,6 +39,7 @@ export default function TanaExcalidraw({initialData,stateHandler,tanaNode,resolv
         if (hasChanged(elements)) {
             setPrevElements(elements)
             stateHandler.saveData(tanaNode.id,elements)
+
         }
     }
 
@@ -50,7 +53,10 @@ export default function TanaExcalidraw({initialData,stateHandler,tanaNode,resolv
     return (
         <ExcalidrawContainer ref={excalidrawRef}>
             <Excalidraw
-                ref={(api) => setExcalidrawAPI(api)} 
+                ref={(api) => {
+                    if (!api) return 
+                    api.readyPromise?.then(excalidrawAPI => setExcalidrawAPI(excalidrawAPI))
+                }} 
                 autoFocus={false}
                 onChange={handleOnChange}
                 initialData={initialData}
