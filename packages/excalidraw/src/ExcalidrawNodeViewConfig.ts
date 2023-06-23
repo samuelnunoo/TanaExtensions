@@ -5,18 +5,17 @@ import FullscreenNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaN
 import _ from "lodash";
 import reactDOM from "react-dom"
 import ExcalidrawExtension from ".";
-import NodeViewConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/NodeViewConfig";
 import TanaNodePortalState from "tana-extensions-core/src/StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
-import RuntimeEventInstance from "tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventInstance";
-import { DropEventContent } from "tana-extensions-core/src/ReactiveModules/TanaDragDropModule/types/OnDropEvent";
 import TanaExcalidraw from "./dom/TanaExcalidraw";
 import React from "react";
+import NodeViewConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/NodeViewConfig";
+import ExpandedDropEventContent from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/events/ExpandedDropEventContent";
 
 const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"
 
 export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawExtension> {
 
-    OnDropEvent(dropEvent: RuntimeEventInstance<DropEventContent>,dispatchDropDomEvent:() => void): void {
+    OnDropEvent(dropEvent: CustomEvent<ExpandedDropEventContent>,dispatchDropDomEvent:() => void): void {
             dispatchDropDomEvent()
     }
 
@@ -27,7 +26,6 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
     }
     
     createNodeView({tanaNode}: NodeEventMessage,nodePortalState:TanaNodePortalState): Promise<HTMLDivElement> {
-        console.log(nodePortalState)
         return new Promise(async (resolve) => {
             const stateHandler = this.getMediator().getExcalidrawStateHandler()
             const initialData = await stateHandler.getData(tanaNode)
@@ -79,7 +77,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
                 addBorder: false,
                 hideHeader: true,
                 height: "90vh",
-                width:"90vw",
+                width:"100%",
                 lockByDefault: false,
                 addSettingsButton:true,
                 allowFullscreen:true 

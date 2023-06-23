@@ -8,9 +8,11 @@ import OnStartEvent from "../TanaLoaderModule/types/OnStartEvent";
 import ExpandedDropEventContent from "./types/events/ExpandedDropEventContent";
 
 export default class DropEventSubscriber extends TanaSubscriber<TanaNodeViewModule> {
+    
     getInitRequirements(): InitEvent[] {
        return [OnStartEvent]
     }
+    
     onDependenciesInitComplete() {
         this.subscribeToRuntimeEvent(OnDropEvent,this.onDropEvent.bind(this))
     }
