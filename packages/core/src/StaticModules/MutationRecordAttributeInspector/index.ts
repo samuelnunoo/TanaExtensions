@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import TanaDomNodeProvider from "../TanaDomNodeProvider";
 import TanaConstants from "../TanaDomNodeProvider/TanaConstants";
-import { NodeEventTypeEnum } from "../../ReactiveModules/TanaDomNodeEventPublisher/types/types";
+import { NodeEventTypeEnum } from "../../ReactiveModules/TanaNodeEventModule/types/types";
 
 export default new class MutationRecordAttributeInspector extends TanaConstants {
 

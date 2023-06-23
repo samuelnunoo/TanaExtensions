@@ -1,13 +1,13 @@
-import NodeViewConfig from "../../ReactiveModules/TanaNodeViewPublisher/types/configs/NodeViewConfig";
+import NodeViewConfig from "../../ReactiveModules/TanaNodeViewModule/types/configs/NodeViewConfig";
 import {curry, Maybe} from "purify-ts";
 import TanaDomNodeProvider from "../TanaDomNodeProvider";
-import {NodeViewType} from "../../ReactiveModules/TanaNodeViewPublisher/types/configs/NodeViewType";
+import {NodeViewType} from "../../ReactiveModules/TanaNodeViewModule/types/configs/NodeViewType";
 import {TanaNode} from "../TanaStateProvider/types/types";
 import TanaCommandExecutor from "../TanaCommandExecutor";
 import autoBind from "auto-bind";
 import RuntimeEventInstance from "../../ReactiveModules/EventBus/types/RuntimeEventInstance";
-import { ReplaceViewEventMessage } from "../../ReactiveModules/TanaNodeViewPublisher/types/events/ReplaceViewEvent";
-import { DropEventContent} from "../../ReactiveModules/TanaDragEventPublisher/types/OnDropEvent";
+import { ReplaceViewEventMessage } from "../../ReactiveModules/TanaNodeViewModule/types/events/ReplaceViewEvent";
+import { DropEventContent} from "../../ReactiveModules/TanaDragDropModule/types/OnDropEvent";
 import { Just } from "purify-ts/esm/Maybe";
 
 const NODE_VIEW_CONTAINER_CLASS = "node-view-container"

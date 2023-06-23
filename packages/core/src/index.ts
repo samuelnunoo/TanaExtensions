@@ -1,13 +1,13 @@
-import TanaModuleLoader from "./ReactiveModules/TanaModuleLoader";
+import TanaLoaderModule from "./ReactiveModules/TanaLoaderModule";
 import EventBus from "./ReactiveModules/EventBus";
 import TanaPubSubModule from "./ReactiveModules/EventBus/types/TanaPubSubModule";
-import TanaDomNodeEventModule from "./ReactiveModules/TanaDomNodeEventPublisher";
-import TanaDomPanelEventPublisher from "./ReactiveModules/TanaDomPanelEventPublisher";
+import TanaDomNodeEventModule from "./ReactiveModules/TanaNodeEventModule";
+import TanaPanelEventModule from "./ReactiveModules/TanaPanelEventModule";
 import OnMainInitEvent from "./types/OnMainInitEvent";
 import TanaExtension from "./types/TanaExtension";
 import "../assets/default.css"
-import TanaNodeViewModule from "./ReactiveModules/TanaNodeViewPublisher";
-import TanaDragEventPublisher from "./ReactiveModules/TanaDragEventPublisher";
+import TanaNodeViewModule from "./ReactiveModules/TanaNodeViewModule";
+import TanaDragDropModule from "./ReactiveModules/TanaDragDropModule";
 /*
 Module Responsibility
     This module is responsible for initializing the tana extension
@@ -22,11 +22,11 @@ export default class TanaMain {
         console.log("Loading Extension...")
         this.eventBus = new EventBus()
         this.coreModules =  [
-            new TanaModuleLoader(this.eventBus) as TanaPubSubModule,
+            new TanaLoaderModule(this.eventBus) as TanaPubSubModule,
             new TanaDomNodeEventModule(this.eventBus) as TanaPubSubModule,
-            new TanaDomPanelEventPublisher(this.eventBus) as TanaPubSubModule,
+            new TanaPanelEventModule(this.eventBus) as TanaPubSubModule,
             new TanaNodeViewModule(this.eventBus) as TanaPubSubModule,
-            new TanaDragEventPublisher(this.eventBus) as TanaPubSubModule,
+            new TanaDragDropModule(this.eventBus) as TanaPubSubModule,
         ]
         this.moduleExtensions = tanaExtensionWrapper(this.eventBus)
         this.init()

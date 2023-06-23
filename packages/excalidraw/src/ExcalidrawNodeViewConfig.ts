@@ -1,14 +1,14 @@
-import { NodeEventMessage } from "tana-extensions-core/src/ReactiveModules/TanaDomNodeEventPublisher/types/NodeEvent";
-import DefaultNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/DefaultNodeConfig";
-import ExpandedNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/ExpandedNodeConfig";
-import FullscreenNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/FullscreenNodeConfig";
+import { NodeEventMessage } from "tana-extensions-core/src/ReactiveModules/TanaNodeEventModule/types/NodeEvent";
+import DefaultNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/DefaultNodeConfig";
+import ExpandedNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/ExpandedNodeConfig";
+import FullscreenNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/FullscreenNodeConfig";
 import _ from "lodash";
 import reactDOM from "react-dom"
 import ExcalidrawExtension from ".";
 import NodeViewConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewPublisher/types/configs/NodeViewConfig";
 import TanaNodePortalState from "tana-extensions-core/src/StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
 import RuntimeEventInstance from "tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventInstance";
-import { DropEventContent } from "tana-extensions-core/src/ReactiveModules/TanaDragEventPublisher/types/OnDropEvent";
+import { DropEventContent } from "tana-extensions-core/src/ReactiveModules/TanaDragDropModule/types/OnDropEvent";
 import TanaExcalidraw from "./dom/TanaExcalidraw";
 import React from "react";
 
@@ -16,10 +16,8 @@ const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"
 
 export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawExtension> {
 
-    OnDropEvent(dropEvent: RuntimeEventInstance<DropEventContent>,nodePortalState:TanaNodePortalState,
-        addedContentNode:HTMLElement,dispatchDropDomEvent:() => void): void {
+    OnDropEvent(dropEvent: RuntimeEventInstance<DropEventContent>,dispatchDropDomEvent:() => void): void {
             dispatchDropDomEvent()
-            console.log(dropEvent,nodePortalState,addedContentNode)
     }
 
     setDimensions(nodeView:HTMLElement,width: string, height: string): void {
@@ -37,6 +35,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
     
             reactDOM.render(React.createElement(TanaExcalidraw,{
                 initialData,
+                nodePortalState,
                 stateHandler,
                 tanaNode,
                 resolve,

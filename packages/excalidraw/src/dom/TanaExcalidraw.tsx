@@ -10,6 +10,7 @@ import { Maybe } from "purify-ts/Maybe";
 import {useEffect, useRef, useState }from "react"
 import React from "react";
 import TanaNodePortalState from "tana-extensions-core/src/StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
+import { ExcalidrawChangeEventContent, ON_CHANGE_EVENT } from '../../types/OnChangeEvent';
 export interface ExcalidrawProps {
     initialData:ExcalidrawInitialDataState
     container:HTMLDivElement
@@ -23,9 +24,10 @@ export default function TanaExcalidraw({nodePortalState,initialData,stateHandler
 
     const excalidrawRef = useRef<HTMLDivElement>(null)
     const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI|null>(null)
-    const [prevElements, setPrevElements] = useState<readonly any[]>(Maybe.fromNullable(initialData.elements).orDefault([]))
+    const [prevElements, setPrevElements] = useState<readonly any[]>(Maybe.fromNullable(_.cloneDeep(initialData.elements)).orDefault([]))
+    const [prevAppState, setAppState] = useState<AppState|null>(null)
     
-    const hasChanged = (elements: readonly any[]) => {
+    const elementsHaveChanged = (elements: readonly any[]) => {
         if (elements.length !== prevElements!.length) return true
         for (let i = 0; i < elements.length; i++) {
             const curr = elements[i]
@@ -35,11 +37,43 @@ export default function TanaExcalidraw({nodePortalState,initialData,stateHandler
         return false
     }
 
-    function handleOnChange(elements: readonly ExcalidrawElement[], appState: AppState) {
-        if (hasChanged(elements)) {
-            setPrevElements(elements)
-            stateHandler.saveData(tanaNode.id,elements)
+    const keysToIgnore = new Set(['cursorButton', 'draggingElement', 'previousSelectedElementIds', 'selectedElementIds', 'selectionElement'])
 
+    const diffKeys = (prevAppState:AppState,appState:AppState) => {
+        return Object.keys(prevAppState!).reduce((result, key) => {
+            if (!appState.hasOwnProperty(key)) {
+                result.push(key);
+            } else if (_.isEqual(prevAppState![key], appState[key])) {
+                const resultKeyIndex = result.indexOf(key);
+                result.splice(resultKeyIndex, 1);
+            }
+            return result;
+        }, Object.keys(appState));
+    }
+
+    const appStateHasChanged = (appState:AppState) => {
+       if (!prevAppState && !!appState) return true 
+       const diffs = diffKeys(prevAppState!,appState)
+       for (const diff of diffs) {
+        if (!keysToIgnore.has(diff)) return true 
+       }
+       return false 
+
+    }
+
+    function handleOnChange(elements: readonly ExcalidrawElement[], appState: AppState) {
+        if (elementsHaveChanged(elements) || appStateHasChanged(appState)) {
+            setPrevElements(_.cloneDeep(elements))
+            setAppState(_.cloneDeep(appState))
+            stateHandler.saveData(tanaNode.id,elements)
+            const ref = excalidrawRef.current
+            if (!ref) return 
+
+            const changeEvent = new CustomEvent<ExcalidrawChangeEventContent>(ON_CHANGE_EVENT,{
+                detail: { elements, appState},
+                bubbles:true 
+            })
+            ref.dispatchEvent(changeEvent)
         }
     }
 
@@ -48,7 +82,7 @@ export default function TanaExcalidraw({nodePortalState,initialData,stateHandler
       }, []);  
 
       
-    useDropEffect(excalidrawRef.current,excalidrawAPI)
+    useDropEffect(excalidrawRef.current,excalidrawAPI,nodePortalState)
 
     return (
         <ExcalidrawContainer ref={excalidrawRef}>

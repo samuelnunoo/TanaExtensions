@@ -1,58 +1,66 @@
-import { sceneCoordsToViewportCoords } from "@excalidraw/excalidraw"
+import { sceneCoordsToViewportCoords, viewportCoordsToSceneCoords } from "@excalidraw/excalidraw"
 import { ExcalidrawRectangleElement } from "@excalidraw/excalidraw/types/element/types"
 import { AppState, ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
+
+const PADDING = 0.1
 
 export default class ExcalidrawPortalPositionHandler {
 
     public static positionPortal(portalElement:HTMLElement,excalidrawRect:ExcalidrawRectangleElement,appState:AppState) {
         const {x,y} = this.getXYPosition(excalidrawRect,appState)
 
-        portalElement.style.left = `${x}px` 
-        portalElement.style.top = `${y}px`
-        portalElement.style.height = this.getHeight(excalidrawRect,appState)
-        portalElement.style.width = this.getWidth(excalidrawRect,appState)
+        portalElement.style.left = `${x + this.getMargin(excalidrawRect.width,appState)}px` 
+        portalElement.style.top = `${y + this.getMargin(excalidrawRect.height,appState)}px`
+        portalElement.style.height = `${this.getDimension(excalidrawRect.height,appState)}px`
+        portalElement.style.width = `${this.getDimension(excalidrawRect.width,appState)}px`
         this.clipOutOfBoundElementSegments(portalElement,appState)
         portalElement.style.visibility = "visible"
         portalElement.style.position = "fixed"
-        portalElement.style.zIndex = "4"
+        portalElement.style.zIndex = "3"
+        portalElement.style.scale = `${appState.zoom.value}`
+        portalElement.style.transformOrigin = "top left"
     }
 
     public static insertPortalContainer(excalidrawApi:ExcalidrawImperativeAPI) {
         return (clientX:number,clientY:number,nodePath:string) => {
             const {x,y} = viewportCoordsToSceneCoords({clientX,clientY},excalidrawApi.getAppState())
+            const element = {
+                type: "rectangle",
+                version: 141,
+                versionNonce: 361174001,
+                isDeleted: false,
+                id: nodePath,
+                fillStyle: "solid",
+                strokeWidth: 1,
+                strokeStyle: "solid",
+                roughness: 1,
+                opacity: 100,
+                angle: 0,
+                x,
+                y,
+                strokeColor: "#495057",
+                backgroundColor: "#ced4da",
+                width: 300,
+                height: 400,
+                seed: 1968410350,
+                groupIds: [],
+                boundElements: null,
+                locked: false,
+                link: null,
+                updated: 1,
+                roundness: {
+                  type: 3,
+                  value: 32,
+                },
+              } as ExcalidrawRectangleElement
+
             excalidrawApi.updateScene({
                 elements:[
-                    {
-                        type: "rectangle",
-                        version: 141,
-                        versionNonce: 361174001,
-                        isDeleted: false,
-                        id: nodePath,
-                        fillStyle: "hachure",
-                        strokeWidth: 1,
-                        strokeStyle: "solid",
-                        roughness: 1,
-                        opacity: 100,
-                        angle: 0,
-                        x,
-                        y,
-                        strokeColor: "#c92a2a",
-                        backgroundColor: "transparent",
-                        width: 300,
-                        height: 400,
-                        seed: 1968410350,
-                        groupIds: [],
-                        boundElements: null,
-                        locked: false,
-                        link: null,
-                        updated: 1,
-                        roundness: {
-                          type: 3,
-                          value: 32,
-                        },
-                      },
+                  ...excalidrawApi.getSceneElements(),
+                  element
                 ]
             }) 
+            return element 
         }
 
     }
@@ -60,21 +68,26 @@ export default class ExcalidrawPortalPositionHandler {
     public static placePortal(excalidrawApi:ExcalidrawImperativeAPI) {
         return (nodePath:string,portal:HTMLElement) => {
             const element = excalidrawApi.getSceneElements().find(element => element.id == nodePath);
-            this.positionPortal(portal, element as ExcalidrawRectangleElement, excalidrawApi.getAppState());
+            const replacementRect = !!element ? element : this.insertPortalContainer(excalidrawApi)(0,0,nodePath)
+            this.positionPortal(portal, replacementRect as ExcalidrawRectangleElement, excalidrawApi.getAppState());
         }
     }
-    
+
+    private static getMargin(value:number,appState:AppState){
+        return (value * PADDING * appState.zoom.value)/2
+    }
+
     private static getXYPosition(element:ExcalidrawRectangleElement,appState:AppState) {
-        const {x,y} = element
-        return sceneCoordsToViewportCoords({sceneX:x,sceneY:y},appState)
+        const xPosition = (element.x + appState.scrollX) * appState.zoom.value + appState.offsetLeft
+        const yPosition = (element.y + appState.scrollY) * appState.zoom.value + appState.offsetTop 
+        const sceneX = element.x
+        const sceneY = element.y
+        return sceneCoordsToViewportCoords({sceneX, sceneY},appState)
+       //return {xPosition,yPosition}
     }
-
-    private static getWidth(element:ExcalidrawRectangleElement,appState:AppState) {
-        return `${element.width * appState.zoom.value}px`
-    }
-
-    private static getHeight(element:ExcalidrawRectangleElement,appState:AppState) {
-        return `${element.height * appState.zoom.value}px`
+    
+    private static getDimension(dimension:number,appState:AppState) {
+        return dimension * ( 1 - PADDING )
     }
 
     private static clipOutOfBoundElementSegments(portalElement:HTMLElement,appState:AppState){
@@ -94,8 +107,5 @@ export default class ExcalidrawPortalPositionHandler {
 
     }
     
-}
-function viewportCoordsToSceneCoords(arg0: { clientX: number; clientY: number }, appState: AppState): { x: any; y: any } {
-    throw new Error("Function not implemented.")
 }
 
