@@ -1,7 +1,7 @@
 import TanaSubscriber from "tana-extensions-core/src/ReactiveModules/EventBus/types/TanaSubscriber";
 import TanaDatabaseExtension from "./index";
 import {InitEvent} from "tana-extensions-core/src/ReactiveModules/EventBus/types/Event";
-import OnStartEvent from "tana-extensions-core/src/ReactiveModules/TanaModuleLoader/types/OnStartEvent";
+import OnStartEvent from "tana-extensions-core/src/ReactiveModules/TanaLoaderModule/types/OnStartEvent"
 import RuntimeEventInstance from "tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventInstance";
 import UpdateNodeDataEvent, {UpdateNodeDataEventMessage} from "../types/events/UpdateNodeDataEvent";
 import {Maybe} from "purify-ts";
