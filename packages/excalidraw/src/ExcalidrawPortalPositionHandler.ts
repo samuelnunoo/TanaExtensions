@@ -16,7 +16,7 @@ export default class ExcalidrawPortalPositionHandler {
         this.clipOutOfBoundElementSegments(portalElement,appState)
         portalElement.style.visibility = "visible"
         portalElement.style.position = "fixed"
-        portalElement.style.zIndex = "3"
+        portalElement.style.zIndex = "2"
         portalElement.style.scale = `${appState.zoom.value}`
         portalElement.style.transformOrigin = "top left"
     }
