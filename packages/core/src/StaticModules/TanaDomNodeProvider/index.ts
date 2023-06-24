@@ -53,7 +53,7 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
     }
 
     public getContentDomNodeFromNodeId(doc:Document,nodeId:string) {
-        return doc.querySelector(`[${this.getContentNodeAttribute()}$=${nodeId}]`) as HTMLElement
+        return doc.querySelector(`[${this.getContentNodeAttribute()}$='${nodeId}']`) as HTMLElement
     }
 
     public getNonTemplateNodeFromAncestor(ancestor:HTMLElement) {

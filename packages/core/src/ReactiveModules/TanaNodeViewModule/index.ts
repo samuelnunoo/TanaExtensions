@@ -11,8 +11,8 @@ import NodeViewDBCollectionPublisher from "./NodeViewDBCollectionPublisher";
 import TanaNodeAttributeInspector from "../../StaticModules/TanaNodeAttributeInspector";
 import { Maybe } from 'purify-ts';
 import "./assets/node-view.css"
-import NodePortalStateHandler from "../TanaNodePortalModule/NodePortalStateHandler";
 import DropEventSubscriber from "./DropEventSubscriber";
+import NodePortalStateHandler from "./NodePortalStateHandler";
 
 export default class TanaNodeViewModule extends TanaPubSubModule {
     private nodeViewStateHandler = new NodeViewStateHandler()

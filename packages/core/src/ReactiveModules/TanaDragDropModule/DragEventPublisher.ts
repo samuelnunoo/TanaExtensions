@@ -70,7 +70,6 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragDropModule
         })
     }
 
-
     private isNodeView(contentNode:HTMLElement) {
        return !!TanaDomNodeProvider.getNodeViewFromDescendant(contentNode)
     }

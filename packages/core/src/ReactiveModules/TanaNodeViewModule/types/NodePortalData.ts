@@ -1,6 +1,4 @@
-import NodePortalStateHandler from "../../TanaNodePortalModule/NodePortalStateHandler";
-
-
+import NodePortalStateHandler from "../NodePortalStateHandler"
 
 
 

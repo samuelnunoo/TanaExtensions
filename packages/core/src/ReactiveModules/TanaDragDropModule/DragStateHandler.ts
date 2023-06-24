@@ -6,7 +6,6 @@ export default class DragStateHandler {
     private hoverElement:HTMLElement|null = null 
     private dragHandleExists:boolean = false 
 
-
     resetAll() {
         this.moveCount = 0
         this.onMouseDownTanaNodeId = ""
