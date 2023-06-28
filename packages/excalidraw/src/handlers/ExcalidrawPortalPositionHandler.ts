@@ -2,6 +2,7 @@ import { sceneCoordsToViewportCoords, viewportCoordsToSceneCoords } from "@excal
 import { ExcalidrawElement, ExcalidrawRectangleElement } from "@excalidraw/excalidraw/types/element/types"
 import { AppState, ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 import ExcalidrawPortalStateHandler from "./ExcalidrawPortalStateHandler"
+import TanaDomNodeProvider from "tana-extensions-core/src/StaticModules/TanaDomNodeProvider"
 
 const PADDING = 60
 
@@ -11,11 +12,14 @@ export default class ExcalidrawPortalPositionHandler {
         console.log("position portal")
         const {x,y} = this.getXYPosition(excalidrawRect,appState)
         console.log("viewport Pos",y,x)
-        const {top,left} = portalElement.parentElement!.getBoundingClientRect()
+        portalElement.parentElement!.style.width = "100vw"
+        portalElement.parentElement!.style.height = "100vh"
+        const {top,left} = TanaDomNodeProvider.getPortalContainerFromDescendant(portalElement)!.getBoundingClientRect()
         console.log("Element", top, left)
         const offsetTop = (top - y) * -1 
         const offsetLeft = (left - x) * -1
         console.log("Offset",offsetTop,offsetLeft)
+       
         portalElement.style.left = `${ offsetLeft + this.getMargin(excalidrawRect.width,width,appState)}px` 
         portalElement.style.top = `${ offsetTop + this.getMargin(excalidrawRect.height,height,appState) }px`
         portalElement.style.fontSize = "120%"
@@ -27,7 +31,7 @@ export default class ExcalidrawPortalPositionHandler {
         portalElement.style.position = "absolute"
         portalElement.style.zIndex = "2"
         portalElement.style.scale = `${appState.zoom.value}`
-       // portalElement.style.transformOrigin = "top left"
+        portalElement.style.transformOrigin = "top left"
         console.log(portalElement)
         const xx = portalElement.getBoundingClientRect()
         console.log("newPos", xx.top, xx.left)

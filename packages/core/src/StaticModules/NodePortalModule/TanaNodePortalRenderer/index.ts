@@ -7,7 +7,7 @@ import TanaNodeAttributeInspector from "../../TanaNodeAttributeInspector";
 import TanaDomNodeProvider from "../../TanaDomNodeProvider";
 
 const NODE_PORTAL_TEMPLATE_NAME = "node-portal-component"
-
+const NODE_PORTAL_CLASS = "node-portal-container"
 export default class TanaNodePortalRenderer {
 
     public static addNodeReferenceToPortal(portalParentNode:TanaNode,contentNode:HTMLElement,expandPortal:boolean) {
@@ -55,6 +55,7 @@ export default class TanaNodePortalRenderer {
             for (const file of portalFiles) {
                 const contentNodePathString = [ ...portalNodePath,folder,file,file.firstChild].map(node => node.id).join("|")
                 const contentNode = TanaDomNodeProvider.getContentNodeFromNodePath(contentNodePathString)
+                this.removeCSSPositionFromNonPortalAncestors(contentNode)
                 portalDomNodeMap.set(contentNodePathString,contentNode)
             }
         }
@@ -62,6 +63,13 @@ export default class TanaNodePortalRenderer {
         return portalDomNodeMap
     }
 
+    private static removeCSSPositionFromNonPortalAncestors(contentNode:HTMLElement) {
+        let current = contentNode.parentElement
+        while (current && !current.classList.contains(NODE_PORTAL_CLASS)) {
+            current.style.position = "static"
+            current = current.parentElement
+        }
+    }
     private static hideNodePortal(portalNodePath:TanaNode[]) {
         const portalNodePathString = portalNodePath.map(n => n.id).join("|")
         const portalDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalNodePathString)
@@ -69,6 +77,7 @@ export default class TanaNodePortalRenderer {
         portalDomNode.style.visibility = "hidden"
         portalDomNode.style.position = "absolute"
         portalDomNode.style.left = "1000px"
+        portalDomNode.classList.add(NODE_PORTAL_CLASS)
     }
     
     private static insertNodeToPortal(portalContainer:TanaNode,node:TanaNode) {

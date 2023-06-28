@@ -9,6 +9,10 @@ export default abstract class TanaConstants {
         return "wrapEditableAndMenu"
     }
 
+    protected portalContainerCssClass() {
+        return "node-portal-container"
+    }
+
     protected getNodeViewCssClass() {
         return "node-view-container"
     }

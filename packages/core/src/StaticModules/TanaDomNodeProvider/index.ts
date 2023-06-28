@@ -72,6 +72,10 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         return doc.querySelector(this.getDockContainerAttributeSelector())
     }
 
+    public getPortalContainerFromDescendant(portal:HTMLElement) {
+        return portal.closest(this.classSelector(this.portalContainerCssClass()))
+    }
+
     public getMainDock(doc:Document) {
         return doc.querySelector(this.getMainDockAttributeSelector())
     }
