@@ -34,6 +34,8 @@ export default function useDropEffect(
         const {clientX,clientY} = event.detail.mouseEvent
         const portal = event.detail.contentDomNode
         const nodePath = event.detail.nodePath
+        const {width,height} = portal.getBoundingClientRect()
+        excalidrawPortalState.setPortalDomRect(nodePath,{width,height})
         insertPortalContainer(clientX,clientY,nodePath)
         placementMethod(nodePath,portal)
      }) as EventListener

@@ -24,17 +24,15 @@ export default class ExcalidrawPortalPositionHandler {
         portalElement.style.top = `${ offsetTop + this.getMargin(excalidrawRect.height,height,appState) }px`
         portalElement.style.fontSize = "120%"
         portalElement.style.color = "black"
-        portalElement.style.width = 'fit-content' //'fit-content'
-        portalElement.style.height = 'fit-content' //'fit-content'
+        portalElement.style.width = 'fit-content' 
+        portalElement.style.height = 'fit-content'
         this.clipOutOfBoundElementSegments(portalElement,appState)
         portalElement.style.visibility = "visible"
         portalElement.style.position = "absolute"
         portalElement.style.zIndex = "2"
         portalElement.style.scale = `${appState.zoom.value}`
         portalElement.style.transformOrigin = "top left"
-        console.log(portalElement)
-        const xx = portalElement.getBoundingClientRect()
-        console.log("newPos", xx.top, xx.left)
+
     }
 
     public static checkElementSize(elements: readonly ExcalidrawElement[], portalState:ExcalidrawPortalStateHandler, excalidrawAPI:ExcalidrawImperativeAPI|null) {
