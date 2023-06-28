@@ -26,6 +26,8 @@ export default class TanaNodePortalRenderer {
 
                 if (expandPortal) TanaCommandExecutor.expandTanaNodeFromNodePath(refNodePath)
                 else TanaCommandExecutor.collapseTanaNodeFromNodePath(refNodePath)
+                const contentNode = TanaDomNodeProvider.getContentNodeFromNodePath(refNodePath.map(node => node.id).join("|"))
+                this.removeCSSPositionFromNonPortalAncestors(contentNode)
                 return refNodePath
             }).extractNullable()
     }
