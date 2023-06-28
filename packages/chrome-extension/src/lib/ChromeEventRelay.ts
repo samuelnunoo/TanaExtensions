@@ -6,7 +6,5 @@
         const response = await chromeApi.sendEventToBackground(event)
         console.log(response)
     });
-
-
 })()
 

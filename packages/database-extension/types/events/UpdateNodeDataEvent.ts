@@ -1,6 +1,5 @@
 
 import RuntimeEventStatic from "tana-extensions-core/src/ReactiveModules/EventBus/types/RuntimeEventStatic";
-import DBCollectionEntry from "../database/DBCollectionEntry";
 import DBCollection from "../database/DBCollection";
 
 

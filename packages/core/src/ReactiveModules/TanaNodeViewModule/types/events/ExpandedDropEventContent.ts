@@ -1,4 +1,4 @@
-import TanaNodePortalState from "../../../../StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
+import TanaNodePortalState from "../../../../StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";
 import { DropEventContent } from "../../../TanaDragDropModule/types/OnDropEvent";
 
 

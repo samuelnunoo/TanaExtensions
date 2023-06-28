@@ -2,6 +2,7 @@
 export default interface ExpandedNodeConfig {
     addBorder:boolean
     hideHeader:boolean
+    expandNodePortalsByDefault:boolean 
     height:string
     width:string
     lockByDefault:boolean

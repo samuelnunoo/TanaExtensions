@@ -18,6 +18,7 @@ export default class TanaMain {
     eventBus:EventBus
     moduleExtensions: TanaExtension[]
     coreModules: TanaPubSubModule[]
+    
     constructor(tanaExtensionWrapper: (eventBus:EventBus) => TanaExtension[]) {
         console.log("Loading Extension...")
         this.eventBus = new EventBus()

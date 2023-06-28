@@ -2,7 +2,6 @@ import { Maybe } from "purify-ts";
 import TanaConstants from "../TanaDomNodeProvider/TanaConstants";
 import {TanaNode} from "../TanaStateProvider/types/types";
 import TanaDomNodeProvider from "../TanaDomNodeProvider";
-import TanaStateProvider from "../TanaStateProvider";
 
 export default new class TanaNodeAttributeInspector extends TanaConstants {
 
@@ -15,6 +14,7 @@ export default new class TanaNodeAttributeInspector extends TanaConstants {
         const wrapper = TanaDomNodeProvider.getWrapperNodeFromAncestor(panelHeader!)!
         return wrapper.id == node.id
     }
+
 
     public hasTemplateWithName(node:TanaNode,templateName:string) {
         if (node.templates == null) return false 

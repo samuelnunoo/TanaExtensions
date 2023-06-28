@@ -4,7 +4,7 @@ import { TanaPubSubComponent } from "tana-extensions-core/src/ReactiveModules/Ev
 import ExcalidrawNodeViewPublisher from "./ExcalidrawNodeViewPublisher";
 import _ from "lodash";
 import OnExcalidrawExtensionInitEvent from "../types/OnExcalidrawExtensionInitEvent"
-import ExcalidrawStateHandler from "./ExcalidrawStateHandler";
+import ExcalidrawStateHandler from "./handlers/ExcalidrawStateHandler";
 import ExcalidrawNodeViewConfig from "./ExcalidrawNodeViewConfig";
 
 export default class ExcalidrawExtension extends TanaExtension {

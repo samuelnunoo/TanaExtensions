@@ -2,6 +2,7 @@ const TANA_REACT_APP_ID = "app"
 const TANA_MAIN_UI_CONTAINER_CLASS_PREFIX = "Application-module_mainUIContainer"
 
 export default new class TanaLoader {
+    
     public async waitForFieldToInstantiate(object:Object,key:string) {
         return new Promise((resolve) => {
             if (key in object) return resolve(true)
@@ -15,6 +16,7 @@ export default new class TanaLoader {
             });
         })
     }
+
     public async waitForPageDomToCompleteInitialization(dom:Document) {
         return new Promise((resolve) => {
             const app = dom.getElementById(TANA_REACT_APP_ID)!
@@ -32,6 +34,7 @@ export default new class TanaLoader {
             })
         })
     }
+
     private mainUIContainerHasBeenAdded(htmlElements:HTMLElement[]) {
         for (const htmlElement of htmlElements){
             const mainUIContainer =

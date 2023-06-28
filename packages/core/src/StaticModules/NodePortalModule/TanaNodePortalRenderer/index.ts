@@ -1,16 +1,16 @@
-import {TanaNode} from "../TanaStateProvider/types/types";
-import TanaStateProvider from "../TanaStateProvider";
+import {TanaNode} from "../../TanaStateProvider/types/types";
+import TanaStateProvider from "../../TanaStateProvider";
 import {Maybe} from "purify-ts";
-import TanaCommandExecutor from "../TanaCommandExecutor";
-import TanaNodeFinder from "../TanaNodeFinder";
-import TanaNodeAttributeInspector from "../TanaNodeAttributeInspector";
-import TanaDomNodeProvider from "../TanaDomNodeProvider";
+import TanaCommandExecutor from "../../TanaCommandExecutor";
+import TanaNodeFinder from "../../TanaNodeFinder";
+import TanaNodeAttributeInspector from "../../TanaNodeAttributeInspector";
+import TanaDomNodeProvider from "../../TanaDomNodeProvider";
 
 const NODE_PORTAL_TEMPLATE_NAME = "node-portal-component"
 
 export default class TanaNodePortalRenderer {
 
-    public static addNodeReferenceToPortal(portalParentNode:TanaNode,contentNode:HTMLElement) {
+    public static addNodeReferenceToPortal(portalParentNode:TanaNode,contentNode:HTMLElement,expandPortal:boolean) {
         const contentNodeId = TanaDomNodeProvider.getIdFromElement(contentNode)
         if (!contentNodeId) return null 
         const portalContainer = this.getOrInsertPortalContainer(portalParentNode)
@@ -23,11 +23,14 @@ export default class TanaNodePortalRenderer {
                 const fileNodePath = this.insertNodeToPortal(portalContainer,nodeRef)
                 TanaCommandExecutor.expandAllOwnedChildren(portalNodePath)
                 const refNodePath = [...portalNodePath,...fileNodePath]
-                TanaCommandExecutor.expandTanaNodeFromNodePath(refNodePath)
+
+                if (expandPortal) TanaCommandExecutor.expandTanaNodeFromNodePath(refNodePath)
+                else TanaCommandExecutor.collapseTanaNodeFromNodePath(refNodePath)
                 return refNodePath
             }).extractNullable()
     }
 
+    
     public static hidePortalAndExpandDescendants(portalParentNode:TanaNode) {
         const portalContainer = this.getOrInsertPortalContainer(portalParentNode)
         const portalNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
@@ -65,7 +68,7 @@ export default class TanaNodePortalRenderer {
         if (!portalDomNode) return 
         portalDomNode.style.visibility = "hidden"
         portalDomNode.style.position = "absolute"
-        portalDomNode.style.top = "-5000px"
+        portalDomNode.style.left = "1000px"
     }
     
     private static insertNodeToPortal(portalContainer:TanaNode,node:TanaNode) {

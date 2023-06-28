@@ -42,6 +42,12 @@ export default class TanaCommandExecutor {
             .chainNullable(panelUIState => panelUIState.expand(nodePath))
     }
 
+    public static collapseTanaNodeFromNodePath(nodePath:TanaNode[]) {
+        TanaStateProvider.getAppState()
+            .chainNullable(appState => appState.getPanelUIStateForPath(nodePath))
+            .chainNullable(panelUIState => panelUIState.collapse(nodePath))
+    }
+
     public static expandAllOwnedChildren(nodePath:TanaNode[]) {
         TanaStateProvider.getAppState()
             .chainNullable(appState => appState.getPanelUIStateForPath(nodePath))

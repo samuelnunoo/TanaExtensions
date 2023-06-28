@@ -13,7 +13,7 @@ import { VIEW_EXTENSION_TEMPLATE } from "../TanaNodeViewModule/types/constants";
 const MOVE_COUNT_THRESHOLD = 15 
 
 export default class DragEventPublisher extends TanaPublisher<TanaDragDropModule> {
-    doc: Document
+    private doc: Document
 
     constructor(mediator:TanaDragDropModule,eventBus:EventBus,doc:Document) {
         super(mediator,eventBus)
@@ -39,7 +39,8 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragDropModule
 
     private invokeDropEvent(
         draggedTanaNodeId:string,mouseEvent:MouseEvent,draggedContentNode:HTMLElement,
-        dropTarget:HTMLElement,targetNodeViewContainer:HTMLElement,targetTanaNode:TanaNode,nodeViewTemplateId:string
+        dropTarget:HTMLElement,targetNodeViewContainer:HTMLElement,targetTanaNode:TanaNode,nodeViewTemplateId:string,
+        nodeElement:HTMLElement, isExpanded:boolean
         ) {
         const content =  {
             draggedTanaNodeId,
@@ -48,7 +49,9 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragDropModule
             draggedContentNode,
             targetTanaNode,
             dropTarget,
-            nodeViewTemplateId
+            nodeViewTemplateId,
+            nodeElement,
+            isExpanded
         } as DropEventContent
 
 
@@ -111,8 +114,10 @@ export default class DragEventPublisher extends TanaPublisher<TanaDragDropModule
             const templateId = TanaNodeAttributeInspector.getFirstTemplateWithSuperTag(targetTanaNode,VIEW_EXTENSION_TEMPLATE)
             if (!templateId) return 
             if (nodeView == contentNode || nodeView.contains(contentNode)) return 
-
-            this.invokeDropEvent(tanaNodeId,event,contentNode,hoverElement,nodeView,targetTanaNode,templateId.name)
+            const nodeElement = TanaDomNodeProvider.getNodeViewParentNodeElement(nodeView)
+            if (!nodeElement) return
+            const isExpanded = TanaNodeAttributeInspector.hasPanelHeaderAttribute(nodeElement)
+            this.invokeDropEvent(tanaNodeId,event,contentNode,hoverElement,nodeView,targetTanaNode,templateId.name,nodeElement,isExpanded)
             this.mediator.getDragStateHandler().resetAll()
         })
     }

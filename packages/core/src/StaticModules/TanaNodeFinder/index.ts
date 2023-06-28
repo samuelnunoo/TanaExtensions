@@ -3,6 +3,7 @@ import {Maybe} from "purify-ts";
 
 
 export default new class TanaNodeFinder {
+    
     public getTemplateNodeWithName(templateName:string) {
         return TanaStateProvider.getAppState()
             .chain(({nodeSpace}) => {

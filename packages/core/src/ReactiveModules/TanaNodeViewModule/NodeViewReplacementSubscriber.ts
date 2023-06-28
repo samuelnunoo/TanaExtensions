@@ -11,7 +11,8 @@ import {Maybe} from "purify-ts";
 import NodeViewConfig from "./types/configs/NodeViewConfig";
 import GetNodeDataEvent from 'database-extension/types/events/GetNodeDataEvent';
 import { NodeEventTypeEnum } from "../TanaNodeEventModule/types/types";
-import TanaNodePortalState from "../../StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
+import TanaNodePortalState from "../../StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";
+import NodeViewEventHandler from "./NodeViewEventHandler";
 
 
 export default class NodeViewReplacementSubscriber extends TanaSubscriber<TanaViewReplacementPublisher> {
@@ -39,26 +40,44 @@ export default class NodeViewReplacementSubscriber extends TanaSubscriber<TanaVi
                     nodeEventType == NodeEventTypeEnum.BulletCollapse
 
                 if (isInsertionEvent) this.createNodeView(event,nodeViewConfig)
-                else if (isDeletionEvent) await nodeViewConfig.destroyNodeView(event.message.nodeEvent)
+                else if (isDeletionEvent) this.deleteNodeView(event,nodeViewConfig)
          
             })
     }
 
-    private async createNodeView(event:RuntimeEventInstance<ReplaceViewEventMessage>,config:NodeViewConfig<any>) {
-        //Setup the portal here !!! 
-        const nodePortalState =  new TanaNodePortalState(event.message.nodeEvent.tanaNode)
-        const nodeView = await config.createNodeView(event.message.nodeEvent,nodePortalState)
-        const viewContainer = TanaNodeViewCreator.renderNodeView(event,config,nodeView)
-        if (!viewContainer) return 
-        this.mediator.getNodePortalStateHandler().addNodePortalState(viewContainer,nodePortalState)
-    }
-
     async onRegisterNodeView({message}:RuntimeEventInstance<RegisterNodeViewMessage>) {
-        const {templateId,config} = message
-        const dataRequestEvent = GetNodeDataEvent.createInstance({collection:NodeViewCollection, nodeId:templateId})
+        const {config} = message
+        const dataRequestEvent = GetNodeDataEvent.createInstance({collection:NodeViewCollection, nodeId:config.templateName()})
         const response = await this.dispatchEventAndAWaitFirstReply(dataRequestEvent,3) as NodeViewConfig<any>
         const configData:NodeViewConfig<any> = response ? {...config,...response} as NodeViewConfig<any> : config
-        this.mediator.getNodeViewStateHandler().addEntry(templateId,configData)
+        this.mediator.getNodeViewStateHandler().addEntry(config.templateName(),configData)
+    }
+
+    private async createNodeView(event:RuntimeEventInstance<ReplaceViewEventMessage>,config:NodeViewConfig<any>) {
+        const portalObserver = this.mediator.getNodePortalObserver()
+        const nodePortalState = new TanaNodePortalState(event.message.nodeEvent.tanaNode,portalObserver)
+        const eventHandlers = NodeViewEventHandler.getEventHandlers(event.message.nodeEvent.nodeElement)
+        const nodeView = await config.createNodeView(event.message.nodeEvent,nodePortalState,eventHandlers)
+
+        this.registerResizeObservers(event.message.nodeEvent.nodeElement,nodePortalState);
+        this.mediator.getNodePortalStateHandler().addNodePortalState(event.message.nodeEvent.nodeElement,nodePortalState)
+        TanaNodeViewCreator.renderNodeView(event,config,nodeView)
+    }
+
+    private registerResizeObservers(nodeElement:HTMLElement,nodePortalState: TanaNodePortalState) {
+        const nodePortalResizeObserver = this.mediator.getNodePortalResizeObserver();
+        nodePortalState.getAllPortals().forEach(({portal,nodePath}) => nodePortalResizeObserver.registerNodePortal(portal, NodeViewEventHandler.portalResizeEventCallback(nodeElement,portal,nodePath)));
+    }
+
+    private async deleteNodeView(event:RuntimeEventInstance<ReplaceViewEventMessage>,config:NodeViewConfig<any>) {
+        const {nodeElement} = event.message.nodeEvent
+        await config.destroyNodeView(event.message.nodeEvent)
+        Maybe.fromNullable(this.mediator.getNodePortalStateHandler().getNodePortalState(nodeElement))
+            .chainNullable(portalState => {
+                const portals = portalState.getAllPortals()
+                portals.forEach(({portal}) => this.mediator.getNodePortalResizeObserver().unregisterNodePortal(portal))
+                portalState.destroyAllPortals()
+            })
     }
 
 }

@@ -5,19 +5,19 @@ import FullscreenNodeConfig from "tana-extensions-core/src/ReactiveModules/TanaN
 import _ from "lodash";
 import reactDOM from "react-dom"
 import ExcalidrawExtension from ".";
-import TanaNodePortalState from "tana-extensions-core/src/StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
-import TanaExcalidraw from "./dom/TanaExcalidraw";
+import TanaExcalidraw from "./components/TanaExcalidraw";
 import React from "react";
 import NodeViewConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/NodeViewConfig";
-import ExpandedDropEventContent from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/events/ExpandedDropEventContent";
+import TanaNodePortalState from "tana-extensions-core/src/StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";
+import NodeViewEvents from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/NodeViewEvents";
 
 const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"
 
 export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawExtension> {
-
-    OnDropEvent(dropEvent: CustomEvent<ExpandedDropEventContent>,dispatchDropDomEvent:() => void): void {
-            dispatchDropDomEvent()
+    templateName(): string {
+        return "excalidraw-extension"
     }
+
 
     setDimensions(nodeView:HTMLElement,width: string, height: string): void {
         const excalidrawDimension = nodeView.querySelector(`.${EXCALIDRAW_DIMENSION_CLASS_NAME}`) as HTMLElement
@@ -25,7 +25,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
         excalidrawDimension.style.height = height 
     }
     
-    createNodeView({tanaNode}: NodeEventMessage,nodePortalState:TanaNodePortalState): Promise<HTMLDivElement> {
+    createNodeView({tanaNode}: NodeEventMessage,nodePortalState:TanaNodePortalState,nodeViewEvents:NodeViewEvents): Promise<HTMLDivElement> {
         return new Promise(async (resolve) => {
             const stateHandler = this.getMediator().getExcalidrawStateHandler()
             const initialData = await stateHandler.getData(tanaNode)
@@ -35,6 +35,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
                 initialData,
                 nodePortalState,
                 stateHandler,
+                nodeViewEvents,
                 tanaNode,
                 resolve,
                 container 
@@ -56,6 +57,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
         return {
                 insertBeforeTemplateContent: true,
                 lockByDefault:true,
+                expandNodePortalsByDefault:false,
                 expandByDefault:true,
                 onLock(nodeView:HTMLElement) {
                     console.log("locking")
@@ -63,7 +65,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
                 onUnlock(nodeView) {
                     console.log("unlocking")
                 },
-                height:"250px",
+                height:"400px",
                 width: "500px",
                 addSettingsButton:true,
                 addBorder:false,
@@ -76,6 +78,7 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
         return {
                 addBorder: false,
                 hideHeader: true,
+                expandNodePortalsByDefault: false,
                 height: "90vh",
                 width:"100%",
                 lockByDefault: false,

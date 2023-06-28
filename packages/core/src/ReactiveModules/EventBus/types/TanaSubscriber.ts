@@ -25,6 +25,7 @@ export default abstract class TanaSubscriber<T extends TanaPubSubModule> impleme
     public async dispatchEventAndAWaitFirstReply<T>(runtimeEvent:RuntimeEventInstance<T>,secondsToWait:number) {
         return this.eventBus.dispatchEventAndAWaitFirstReply(runtimeEvent,secondsToWait)
     }
+    
     public dispatchEventResponse<T>(originalEvent:RuntimeEventInstance<any>,responseEvent:RuntimeEventInstance<T>) {
         this.eventBus.dispatchEventResponse(originalEvent,responseEvent)
     }

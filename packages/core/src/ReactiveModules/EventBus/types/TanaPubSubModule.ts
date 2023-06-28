@@ -41,7 +41,7 @@ export default abstract class TanaPubSubModule {
             await component.onDependenciesInitComplete()
         }
         this.eventBus.dispatchInitEvent(this.getEventModuleInvokesOnCompletion())
-        console.log(`${this} has Initialized...`)
+        console.log(`${this.constructor.name} has Initialized...`)
         this.isInitialized = true
     }
 

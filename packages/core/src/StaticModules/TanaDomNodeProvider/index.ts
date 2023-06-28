@@ -29,6 +29,14 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
         return descendant.closest(this.classSelector(this.getNodeViewCssClass())) as HTMLElement
     }
 
+    public getNodeViewParentNodeElement(nodeView:HTMLElement) {
+        const contentNode = this.getContentNodeFromDescendant(nodeView)
+        if (contentNode) return contentNode
+        return Maybe.fromNullable(this.getPanelFromDescendant(nodeView))
+            .chainNullable(panel => this.getPanelHeaderFromAncestor(panel as HTMLElement))
+            .extractNullable()
+    }
+    
     public getListItemContainerFromAncestor(ancestor:HTMLElement) {
         return ancestor.querySelector(this.classSelector(this.getListItemCssClass()))
     }
@@ -66,6 +74,10 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
 
     public getMainDock(doc:Document) {
         return doc.querySelector(this.getMainDockAttributeSelector())
+    }
+
+    public getPanelContentNodeFromDescendant(descendant:HTMLElement) {
+        return descendant.closest(this.classSelector(this.getPanelContentCssClass()))
     }
 
     public getViewPanelContainerFromDescendant(descendant:HTMLElement) {
@@ -129,7 +141,7 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
      */
     public getContentNodeFromDescendant(descendant:HTMLElement) {
         const bulletAndContentSelector = this.classSelector(this.getContentNodeCssClass())
-        return descendant.closest(bulletAndContentSelector)
+        return descendant.closest(bulletAndContentSelector) as HTMLElement
     }
 
     public getEditableNodeFromAncestor(ancestor:HTMLElement) {

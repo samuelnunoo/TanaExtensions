@@ -4,7 +4,7 @@ import GetNodeDataEvent from "database-extension/types/events/GetNodeDataEvent"
 import UpdateNodeDataEvent, { UpdateNodeDataEventMessage } from "database-extension/types/events/UpdateNodeDataEvent"
 import { Codec, array, unknown } from "purify-ts"
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types"
-import ExcalidrawDBCollection, { ExcalidrawContent } from "./ExcalidrawDBCollection"
+import ExcalidrawDBCollection, { ExcalidrawContent } from "../ExcalidrawDBCollection"
 import EventBus from "tana-extensions-core/src/ReactiveModules/EventBus"
 
 

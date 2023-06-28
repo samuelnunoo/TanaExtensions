@@ -2,13 +2,11 @@ import NodeViewConfig from "../../ReactiveModules/TanaNodeViewModule/types/confi
 import {curry, Maybe} from "purify-ts";
 import TanaDomNodeProvider from "../TanaDomNodeProvider";
 import {NodeViewType} from "../../ReactiveModules/TanaNodeViewModule/types/configs/NodeViewType";
-import {TanaNode} from "../TanaStateProvider/types/types";
 import TanaCommandExecutor from "../TanaCommandExecutor";
 import autoBind from "auto-bind";
 import RuntimeEventInstance from "../../ReactiveModules/EventBus/types/RuntimeEventInstance";
 import { ReplaceViewEventMessage } from "../../ReactiveModules/TanaNodeViewModule/types/events/ReplaceViewEvent";
-import { DropEventContent} from "../../ReactiveModules/TanaDragDropModule/types/OnDropEvent";
-import { Just } from "purify-ts/esm/Maybe";
+
 
 const NODE_VIEW_CONTAINER_CLASS = "node-view-container"
 const NODE_VIEW_BORDER_CLASS = "node-view-border"
@@ -46,7 +44,7 @@ class _TanaNodeViewCreator {
 
 
     private wrapInViewContainer(event:RuntimeEventInstance<ReplaceViewEventMessage>, config:NodeViewConfig<any>,nodeView:HTMLDivElement,nodeElement:HTMLElement) {
-        const {nodeViewType,tanaNode} = event.message.nodeEvent
+        const {nodeViewType} = event.message.nodeEvent
         const viewContainer = this.createViewContainer()
         viewContainer.appendChild(nodeView)
         this.preventEventPropagationInContainer(viewContainer)

@@ -13,11 +13,15 @@ import { Maybe } from 'purify-ts';
 import "./assets/node-view.css"
 import DropEventSubscriber from "./DropEventSubscriber";
 import NodePortalStateHandler from "./NodePortalStateHandler";
+import NodePortalResizeObserver from "../../StaticModules/NodePortalModule/NodePortalResizeObserver";
+import NodePortalObserver from "./NodePortalObserver";
+
 
 export default class TanaNodeViewModule extends TanaPubSubModule {
     private nodeViewStateHandler = new NodeViewStateHandler()
     private nodePortalStateHandler = new NodePortalStateHandler()
-
+    private nodePortalResizeObserver = new NodePortalResizeObserver()
+    private nodePortalObserver = new NodePortalObserver(this,this.eventBus)
     private nodeEventSubscriber = new NodeEventSubscriber(this,this.eventBus)
     private nodeViewPublisher: NodeViewReplacementSubscriber = new NodeViewReplacementSubscriber(this,this.eventBus)
     private nodeViewCollectionPublisher:NodeViewDBCollectionPublisher = new NodeViewDBCollectionPublisher(this,this.eventBus)
@@ -28,11 +32,20 @@ export default class TanaNodeViewModule extends TanaPubSubModule {
 
     getPubSubComponents(): TanaPubSubComponent[] {
         return [
+            this.nodePortalObserver,
             this.nodeEventSubscriber,
             this.nodeViewPublisher,
             this.nodeViewCollectionPublisher,
             this.dropEventSubscriber
         ];
+    }
+
+    getNodePortalObserver() {
+        return this.nodePortalObserver
+    }
+
+    getNodePortalResizeObserver() {
+        return this.nodePortalResizeObserver
     }
 
     getNodeViewReplacementSubscriber() {

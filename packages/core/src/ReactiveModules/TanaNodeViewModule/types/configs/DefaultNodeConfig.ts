@@ -2,6 +2,7 @@
 export default interface DefaultNodeConfig {
     insertBeforeTemplateContent:boolean
     addBorder:boolean
+    expandNodePortalsByDefault:boolean 
     lockByDefault:boolean
     expandByDefault:boolean
     onLock:(nodeView:HTMLElement) => unknown | null

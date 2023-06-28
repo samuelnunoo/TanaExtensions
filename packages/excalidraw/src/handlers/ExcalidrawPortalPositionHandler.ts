@@ -1,24 +1,57 @@
 import { sceneCoordsToViewportCoords, viewportCoordsToSceneCoords } from "@excalidraw/excalidraw"
-import { ExcalidrawRectangleElement } from "@excalidraw/excalidraw/types/element/types"
+import { ExcalidrawElement, ExcalidrawRectangleElement } from "@excalidraw/excalidraw/types/element/types"
 import { AppState, ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
+import ExcalidrawPortalStateHandler from "./ExcalidrawPortalStateHandler"
 
-const PADDING = 0.1
+const PADDING = 60
 
 export default class ExcalidrawPortalPositionHandler {
 
-    public static positionPortal(portalElement:HTMLElement,excalidrawRect:ExcalidrawRectangleElement,appState:AppState) {
+    public static positionPortal(portalElement:HTMLElement,width:number,height:number,excalidrawRect:ExcalidrawRectangleElement,appState:AppState) {
+        console.log("position portal")
         const {x,y} = this.getXYPosition(excalidrawRect,appState)
-
-        portalElement.style.left = `${x + this.getMargin(excalidrawRect.width,appState)}px` 
-        portalElement.style.top = `${y + this.getMargin(excalidrawRect.height,appState)}px`
-        portalElement.style.height = `${this.getDimension(excalidrawRect.height,appState)}px`
-        portalElement.style.width = `${this.getDimension(excalidrawRect.width,appState)}px`
+        console.log("viewport Pos",y,x)
+        const {top,left} = portalElement.parentElement!.getBoundingClientRect()
+        console.log("Element", top, left)
+        const offsetTop = (top - y) * -1 
+        const offsetLeft = (left - x) * -1
+        console.log("Offset",offsetTop,offsetLeft)
+        portalElement.style.left = `${ offsetLeft + this.getMargin(excalidrawRect.width,width,appState)}px` 
+        portalElement.style.top = `${ offsetTop + this.getMargin(excalidrawRect.height,height,appState) }px`
+        portalElement.style.fontSize = "120%"
+        portalElement.style.color = "black"
+        portalElement.style.width = 'fit-content' //'fit-content'
+        portalElement.style.height = 'fit-content' //'fit-content'
         this.clipOutOfBoundElementSegments(portalElement,appState)
         portalElement.style.visibility = "visible"
-        portalElement.style.position = "fixed"
+        portalElement.style.position = "absolute"
         portalElement.style.zIndex = "2"
         portalElement.style.scale = `${appState.zoom.value}`
-        portalElement.style.transformOrigin = "top left"
+       // portalElement.style.transformOrigin = "top left"
+        console.log(portalElement)
+        const xx = portalElement.getBoundingClientRect()
+        console.log("newPos", xx.top, xx.left)
+    }
+
+    public static checkElementSize(elements: readonly ExcalidrawElement[], portalState:ExcalidrawPortalStateHandler, excalidrawAPI:ExcalidrawImperativeAPI|null) {
+      
+    }
+
+    public static fitRectToPortal(elements: readonly ExcalidrawElement[],portalState:ExcalidrawPortalStateHandler,excalidrawAPI:ExcalidrawImperativeAPI) {
+        const els = elements.map(element => {
+            const domRect = portalState.getPortalDomRect(element.id)
+            if (!domRect) return element
+            const zoom = excalidrawAPI.getAppState().zoom.value
+            const width =  domRect.width + ( PADDING  * zoom )
+            const height =  domRect.height + ( PADDING * zoom )
+    
+            return {
+                ...element,
+                width,
+                height
+            }
+        })
+        excalidrawAPI.updateScene({elements:els})
     }
 
     public static insertPortalContainer(excalidrawApi:ExcalidrawImperativeAPI) {
@@ -65,25 +98,23 @@ export default class ExcalidrawPortalPositionHandler {
 
     }
 
-    public static placePortal(excalidrawApi:ExcalidrawImperativeAPI) {
+    public static placePortal(excalidrawApi:ExcalidrawImperativeAPI,portalState:ExcalidrawPortalStateHandler) {
         return (nodePath:string,portal:HTMLElement) => {
             const element = excalidrawApi.getSceneElements().find(element => element.id == nodePath);
             const replacementRect = !!element ? element : this.insertPortalContainer(excalidrawApi)(0,0,nodePath)
-            this.positionPortal(portal, replacementRect as ExcalidrawRectangleElement, excalidrawApi.getAppState());
+            const {width,height} = portalState.getPortalDomRect(nodePath)!
+            this.positionPortal(portal,width,height, replacementRect as ExcalidrawRectangleElement, excalidrawApi.getAppState());
         }
     }
 
-    private static getMargin(value:number,appState:AppState){
-        return (value * PADDING * appState.zoom.value)/2
+    private static getMargin(excalidrawElementDimension:number,domElementDimension:number,appState:AppState){
+        return (Math.abs(excalidrawElementDimension - domElementDimension)/2) * appState.zoom.value
     }
 
     private static getXYPosition(element:ExcalidrawRectangleElement,appState:AppState) {
-        const xPosition = (element.x + appState.scrollX) * appState.zoom.value + appState.offsetLeft
-        const yPosition = (element.y + appState.scrollY) * appState.zoom.value + appState.offsetTop 
         const sceneX = element.x
         const sceneY = element.y
         return sceneCoordsToViewportCoords({sceneX, sceneY},appState)
-       //return {xPosition,yPosition}
     }
     
     private static getDimension(dimension:number,appState:AppState) {

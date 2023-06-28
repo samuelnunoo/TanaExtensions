@@ -3,9 +3,9 @@ import TanaNodeViewModule from ".";
 import { InitEvent } from "../EventBus/types/Event";
 import RuntimeEventInstance from "../EventBus/types/RuntimeEventInstance";
 import TanaSubscriber from "../EventBus/types/TanaSubscriber";
-import OnDropEvent, { DropEventContent, ON_DROP_DOM_EVENT } from "../TanaDragDropModule/types/OnDropEvent";
+import OnDropEvent, { DropEventContent } from "../TanaDragDropModule/types/OnDropEvent";
 import OnStartEvent from "../TanaLoaderModule/types/OnStartEvent";
-import ExpandedDropEventContent from "./types/events/ExpandedDropEventContent";
+import NodeViewEventHandler from "./NodeViewEventHandler";
 
 export default class DropEventSubscriber extends TanaSubscriber<TanaNodeViewModule> {
     
@@ -18,30 +18,19 @@ export default class DropEventSubscriber extends TanaSubscriber<TanaNodeViewModu
     }
 
     onDropEvent(event:RuntimeEventInstance<DropEventContent>) {
-        const {draggedContentNode,targetNodeViewContainer,nodeViewTemplateId} = event.message
-        Maybe.fromNullable(this.mediator.getNodePortalStateHandler().getNodePortalState(targetNodeViewContainer))
-            .chainNullable(portalStateHandler => {
-                const {contentDomNode,nodePath} = portalStateHandler.addContentNodeToPortal(draggedContentNode)
-                const nodeViewStateHandler = this.mediator.getNodeViewStateHandler()
-                const nodeViewConfig = nodeViewStateHandler.getEntry(nodeViewTemplateId)
-                if (!nodeViewConfig) return
+        const {draggedContentNode,nodeElement,nodeViewTemplateId,isExpanded} = event.message
+            Maybe.fromNullable(this.mediator.getNodePortalStateHandler().getNodePortalState(nodeElement))
+                .chainNullable(portalStateHandler => {
+                    const nodeViewStateHandler = this.mediator.getNodeViewStateHandler()
+                    const nodeViewConfig = nodeViewStateHandler.getEntry(nodeViewTemplateId)
+                    if (!nodeViewConfig) return
 
-                const dropDomEvent = new CustomEvent<ExpandedDropEventContent>(ON_DROP_DOM_EVENT,{
-                    detail:{
-                        ...event.message,
-                        portalStateHandler,
-                        contentDomNode,
-                        nodePath
-                    },
-                    bubbles:true 
-                })
+                    const shouldExpandNodePortals = isExpanded ? nodeViewConfig.expandedConfig().expandNodePortalsByDefault : nodeViewConfig.defaultConfig().expandNodePortalsByDefault
+                    const {contentDomNode,nodePath} = portalStateHandler.addContentNodeToPortal(draggedContentNode,shouldExpandNodePortals)
+                    this.mediator.getNodePortalResizeObserver().registerNodePortal(contentDomNode,NodeViewEventHandler.portalResizeEventCallback(nodeElement,contentDomNode,nodePath))
+                    NodeViewEventHandler.invokeDropEvent(event,portalStateHandler,contentDomNode,nodePath)
 
-                const dispatchDomDropEvent = () => {
-                    event.message.dropTarget.dispatchEvent(dropDomEvent)
-                }
-
-                nodeViewConfig.OnDropEvent(dropDomEvent,dispatchDomDropEvent)
-            })      
+                })      
     }
 
 }

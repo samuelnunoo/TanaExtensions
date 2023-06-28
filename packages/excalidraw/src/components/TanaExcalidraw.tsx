@@ -1,31 +1,37 @@
 import { Excalidraw } from "@excalidraw/excalidraw";
 import ExcalidrawContainer from "./ExcalidrawContainer";
-import { AppState, ExcalidrawAPIRefValue, ExcalidrawImperativeAPI, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types/types';
+import { AppState, ExcalidrawImperativeAPI, ExcalidrawInitialDataState } from '@excalidraw/excalidraw/types/types';
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
-import useDropEffect from "./useDropEffect";
+import useDropEffect from "../effects/useDropEffect";
 import _ from "lodash";
-import ExcalidrawStateHandler from "../ExcalidrawStateHandler";
+import ExcalidrawStateHandler from "../handlers/ExcalidrawStateHandler";
 import { TanaNode } from "tana-extensions-core/src/StaticModules/TanaStateProvider/types/types";
 import { Maybe } from "purify-ts/Maybe";
 import {useEffect, useRef, useState }from "react"
 import React from "react";
-import TanaNodePortalState from "tana-extensions-core/src/StaticModules/TanaNodePortalRenderer/TanaNodePortalState";
 import { ExcalidrawChangeEventContent, ON_CHANGE_EVENT } from '../../types/OnChangeEvent';
+import TanaNodePortalState from "tana-extensions-core/src/StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";
+import ExcalidrawPortalStateHandler from "../handlers/ExcalidrawPortalStateHandler";
+import ExcalidrawPortalPositionHandler from "../handlers/ExcalidrawPortalPositionHandler";
+import NodeViewEvents from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/NodeViewEvents";
+
 export interface ExcalidrawProps {
     initialData:ExcalidrawInitialDataState
     container:HTMLDivElement
     nodePortalState:TanaNodePortalState
     stateHandler:ExcalidrawStateHandler
+    nodeViewEvents:NodeViewEvents
     tanaNode:TanaNode
     resolve:any
 }
 
-export default function TanaExcalidraw({nodePortalState,initialData,stateHandler,tanaNode,resolve,container}:ExcalidrawProps) {
-
+export default function TanaExcalidraw({nodeViewEvents,nodePortalState,initialData,stateHandler,tanaNode,resolve,container}:ExcalidrawProps) {
     const excalidrawRef = useRef<HTMLDivElement>(null)
     const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI|null>(null)
     const [prevElements, setPrevElements] = useState<readonly any[]>(Maybe.fromNullable(_.cloneDeep(initialData.elements)).orDefault([]))
     const [prevAppState, setAppState] = useState<AppState|null>(null)
+    const keysToIgnore = new Set(['cursorButton', 'draggingElement', 'previousSelectedElementIds', 'selectedElementIds', 'selectionElement'])
+    const portalState = new ExcalidrawPortalStateHandler()
     
     const elementsHaveChanged = (elements: readonly any[]) => {
         if (elements.length !== prevElements!.length) return true
@@ -36,8 +42,11 @@ export default function TanaExcalidraw({nodePortalState,initialData,stateHandler
         }
         return false
     }
-
-    const keysToIgnore = new Set(['cursorButton', 'draggingElement', 'previousSelectedElementIds', 'selectedElementIds', 'selectionElement'])
+    
+    nodePortalState.runCommandOnPortals((portal,nodePath) => {
+        const {width,height} =  portal.getBoundingClientRect()
+        portalState.setPortalDomRect(nodePath,{width,height})
+    })
 
     const diffKeys = (prevAppState:AppState,appState:AppState) => {
         return Object.keys(prevAppState!).reduce((result, key) => {
@@ -60,30 +69,26 @@ export default function TanaExcalidraw({nodePortalState,initialData,stateHandler
        return false 
 
     }
-
+    
     function handleOnChange(elements: readonly ExcalidrawElement[], appState: AppState) {
-        if (elementsHaveChanged(elements) || appStateHasChanged(appState)) {
-            setPrevElements(_.cloneDeep(elements))
-            setAppState(_.cloneDeep(appState))
-            stateHandler.saveData(tanaNode.id,elements)
-            const ref = excalidrawRef.current
-            if (!ref) return 
-
-            const changeEvent = new CustomEvent<ExcalidrawChangeEventContent>(ON_CHANGE_EVENT,{
-                detail: { elements, appState},
-                bubbles:true 
-            })
-            ref.dispatchEvent(changeEvent)
-        }
+        if (!elementsHaveChanged(elements) && !appStateHasChanged(appState)) return
+        ExcalidrawPortalPositionHandler.checkElementSize(elements,portalState,excalidrawAPI)
+        setPrevElements(_.cloneDeep(elements))
+        setAppState(_.cloneDeep(appState))
+        stateHandler.saveData(tanaNode.id,elements)
+        const ref = excalidrawRef.current
+        if (!ref) return 
+        const changeEvent = new CustomEvent<ExcalidrawChangeEventContent>(ON_CHANGE_EVENT,{
+            detail: { elements, appState},
+            bubbles:true 
+        })
+        ref.dispatchEvent(changeEvent)
     }
 
-    useEffect(() => {
-        resolve(container)
-      }, []);  
+    useEffect(() => { resolve(container) }, []);  
+    useDropEffect(excalidrawRef.current,excalidrawAPI,nodePortalState,nodeViewEvents,portalState)
 
-      
-    useDropEffect(excalidrawRef.current,excalidrawAPI,nodePortalState)
-
+    initialData.appState = {width:500, height:400}
     return (
         <ExcalidrawContainer ref={excalidrawRef}>
             <Excalidraw
