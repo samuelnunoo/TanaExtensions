@@ -11,7 +11,7 @@ import {Maybe} from "purify-ts";
 import NodeViewConfig from "./types/configs/NodeViewConfig";
 import GetNodeDataEvent from 'database-extension/types/events/GetNodeDataEvent';
 import { NodeEventTypeEnum } from "../TanaNodeEventModule/types/types";
-import TanaNodePortalState from "../../StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";
+import TanaNodePortalState from "../../StaticModules/NodePortalModules/TanaNodePortalRenderer/TanaNodePortalState";
 import NodeViewEventHandler from "./NodeViewEventHandler";
 
 

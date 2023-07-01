@@ -1,16 +1,16 @@
 import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types";
-import { ON_DROP_DOM_EVENT } from 'tana-extensions-core/src/ReactiveModules/TanaDragDropModule/types/OnDropEvent';
 import { useEffect } from "react" 
 import ExpandedDropEventContent from 'tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/events/ExpandedDropEventContent';
 import ExcalidrawPortalPositionHandler from '../handlers/ExcalidrawPortalPositionHandler';
 import { ExcalidrawChangeEventContent } from "../../types/OnChangeEvent";
-import TanaNodePortalState from "tana-extensions-core/src/StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";
+import TanaNodePortalState from "tana-extensions-core/src/StaticModules/NodePortalModules/TanaNodePortalRenderer/TanaNodePortalState";
 import NodeViewEvents from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/NodeViewEvents";
-import NodePortalResizeContent from "tana-extensions-core/src/StaticModules/NodePortalModule/NodePortalResizeObserver/types/NodePortalResizeContent";
+import NodePortalResizeContent from "tana-extensions-core/src/StaticModules/NodePortalModules/NodePortalResizeObserver/types/NodePortalResizeContent";
 import ExcalidrawPortalStateHandler from "../handlers/ExcalidrawPortalStateHandler";
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import _ from "lodash";
 import TanaDomNodeProvider from "tana-extensions-core/src/StaticModules/TanaDomNodeProvider";
+import NodePortal from "tana-extensions-core/src/StaticModules/NodePortalModules/NodePortal";
 
 export const ON_CHANGE_EVENT = "onChangeEvent"
 export const ON_RESIZE_EVENT = "onResizeEvent"
@@ -25,25 +25,25 @@ export default function useDropEffect(
     
     const placementMethod = ExcalidrawPortalPositionHandler.placePortal(excalidrawApi,excalidrawPortalState)
     const insertPortalContainer = ExcalidrawPortalPositionHandler.insertPortalContainer(excalidrawApi)
-    nodePortalState.runCommandOnPortals((portal:HTMLElement,nodePath:string) => {
-        placementMethod(nodePath,portal)
+    nodePortalState.runCommandOnPortals((portal:NodePortal,portalId:string) => {
+        placementMethod(portalId,portal)
     })
 
     const handleOnDropEvent = ((event:CustomEvent<ExpandedDropEventContent>) => {
         console.log("handle on drop")
         const {clientX,clientY} = event.detail.mouseEvent
-        const portal = event.detail.contentDomNode
-        const nodePath = event.detail.nodePath
-        const {width,height} = portal.getBoundingClientRect()
-        excalidrawPortalState.setPortalDomRect(nodePath,{width,height})
-        insertPortalContainer(clientX,clientY,nodePath)
-        placementMethod(nodePath,portal)
+        const {nodePortal} = event.detail
+        const {width,height} = nodePortal.getPortalDomNode().getBoundingClientRect()
+        excalidrawPortalState.setPortalDomRect(nodePortal.getPortalId(),{width,height})
+        insertPortalContainer(clientX,clientY,nodePortal.getPortalId())
+        placementMethod(nodePortal.getPortalId(),nodePortal)
+
      }) as EventListener
 
      const handleOnChangeEvent = (((event:CustomEvent<ExcalidrawChangeEventContent>) => {
-        nodePortalState.runCommandOnPortals((portal:HTMLElement,nodePath:string) => {
+        nodePortalState.runCommandOnPortals((portal:NodePortal,portalId:string) => {
             console.log("handle on change")
-            placementMethod(nodePath,portal)
+            placementMethod(portalId,portal)
         })
      })) as EventListener
  
@@ -51,7 +51,7 @@ export default function useDropEffect(
         for (const resizeData of event.detail.portalResizeData) {
             console.log("Setting Resize Stuff")
             const {width,height} = resizeData.contentRect
-            excalidrawPortalState.setPortalDomRect(event.detail.nodePath,{width,height})
+            excalidrawPortalState.setPortalDomRect(event.detail.nodePortal.getPortalId(),{width,height})
             const elements: readonly ExcalidrawElement[] = excalidrawApi.getSceneElements()
             ExcalidrawPortalPositionHandler.fitRectToPortal(elements,excalidrawPortalState,excalidrawApi)
         }
@@ -59,7 +59,6 @@ export default function useDropEffect(
 
 
      const panel = TanaDomNodeProvider.getPanelFromDescendant(excalidrawRef)!
-
      const panelContent = TanaDomNodeProvider.getPanelContentNodeFromDescendant(excalidrawRef)!
      const resizeObserver = new ResizeObserver((_) => excalidrawApi.refresh())
      resizeObserver.observe(panelContent)

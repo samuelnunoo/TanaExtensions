@@ -1,9 +1,7 @@
-
-
-
+import NodePortal from "../../../StaticModules/NodePortalModules/NodePortal";
 
 
 export default interface INodePortalListener {
 
-    onPortalPresenceChange(portal:HTMLElement,isRemoved:boolean):void 
+    onPortalPresenceChange(portal:NodePortal,isRemoved:boolean):void 
 }

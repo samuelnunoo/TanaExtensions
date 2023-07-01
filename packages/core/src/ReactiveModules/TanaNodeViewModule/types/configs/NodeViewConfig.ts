@@ -3,8 +3,7 @@ import ExpandedNodeConfig from "./ExpandedNodeConfig";
 import FullscreenNodeConfig from "./FullscreenNodeConfig";
 import {NodeEventMessage} from "../../../TanaNodeEventModule/types/NodeEvent";
 import TanaModuleComponent from "../../../EventBus/types/TanaModuleComponent";
-import TanaNodePortalState from "../../../../StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";  
-import ExpandedDropEventContent from "../events/ExpandedDropEventContent";
+import TanaNodePortalState from "../../../../StaticModules/NodePortalModules/TanaNodePortalRenderer/TanaNodePortalState";  
 import NodeViewEvents from "./NodeViewEvents";
 
 export default abstract class NodeViewConfig<T> extends TanaModuleComponent<T> {

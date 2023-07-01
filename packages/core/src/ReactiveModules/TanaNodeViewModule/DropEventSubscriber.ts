@@ -26,10 +26,9 @@ export default class DropEventSubscriber extends TanaSubscriber<TanaNodeViewModu
                     if (!nodeViewConfig) return
 
                     const shouldExpandNodePortals = isExpanded ? nodeViewConfig.expandedConfig().expandNodePortalsByDefault : nodeViewConfig.defaultConfig().expandNodePortalsByDefault
-                    const {contentDomNode,nodePath} = portalStateHandler.addContentNodeToPortal(draggedContentNode,shouldExpandNodePortals)
-                    this.mediator.getNodePortalResizeObserver().registerNodePortal(contentDomNode,NodeViewEventHandler.portalResizeEventCallback(nodeElement,contentDomNode,nodePath))
-                    NodeViewEventHandler.invokeDropEvent(event,portalStateHandler,contentDomNode,nodePath)
-
+                    const nodePortal = portalStateHandler.addContentNodeToPortal(draggedContentNode,shouldExpandNodePortals)
+                    this.mediator.getNodePortalResizeObserver().registerNodePortal(nodePortal.getPortalDomNode(),NodeViewEventHandler.portalResizeEventCallback(nodeElement,nodePortal))
+                    NodeViewEventHandler.invokeDropEvent(event,portalStateHandler,nodePortal)
                 })      
     }
 

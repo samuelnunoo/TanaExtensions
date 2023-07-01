@@ -3,12 +3,12 @@ export default class ExcalidrawPortalStateHandler {
         private state:Map<string,{width:number,height:number}> = new Map() 
 
 
-        setPortalDomRect(nodePath:string, domRect:{width:number,height:number}) {
-            this.state.set(nodePath,domRect)
+        setPortalDomRect(portalId:string, domRect:{width:number,height:number}) {
+            this.state.set(portalId,domRect)
         }
 
-        getPortalDomRect(nodePath:string) {
-            return this.state.get(nodePath)
+        getPortalDomRect(portalId:string) {
+            return this.state.get(portalId)
         }
 
 }

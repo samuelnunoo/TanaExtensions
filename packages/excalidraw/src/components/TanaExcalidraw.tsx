@@ -10,7 +10,7 @@ import { Maybe } from "purify-ts/Maybe";
 import {useEffect, useRef, useState }from "react"
 import React from "react";
 import { ExcalidrawChangeEventContent, ON_CHANGE_EVENT } from '../../types/OnChangeEvent';
-import TanaNodePortalState from "tana-extensions-core/src/StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";
+import TanaNodePortalState from "tana-extensions-core/src/StaticModules/NodePortalModules/TanaNodePortalRenderer/TanaNodePortalState";
 import ExcalidrawPortalStateHandler from "../handlers/ExcalidrawPortalStateHandler";
 import ExcalidrawPortalPositionHandler from "../handlers/ExcalidrawPortalPositionHandler";
 import NodeViewEvents from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/NodeViewEvents";
@@ -44,7 +44,7 @@ export default function TanaExcalidraw({nodeViewEvents,nodePortalState,initialDa
     }
     
     nodePortalState.runCommandOnPortals((portal,nodePath) => {
-        const {width,height} =  portal.getBoundingClientRect()
+        const {width,height} =  portal.getPortalDomNode().getBoundingClientRect()
         portalState.setPortalDomRect(nodePath,{width,height})
     })
 
@@ -75,7 +75,7 @@ export default function TanaExcalidraw({nodeViewEvents,nodePortalState,initialDa
         ExcalidrawPortalPositionHandler.checkElementSize(elements,portalState,excalidrawAPI)
         setPrevElements(_.cloneDeep(elements))
         setAppState(_.cloneDeep(appState))
-        stateHandler.saveData(tanaNode.id,elements)
+        stateHandler.saveData(tanaNode.id,elements,appState)
         const ref = excalidrawRef.current
         if (!ref) return 
         const changeEvent = new CustomEvent<ExcalidrawChangeEventContent>(ON_CHANGE_EVENT,{
@@ -87,8 +87,6 @@ export default function TanaExcalidraw({nodeViewEvents,nodePortalState,initialDa
 
     useEffect(() => { resolve(container) }, []);  
     useDropEffect(excalidrawRef.current,excalidrawAPI,nodePortalState,nodeViewEvents,portalState)
-
-    initialData.appState = {width:500, height:400}
     return (
         <ExcalidrawContainer ref={excalidrawRef}>
             <Excalidraw

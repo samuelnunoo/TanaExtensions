@@ -1,4 +1,4 @@
-import NodePortalResizeContent from "../../../../StaticModules/NodePortalModule/NodePortalResizeObserver/types/NodePortalResizeContent"
+import NodePortalResizeContent from "../../../../StaticModules/NodePortalModules/NodePortalResizeObserver/types/NodePortalResizeContent"
 import ExpandedDropEventContent from "../events/ExpandedDropEventContent"
 
 

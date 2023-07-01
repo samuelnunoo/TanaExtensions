@@ -2,23 +2,18 @@ import { sceneCoordsToViewportCoords, viewportCoordsToSceneCoords } from "@excal
 import { ExcalidrawElement, ExcalidrawRectangleElement } from "@excalidraw/excalidraw/types/element/types"
 import { AppState, ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 import ExcalidrawPortalStateHandler from "./ExcalidrawPortalStateHandler"
-import TanaDomNodeProvider from "tana-extensions-core/src/StaticModules/TanaDomNodeProvider"
+import NodePortal from "tana-extensions-core/src/StaticModules/NodePortalModules/NodePortal"
 
 const PADDING = 60
 
 export default class ExcalidrawPortalPositionHandler {
 
-    public static positionPortal(portalElement:HTMLElement,width:number,height:number,excalidrawRect:ExcalidrawRectangleElement,appState:AppState) {
-        console.log("position portal")
+    public static positionPortal(portal:NodePortal,width:number,height:number,excalidrawRect:ExcalidrawRectangleElement,appState:AppState) {
         const {x,y} = this.getXYPosition(excalidrawRect,appState)
-        console.log("viewport Pos",y,x)
-        portalElement.parentElement!.style.width = "100vw"
-        portalElement.parentElement!.style.height = "100vh"
-        const {top,left} = TanaDomNodeProvider.getPortalContainerFromDescendant(portalElement)!.getBoundingClientRect()
-        console.log("Element", top, left)
+        const {top,left} = portal.getPortalContainerDomNode().getBoundingClientRect()
         const offsetTop = (top - y) * -1 
         const offsetLeft = (left - x) * -1
-        console.log("Offset",offsetTop,offsetLeft)
+        const portalElement = portal.getPortalDomNode()
        
         portalElement.style.left = `${ offsetLeft + this.getMargin(excalidrawRect.width,width,appState)}px` 
         portalElement.style.top = `${ offsetTop + this.getMargin(excalidrawRect.height,height,appState) }px`
@@ -57,14 +52,14 @@ export default class ExcalidrawPortalPositionHandler {
     }
 
     public static insertPortalContainer(excalidrawApi:ExcalidrawImperativeAPI) {
-        return (clientX:number,clientY:number,nodePath:string) => {
+        return (clientX:number,clientY:number,portalId:string) => {
             const {x,y} = viewportCoordsToSceneCoords({clientX,clientY},excalidrawApi.getAppState())
             const element = {
                 type: "rectangle",
                 version: 141,
                 versionNonce: 361174001,
                 isDeleted: false,
-                id: nodePath,
+                id: portalId,
                 fillStyle: "solid",
                 strokeWidth: 1,
                 strokeStyle: "solid",
@@ -101,10 +96,10 @@ export default class ExcalidrawPortalPositionHandler {
     }
 
     public static placePortal(excalidrawApi:ExcalidrawImperativeAPI,portalState:ExcalidrawPortalStateHandler) {
-        return (nodePath:string,portal:HTMLElement) => {
-            const element = excalidrawApi.getSceneElements().find(element => element.id == nodePath);
-            const replacementRect = !!element ? element : this.insertPortalContainer(excalidrawApi)(0,0,nodePath)
-            const {width,height} = portalState.getPortalDomRect(nodePath)!
+        return (portalId:string,portal:NodePortal) => {
+            const element = excalidrawApi.getSceneElements().find(element => element.id == portalId);
+            const replacementRect = !!element ? element : this.insertPortalContainer(excalidrawApi)(0,0,portalId)
+            const {width,height} = portalState.getPortalDomRect(portalId)!
             this.positionPortal(portal,width,height, replacementRect as ExcalidrawRectangleElement, excalidrawApi.getAppState());
         }
     }

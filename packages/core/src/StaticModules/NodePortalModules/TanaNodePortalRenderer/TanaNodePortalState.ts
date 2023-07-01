@@ -1,12 +1,12 @@
 import { Maybe } from "purify-ts";
 import TanaNodePortalRenderer from ".";
 import INodePortalListener from "../../../ReactiveModules/TanaNodeViewModule/types/INodePortalListener";
-import TanaDomNodeProvider from "../../TanaDomNodeProvider";
 import { TanaNode } from "../../TanaStateProvider/types/types";
+import NodePortal from "../NodePortal";
 
 export default class TanaNodePortalState {
     private portalParentNode:TanaNode 
-    private portalMap:Map<string,HTMLElement>
+    private portalMap:Map<string,NodePortal>
     private listener:INodePortalListener
 
     constructor(portalParentNode:TanaNode,listener:INodePortalListener) {
@@ -19,55 +19,48 @@ export default class TanaNodePortalState {
     }
 
     addContentNodeToPortal(contentNode:HTMLElement,expandPortal:boolean) {
-        const nodePath = TanaNodePortalRenderer.addNodeReferenceToPortal(this.portalParentNode,contentNode,expandPortal)
-        if (!nodePath) throw Error("Failed to add contentNode to NodePortal")
+        const nodePortal = TanaNodePortalRenderer.addNodeReferenceToPortal(this.portalParentNode,contentNode,expandPortal)
+        if (!nodePortal) throw Error("Failed to add contentNode as NodePortal")
         
-        const nodePathString = this.nodePathToString(nodePath)
-        const contentDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(nodePathString)
-        this.portalMap.set(nodePathString,contentDomNode)
-        this.listener.onPortalPresenceChange(contentDomNode,false)
-        return {
-            nodePath:nodePathString,
-            contentDomNode
-        }
+        this.portalMap.set(nodePortal.getPortalId(),nodePortal)
+        this.listener.onPortalPresenceChange(nodePortal,false)
+        return nodePortal
     }
 
-    getPortalNode(nodePath:string) {
-        return this.portalMap.get(nodePath)
+
+    getNodePortal(portalId:string) {
+        return this.portalMap.get(portalId)
     }
 
-    runCommandOnPortals(commandToExecute:(portal:HTMLElement,nodePath:string) => void) {
+    runCommandOnPortals(commandToExecute:(portal:NodePortal,portalId:string) => void) {
         this.portalMap.forEach(commandToExecute)
     }
 
     destroyAllPortals() {
         this.portalMap.forEach(portal => {
             this.listener.onPortalPresenceChange(portal,true)
-            portal.remove()
+            portal.destroyPortal()
         })
+        this.portalMap = new Map() 
     }
 
-    destroyPortalFromNodePath(nodePath:string) {
-        Maybe.fromNullable(this.portalMap.get(nodePath))
+    destroyPortalFromPortalId(portalId:string) {
+        Maybe.fromNullable(this.portalMap.get(portalId))
         .chainNullable(portal => {
             this.listener.onPortalPresenceChange(portal,true)
-            portal.remove() 
+            portal.destroyPortal() 
         })
     }
 
-    destroyPortalFromDomNode(portal:HTMLElement) {
+    destroyPortalFromDomNode(portal:NodePortal) {
         this.listener.onPortalPresenceChange(portal,true)
-        portal.remove()
+        portal.destroyPortal()
     }
 
     getAllPortals() {
-        const portals:{portal:HTMLElement,nodePath:string}[] = []
+        const portals:{portal:NodePortal,nodePath:string}[] = []
         this.portalMap.forEach((portal,nodePath) => {portals.push({portal,nodePath})})
         return portals 
-    }
-
-    private nodePathToString(nodePath:TanaNode[]) {
-        return nodePath.map(node => node.id).join("|")
     }
 
 }

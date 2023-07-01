@@ -1,4 +1,5 @@
-import TanaNodePortalState from "../../../../StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";
+import NodePortal from "../../../../StaticModules/NodePortalModules/NodePortal";
+import TanaNodePortalState from "../../../../StaticModules/NodePortalModules/TanaNodePortalRenderer/TanaNodePortalState";
 import { DropEventContent } from "../../../TanaDragDropModule/types/OnDropEvent";
 
 
@@ -6,6 +7,5 @@ import { DropEventContent } from "../../../TanaDragDropModule/types/OnDropEvent"
 
 export default interface ExpandedDropEventContent extends DropEventContent {
     portalStateHandler: TanaNodePortalState 
-    contentDomNode: HTMLElement
-    nodePath:string 
+    nodePortal:NodePortal
 }

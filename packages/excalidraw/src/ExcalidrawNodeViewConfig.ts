@@ -8,7 +8,7 @@ import ExcalidrawExtension from ".";
 import TanaExcalidraw from "./components/TanaExcalidraw";
 import React from "react";
 import NodeViewConfig from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/NodeViewConfig";
-import TanaNodePortalState from "tana-extensions-core/src/StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState";
+import TanaNodePortalState from "tana-extensions-core/src/StaticModules/NodePortalModules/TanaNodePortalRenderer/TanaNodePortalState";
 import NodeViewEvents from "tana-extensions-core/src/ReactiveModules/TanaNodeViewModule/types/configs/NodeViewEvents";
 
 const EXCALIDRAW_DIMENSION_CLASS_NAME = "excalidraw-dimension"

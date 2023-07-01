@@ -5,9 +5,11 @@ import TanaCommandExecutor from "../../TanaCommandExecutor";
 import TanaNodeFinder from "../../TanaNodeFinder";
 import TanaNodeAttributeInspector from "../../TanaNodeAttributeInspector";
 import TanaDomNodeProvider from "../../TanaDomNodeProvider";
+import NodePortal from "../NodePortal";
 
 const NODE_PORTAL_TEMPLATE_NAME = "node-portal-component"
 const NODE_PORTAL_CLASS = "node-portal-container"
+
 export default class TanaNodePortalRenderer {
 
     public static addNodeReferenceToPortal(portalParentNode:TanaNode,contentNode:HTMLElement,expandPortal:boolean) {
@@ -15,24 +17,33 @@ export default class TanaNodePortalRenderer {
         if (!contentNodeId) return null 
         const portalContainer = this.getOrInsertPortalContainer(portalParentNode)
         portalContainer.lock()
-        const portalNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
-        if (!portalNodePath) return null
+        const portalContainerNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
+        if (!portalContainerNodePath) return null
        
        return Maybe.fromNullable(TanaStateProvider.getNodeWithId(contentNodeId).extractNullable())
-                .map(nodeRef => {
-                const fileNodePath = this.insertNodeToPortal(portalContainer,nodeRef)
-                TanaCommandExecutor.expandAllOwnedChildren(portalNodePath)
-                const refNodePath = [...portalNodePath,...fileNodePath]
+                .map(nodePortal => {
+                const fileNodePath = this.insertNodeToPortal(portalContainer,nodePortal)
+                TanaCommandExecutor.expandAllOwnedChildren(portalContainerNodePath)
+                const nodePortalNodePath = [...portalContainerNodePath,...fileNodePath]
 
-                if (expandPortal) TanaCommandExecutor.expandTanaNodeFromNodePath(refNodePath)
-                else TanaCommandExecutor.collapseTanaNodeFromNodePath(refNodePath)
-                const contentNode = TanaDomNodeProvider.getContentNodeFromNodePath(refNodePath.map(node => node.id).join("|"))
-                this.removeCSSPositionFromNonPortalAncestors(contentNode)
-                return refNodePath
+                if (expandPortal) TanaCommandExecutor.expandTanaNodeFromNodePath(nodePortalNodePath)
+                else TanaCommandExecutor.collapseTanaNodeFromNodePath(nodePortalNodePath)
+                const nodePortalDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(nodePortalNodePath.map(node => node.id).join("|"))
+                const portalContainerDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalContainerNodePath.map(node => node.id).join("|"))
+                if (!nodePortalDomNode || portalContainerDomNode) return null 
+                this.removeCSSPositionFromNonPortalAncestors(nodePortalDomNode)
+                this.hideNodePortal(portalContainerNodePath)
+
+                return new NodePortal(
+                    portalContainerNodePath,
+                    portalContainerDomNode,
+                    nodePortalDomNode,
+                    nodePortalNodePath
+                )
+           
             }).extractNullable()
     }
 
-    
     public static hidePortalAndExpandDescendants(portalParentNode:TanaNode) {
         const portalContainer = this.getOrInsertPortalContainer(portalParentNode)
         const portalNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
@@ -43,22 +54,30 @@ export default class TanaNodePortalRenderer {
 
     public static getPortalDomNodes(portalParentNode:TanaNode) {
         const portalContainer = this.getOrInsertPortalContainer(portalParentNode)
-        const portalNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
-        if (!portalNodePath) return null 
-        const portalNodePathString = portalNodePath.map(n => n.id).join("|")
-        const portalDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalNodePathString)
-        if (!portalDomNode) return null
+        const portalContainerNodePath = TanaDomNodeProvider.getNodePathFromNodeId(portalContainer.id,document)
+        if (!portalContainerNodePath) return null 
+        const portalNodePathString = portalContainerNodePath.map(n => n.id).join("|")
+        const portalContainerDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalNodePathString)
+        if (!portalContainerDomNode) return null
 
-        const portalDomNodeMap:Map<string,HTMLElement> = new Map() 
+        const portalDomNodeMap:Map<string,NodePortal> = new Map() 
         const portalFolders = portalContainer.children 
 
         for (const folder of portalFolders) {
             const portalFiles = folder.children 
             for (const file of portalFiles) {
-                const contentNodePathString = [ ...portalNodePath,folder,file,file.firstChild].map(node => node.id).join("|")
-                const contentNode = TanaDomNodeProvider.getContentNodeFromNodePath(contentNodePathString)
-                this.removeCSSPositionFromNonPortalAncestors(contentNode)
-                portalDomNodeMap.set(contentNodePathString,contentNode)
+                const portalNodePath = [ ...portalContainerNodePath,folder,file,file.firstChild]
+                const portalNodePathString = portalNodePath.map(node => node.id).join("|")
+                const portalDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalNodePathString)
+                this.removeCSSPositionFromNonPortalAncestors(portalDomNode)
+                
+                const nodePortal = new NodePortal(
+                    portalContainerNodePath,
+                    portalContainerDomNode,
+                    portalDomNode,
+                    portalNodePath
+                )
+                portalDomNodeMap.set(nodePortal.getPortalId(),nodePortal)
             }
         }
 
@@ -72,6 +91,7 @@ export default class TanaNodePortalRenderer {
             current = current.parentElement
         }
     }
+
     private static hideNodePortal(portalNodePath:TanaNode[]) {
         const portalNodePathString = portalNodePath.map(n => n.id).join("|")
         const portalDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalNodePathString)

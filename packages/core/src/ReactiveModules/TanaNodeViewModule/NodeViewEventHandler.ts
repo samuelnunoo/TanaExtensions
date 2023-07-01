@@ -1,5 +1,6 @@
-import NodePortalResizeContent from "../../StaticModules/NodePortalModule/NodePortalResizeObserver/types/NodePortalResizeContent"
-import TanaNodePortalState from "../../StaticModules/NodePortalModule/TanaNodePortalRenderer/TanaNodePortalState"
+import NodePortal from "../../StaticModules/NodePortalModules/NodePortal"
+import NodePortalResizeContent from "../../StaticModules/NodePortalModules/NodePortalResizeObserver/types/NodePortalResizeContent"
+import TanaNodePortalState from "../../StaticModules/NodePortalModules/TanaNodePortalRenderer/TanaNodePortalState"
 import RuntimeEventInstance from "../EventBus/types/RuntimeEventInstance"
 import { DropEventContent } from "../TanaDragDropModule/types/OnDropEvent"
 import NodeViewEvents from "./types/configs/NodeViewEvents"
@@ -28,14 +29,13 @@ export default class NodeViewEventHandler {
         } as NodeViewEvents
     }
 
-    public static invokeDropEvent(event:RuntimeEventInstance<DropEventContent>,portalStateHandler:TanaNodePortalState,contentDomNode:HTMLElement,nodePath:string) {
+    public static invokeDropEvent(event:RuntimeEventInstance<DropEventContent>,portalStateHandler:TanaNodePortalState,nodePortal:NodePortal) {
         const {nodeElement} = event.message
         const dropDomEvent = new CustomEvent<ExpandedDropEventContent>(ON_DROP_DOM_EVENT,{
             detail:{
                 ...event.message,
                 portalStateHandler,
-                contentDomNode,
-                nodePath
+                nodePortal
             },
             bubbles:true 
         })
@@ -43,13 +43,12 @@ export default class NodeViewEventHandler {
         nodeElement.dispatchEvent(dropDomEvent)
     }
 
-    public static portalResizeEventCallback(nodeElement:HTMLElement,portalNode:HTMLElement,nodePath:string) {
+    public static portalResizeEventCallback(nodeElement:HTMLElement,nodePortal:NodePortal) {
         return  (entries: ResizeObserverEntry[]) => {
                 const event = new CustomEvent<NodePortalResizeContent>(ON_RESIZE_DOM_EVENT,{
                     detail: {
                         portalResizeData:entries,
-                        portalNode,
-                        nodePath
+                        nodePortal
                     }
                 })
                 nodeElement.dispatchEvent(event)

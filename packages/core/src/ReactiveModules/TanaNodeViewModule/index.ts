@@ -13,7 +13,7 @@ import { Maybe } from 'purify-ts';
 import "./assets/node-view.css"
 import DropEventSubscriber from "./DropEventSubscriber";
 import NodePortalStateHandler from "./NodePortalStateHandler";
-import NodePortalResizeObserver from "../../StaticModules/NodePortalModule/NodePortalResizeObserver";
+import NodePortalResizeObserver from "../../StaticModules/NodePortalModules/NodePortalResizeObserver";
 import NodePortalObserver from "./NodePortalObserver";
 
 
