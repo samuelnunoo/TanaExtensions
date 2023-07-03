@@ -30,7 +30,7 @@ export default class TanaNodePortalRenderer {
                 else TanaCommandExecutor.collapseTanaNodeFromNodePath(nodePortalNodePath)
                 const nodePortalDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(nodePortalNodePath.map(node => node.id).join("|"))
                 const portalContainerDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalContainerNodePath.map(node => node.id).join("|"))
-                if (!nodePortalDomNode || portalContainerDomNode) return null 
+                if (!nodePortalDomNode || !portalContainerDomNode) return null 
                 this.removeCSSPositionFromNonPortalAncestors(nodePortalDomNode)
                 this.hideNodePortal(portalContainerNodePath)
 
@@ -96,6 +96,8 @@ export default class TanaNodePortalRenderer {
         const portalNodePathString = portalNodePath.map(n => n.id).join("|")
         const portalDomNode = TanaDomNodeProvider.getContentNodeFromNodePath(portalNodePathString)
         if (!portalDomNode) return 
+        //@ts-ignore 
+        portalDomNode.style = ""
         portalDomNode.style.visibility = "hidden"
         portalDomNode.style.position = "absolute"
         portalDomNode.style.left = "1000px"

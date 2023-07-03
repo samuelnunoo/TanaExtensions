@@ -36,10 +36,12 @@ export default class TanaNodePortalState {
         this.portalMap.forEach(commandToExecute)
     }
 
-    destroyAllPortals() {
+    resetAllPortals() {
         this.portalMap.forEach(portal => {
             this.listener.onPortalPresenceChange(portal,true)
-            portal.destroyPortal()
+            portal.resetPortal()
+            //@ts-ignore 
+            portal.getPortalContainerDomNode().style = ""
         })
         this.portalMap = new Map() 
     }
@@ -48,13 +50,13 @@ export default class TanaNodePortalState {
         Maybe.fromNullable(this.portalMap.get(portalId))
         .chainNullable(portal => {
             this.listener.onPortalPresenceChange(portal,true)
-            portal.destroyPortal() 
+            portal.resetPortal() 
         })
     }
 
     destroyPortalFromDomNode(portal:NodePortal) {
         this.listener.onPortalPresenceChange(portal,true)
-        portal.destroyPortal()
+        portal.resetPortal()
     }
 
     getAllPortals() {

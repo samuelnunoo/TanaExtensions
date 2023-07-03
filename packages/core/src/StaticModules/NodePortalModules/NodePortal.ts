@@ -47,14 +47,18 @@ export default class NodePortal {
         return this.nodePortalNodePath
     }
 
-    public destroyPortal() {
-        this.nodePortalDomNode.remove()
+    public resetPortal() {
+        //@ts-ignore 
+        this.nodePortalDomNode.style = ""
     }
     
     private constructPortalId() {
         let portalTanaNodeIndex = this.getPortalContainerIndexInPortalPath()
         if (portalTanaNodeIndex == -1) throw Error(`Could not construct portalId for nodePath ${this.nodePortalNodePath}`)
-        return this.nodePortalNodePath.filter((_,index) => index >= portalTanaNodeIndex).join("|")
+        return this.nodePortalNodePath
+            .filter((_,index) => index >= portalTanaNodeIndex)
+            .map(node => node.id)
+            .join("|")
     }
 
     private getPortalContainerIndexInPortalPath() {

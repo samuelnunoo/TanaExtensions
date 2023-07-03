@@ -11,6 +11,7 @@ import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import _ from "lodash";
 import TanaDomNodeProvider from "tana-extensions-core/src/StaticModules/TanaDomNodeProvider";
 import NodePortal from "tana-extensions-core/src/StaticModules/NodePortalModules/NodePortal";
+import { Maybe } from 'purify-ts';
 
 export const ON_CHANGE_EVENT = "onChangeEvent"
 export const ON_RESIZE_EVENT = "onResizeEvent"
@@ -25,10 +26,14 @@ export default function useDropEffect(
     
     const placementMethod = ExcalidrawPortalPositionHandler.placePortal(excalidrawApi,excalidrawPortalState)
     const insertPortalContainer = ExcalidrawPortalPositionHandler.insertPortalContainer(excalidrawApi)
-    nodePortalState.runCommandOnPortals((portal:NodePortal,portalId:string) => {
-        placementMethod(portalId,portal)
-    })
-
+    const hasSceneElements = excalidrawApi.getSceneElements().length > 0
+    
+    if (hasSceneElements) {
+        nodePortalState.runCommandOnPortals((portal:NodePortal,portalId:string) => {
+            placementMethod(portalId,portal)
+        })
+    }
+   
     const handleOnDropEvent = ((event:CustomEvent<ExpandedDropEventContent>) => {
         console.log("handle on drop")
         const {clientX,clientY} = event.detail.mouseEvent
@@ -41,10 +46,10 @@ export default function useDropEffect(
      }) as EventListener
 
      const handleOnChangeEvent = (((event:CustomEvent<ExcalidrawChangeEventContent>) => {
-        nodePortalState.runCommandOnPortals((portal:NodePortal,portalId:string) => {
-            console.log("handle on change")
-            placementMethod(portalId,portal)
-        })
+        for (const element of event.detail.elements) {
+            Maybe.fromNullable(nodePortalState.getNodePortal(element.id))
+            .chainNullable(portal => placementMethod(portal.getPortalId(),portal))
+        }
      })) as EventListener
  
      const handleResizeEvent = (((event:CustomEvent<NodePortalResizeContent>) => {

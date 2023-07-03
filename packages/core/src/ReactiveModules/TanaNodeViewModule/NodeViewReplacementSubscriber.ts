@@ -66,7 +66,7 @@ export default class NodeViewReplacementSubscriber extends TanaSubscriber<TanaVi
 
     private registerResizeObservers(nodeElement:HTMLElement,nodePortalState: TanaNodePortalState) {
         const nodePortalResizeObserver = this.mediator.getNodePortalResizeObserver();
-        nodePortalState.getAllPortals().forEach(({portal,nodePath}) => nodePortalResizeObserver.registerNodePortal(portal, NodeViewEventHandler.portalResizeEventCallback(nodeElement,portal,nodePath)));
+        nodePortalState.getAllPortals().forEach(({portal,nodePath}) => nodePortalResizeObserver.registerNodePortal(portal, NodeViewEventHandler.portalResizeEventCallback(nodeElement,portal)));
     }
 
     private async deleteNodeView(event:RuntimeEventInstance<ReplaceViewEventMessage>,config:NodeViewConfig<any>) {
@@ -76,7 +76,8 @@ export default class NodeViewReplacementSubscriber extends TanaSubscriber<TanaVi
             .chainNullable(portalState => {
                 const portals = portalState.getAllPortals()
                 portals.forEach(({portal}) => this.mediator.getNodePortalResizeObserver().unregisterNodePortal(portal))
-                portalState.destroyAllPortals()
+                portalState.resetAllPortals()
+                this.mediator.getNodePortalStateHandler().deleteNodePortalState(nodeElement)
             })
     }
 

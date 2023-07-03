@@ -67,10 +67,10 @@ export default class ExcalidrawNodeViewConfig extends NodeViewConfig<ExcalidrawE
                 },
                 height:"400px",
                 width: "500px",
-                addSettingsButton:true,
-                addBorder:false,
-                allowFullscreen:true,
-                hideHeaderByDefault:false 
+                addSettingsButton: false,
+                addBorder: false,
+                allowFullscreen: false,
+                hideHeaderByDefault: false 
         }
     }
 
