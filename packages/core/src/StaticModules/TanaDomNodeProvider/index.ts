@@ -10,6 +10,16 @@ export default new class TanaDomNodeProvider extends TanaConstants  {
             .extractNullable()
     }
 
+    public getNodeViewContainerFromPortalContainer(portalContainer:HTMLElement) {
+        return Maybe.fromNullable(this.getListItemContainerFromDescendant(portalContainer))
+            .chainNullable(listItemContainer => listItemContainer.querySelector(this.classSelector(this.getNodeViewCssClass())) as HTMLElement)
+            .extractNullable()
+    }
+
+    public getListItemContainerFromDescendant(descendant:HTMLElement) {
+        return descendant.closest(this.classSelector(this.getListItemCssClass()))
+    }
+
     public getTanaNodeForNodeView(nodeView:HTMLElement) {
         const contentNodeId = this.getIdFromContentNodeDescendant(nodeView)
         if (contentNodeId) return TanaStateProvider.getNodeWithId(contentNodeId).extractNullable()

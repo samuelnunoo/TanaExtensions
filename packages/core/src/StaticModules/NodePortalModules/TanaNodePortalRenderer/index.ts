@@ -33,7 +33,7 @@ export default class TanaNodePortalRenderer {
                 if (!nodePortalDomNode || !portalContainerDomNode) return null 
                 this.removeCSSPositionFromNonPortalAncestors(nodePortalDomNode)
                 this.hideNodePortal(portalContainerNodePath)
-
+                    
                 return new NodePortal(
                     portalContainerNodePath,
                     portalContainerDomNode,

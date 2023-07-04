@@ -1,3 +1,4 @@
+import TanaDomNodeProvider from "../TanaDomNodeProvider";
 import { TanaNode } from "../TanaStateProvider/types/types";
 
 
@@ -8,6 +9,7 @@ export default class NodePortal {
     private nodePortalNodePath: TanaNode[]
     private portalContainerDomNode: HTMLElement
     private nodePortalDomNode: HTMLElement
+    private nodeViewContainer:HTMLElement|null = null
 
     constructor(
         portalContainerNodePath:TanaNode[],
@@ -25,6 +27,12 @@ export default class NodePortal {
 
     public getPortalContainerNodePath() {
         return this.portalContainerNodePath
+    }
+
+    public getPortalNodeViewContainer() {
+        if (this.nodeViewContainer) return this.nodeViewContainer
+        this.nodeViewContainer = TanaDomNodeProvider.getNodeViewContainerFromPortalContainer(this.portalContainerDomNode)!
+        return this.nodeViewContainer
     }
 
     public getPortalId() {

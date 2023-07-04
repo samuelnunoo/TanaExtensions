@@ -85,6 +85,7 @@ export default function TanaExcalidraw({nodeViewEvents,nodePortalState,initialDa
         ref.dispatchEvent(changeEvent)
     }
 
+    initialData.scrollToContent = true 
     useEffect(() => { resolve(container) }, []);  
     useDropEffect(excalidrawRef.current,excalidrawAPI,nodePortalState,nodeViewEvents,portalState)
     return (

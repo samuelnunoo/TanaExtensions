@@ -23,14 +23,15 @@ export default function useDropEffect(
 
     useEffect(() => {
     if (!excalidrawRef || !excalidrawApi) return 
-    
+
+    const excalidrawCanvas = excalidrawRef.querySelector("canvas")
     const placementMethod = ExcalidrawPortalPositionHandler.placePortal(excalidrawApi,excalidrawPortalState)
     const insertPortalContainer = ExcalidrawPortalPositionHandler.insertPortalContainer(excalidrawApi)
     const hasSceneElements = excalidrawApi.getSceneElements().length > 0
-    
+
     if (hasSceneElements) {
         nodePortalState.runCommandOnPortals((portal:NodePortal,portalId:string) => {
-            placementMethod(portalId,portal)
+            placementMethod(portalId,excalidrawCanvas!,portal)
         })
     }
    
@@ -41,14 +42,14 @@ export default function useDropEffect(
         const {width,height} = nodePortal.getPortalDomNode().getBoundingClientRect()
         excalidrawPortalState.setPortalDomRect(nodePortal.getPortalId(),{width,height})
         insertPortalContainer(clientX,clientY,nodePortal.getPortalId())
-        placementMethod(nodePortal.getPortalId(),nodePortal)
+        placementMethod(nodePortal.getPortalId(),excalidrawCanvas!,nodePortal)
 
      }) as EventListener
 
      const handleOnChangeEvent = (((event:CustomEvent<ExcalidrawChangeEventContent>) => {
         for (const element of event.detail.elements) {
             Maybe.fromNullable(nodePortalState.getNodePortal(element.id))
-            .chainNullable(portal => placementMethod(portal.getPortalId(),portal))
+            .chainNullable(portal => placementMethod(portal.getPortalId(),excalidrawCanvas!,portal))
         }
      })) as EventListener
  

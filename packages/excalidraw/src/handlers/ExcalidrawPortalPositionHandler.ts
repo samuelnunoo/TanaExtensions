@@ -3,12 +3,13 @@ import { ExcalidrawElement, ExcalidrawRectangleElement } from "@excalidraw/excal
 import { AppState, ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 import ExcalidrawPortalStateHandler from "./ExcalidrawPortalStateHandler"
 import NodePortal from "tana-extensions-core/src/StaticModules/NodePortalModules/NodePortal"
+import TanaPortalPositionHandler from '../../../core/src/StaticModules/NodePortalModules/TanaPortalPositionHandler/index';
 
 const PADDING = 60
 
 export default class ExcalidrawPortalPositionHandler {
 
-    public static positionPortal(portal:NodePortal,width:number,height:number,excalidrawRect:ExcalidrawRectangleElement,appState:AppState) {
+    public static positionPortal(portal:NodePortal,excalidrawCanvas:HTMLElement,width:number,height:number,excalidrawRect:ExcalidrawRectangleElement,appState:AppState) {
         const {x,y} = this.getXYPosition(excalidrawRect,appState)
         const {top,left} = portal.getPortalContainerDomNode().getBoundingClientRect()
         const offsetTop = (top - y) * -1 
@@ -21,11 +22,12 @@ export default class ExcalidrawPortalPositionHandler {
         portalElement.style.color = "black"
         portalElement.style.width = 'fit-content' 
         portalElement.style.height = 'fit-content'
-        this.clipOutOfBoundElementSegments(portalElement,appState)
+
+        TanaPortalPositionHandler.clipOutOfBoundPortalSegments(portal,excalidrawCanvas)
         portalElement.style.visibility = "visible"
         portalElement.style.position = "absolute"
         portalElement.style.zIndex = "2"
-        portalElement.style.scale = `${appState.zoom.value}`
+        portalElement.style.transform = `scale(${appState.zoom.value})`
         portalElement.style.transformOrigin = "top left"
 
     }
@@ -96,11 +98,11 @@ export default class ExcalidrawPortalPositionHandler {
     }
 
     public static placePortal(excalidrawApi:ExcalidrawImperativeAPI,portalState:ExcalidrawPortalStateHandler) {
-        return (portalId:string,portal:NodePortal) => {
+        return (portalId:string,excalidrawCanvas:HTMLElement,portal:NodePortal) => {
             const element = excalidrawApi.getSceneElements().find(element => element.id == portalId);
             const replacementRect = !!element ? element : this.insertPortalContainer(excalidrawApi)(0,0,portalId)
             const {width,height} = portalState.getPortalDomRect(portalId)!
-            this.positionPortal(portal,width,height, replacementRect as ExcalidrawRectangleElement, excalidrawApi.getAppState());
+            this.positionPortal(portal,excalidrawCanvas,width,height, replacementRect as ExcalidrawRectangleElement, excalidrawApi.getAppState());
         }
     }
 
